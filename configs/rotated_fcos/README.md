@@ -23,6 +23,20 @@ hope that the proposed FCOS framework can serve as a simple and strong alternati
 
 ## Results and Models
 
+DIOR
+
+|      Backbone      |        Model        |  mAP  |  AP50 | AP75 | Angle  |  lr schd  |  BS  | Config | Download |
+| :----------: | :------------: | :---: | :----: | :----: | :----: |:-------: | :--: | :-----: | :---------------: |
+| ResNet50<br> (800,800) |    [Rotated-<br>FCOS]    | 36.90 | 60.40 | 37.00 |`le90` |   `1x`    |  2  | [config](./rotated-fcos-le90_r50_fpn_1x_dior.py) | [last epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/RotatedFCOS/rotated-fcos-le90_r50_fpn_1x_dior/epoch_12.pth) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/RotatedFCOS/rotated-fcos-le90_r50_fpn_1x_dior/20250720_011435/20250720_011435.log) \| <br> [all epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) |
+
+RSAR
+
+**NOTE: the mAP, AP50, and AP75 are reported on test set, not val set !!!**
+
+|      Backbone      |        Model        |  mAP  |  AP50 | AP75 | Angle  |  lr schd  |  BS  | Config | Download |
+| :----------: | :------------: | :---: | :----: | :----: | :----: |:-------: | :--: | :-----: | :---------------: |
+| ResNet50<br> (800,800) |    [Rotated-<br>FCOS](../../../configs/rotated_fcos/README.md)     | 34.22 | 66.66 | 31.45 |`le90` |   `1x`    |  8=4gpu*<br>2img/gpu   | [config](../../../configs/rotated_fcos/rotated-fcos-le90_r50_fpn_1x_rsar.py) | [ckpt](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/RSAR/rotated-fcos-le90_r50_fpn_1x_rsar/rotated-fcos-le90_r50_fpn_1x_rsar_epoch_12.pth) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/RSAR/rotated-fcos-le90_r50_fpn_1x_rsar/rotated-fcos-le90_r50_fpn_1x_rsar.json) |
+
 DOTA1.0
 
 |         Backbone         |  AP50  | Angle | Separate Angle | Tricks | lr schd | Mem (GB) | Inf Time (fps) | Aug | Batch Size |                                                     Configs                                                     |                                                                                                                                                                                   Download                                                                                                                                                                                   |
@@ -45,10 +59,11 @@ DOTA1.0
 ## Citation
 
 ```
-@article{tian2019fcos,
-  title={FCOS: Fully Convolutional One-Stage Object Detection},
+@inproceedings{tian2019fcos,
+  title={Fcos: Fully convolutional one-stage object detection},
   author={Tian, Zhi and Shen, Chunhua and Chen, Hao and He, Tong},
-  journal={arXiv preprint arXiv:1904.01355},
+  booktitle={Proceedings of the IEEE/CVF international conference on computer vision},
+  pages={9627--9636},
   year={2019}
 }
 ```
