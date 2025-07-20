@@ -27,7 +27,7 @@ DIOR
 
 |      Backbone      |        Model        |  mAP  |  AP50 | AP75 | Angle  |  lr schd  |  BS  | Config | Download |
 | :----------: | :------------: | :---: | :----: | :----: | :----: |:-------: | :--: | :-----: | :---------------: |
-| ResNet50<br> (800,800) |    [Rotated-<br>FCOS]    | 36.90 | 60.40 | 37.00 |`le90` |   `1x`    |  2  | [config](./rotated-fcos-le90_r50_fpn_1x_dior.py) | [last epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/RotatedFCOS/rotated-fcos-le90_r50_fpn_1x_dior/epoch_12.pth) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/RotatedFCOS/rotated-fcos-le90_r50_fpn_1x_dior/20250720_011435/20250720_011435.log) \| <br> [all epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) |
+| ResNet50<br> (800,800) |    Rotated-<br>FCOS    | 36.90 | 60.40 | 37.00 |`le90` |   `1x`    |  2  | [rotated-fcos-le90_r50_fpn_1x_dior.py](./rotated-fcos-le90_r50_fpn_1x_dior.py) | [last epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/RotatedFCOS/rotated-fcos-le90_r50_fpn_1x_dior/epoch_12.pth) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/RotatedFCOS/rotated-fcos-le90_r50_fpn_1x_dior/20250720_011435/20250720_011435.log) \| <br> [all epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) |
 
 RSAR
 
@@ -35,7 +35,7 @@ RSAR
 
 |      Backbone      |        Model        |  mAP  |  AP50 | AP75 | Angle  |  lr schd  |  BS  | Config | Download |
 | :----------: | :------------: | :---: | :----: | :----: | :----: |:-------: | :--: | :-----: | :---------------: |
-| ResNet50<br> (800,800) |    [Rotated-<br>FCOS](../../../configs/rotated_fcos/README.md)     | 34.22 | 66.66 | 31.45 |`le90` |   `1x`    |  8=4gpu*<br>2img/gpu   | [config](../../../configs/rotated_fcos/rotated-fcos-le90_r50_fpn_1x_rsar.py) | [ckpt](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/RSAR/rotated-fcos-le90_r50_fpn_1x_rsar/rotated-fcos-le90_r50_fpn_1x_rsar_epoch_12.pth) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/RSAR/rotated-fcos-le90_r50_fpn_1x_rsar/rotated-fcos-le90_r50_fpn_1x_rsar.json) |
+| ResNet50<br> (800,800) |    Rotated-<br>FCOS   | 34.22 | 66.66 | 31.45 |`le90` |   `1x`    |  8=4gpu*<br>2img/gpu   | [rotated-fcos-le90_r50_fpn_1x_rsar.py](./rotated-fcos-le90_r50_fpn_1x_rsar.py) | [ckpt](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/RSAR/rotated-fcos-le90_r50_fpn_1x_rsar/rotated-fcos-le90_r50_fpn_1x_rsar_epoch_12.pth) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/RSAR/rotated-fcos-le90_r50_fpn_1x_rsar/rotated-fcos-le90_r50_fpn_1x_rsar.json) |
 
 DOTA1.0
 
