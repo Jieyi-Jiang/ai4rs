@@ -56,9 +56,9 @@ We hope to integrate remote sensing related work based on MMLab, especially MMDe
 <details open>
 <summary><b>Oriented Object Detection - Coder</b></summary>
 
-|     |     |     |     |
-| :---: | :---: | :---: | :---: |
-| [CSL<br>(ECCV'2020)](configs/csl/README.md) | [Oriented R-CNN<br>(ICCV'2021)](configs/oriented_rcnn/README.md) | [PSC<br>(CVPR'2023)](configs/psc/README.md) | [GauCho<br>(CVPR'2025)](projects/GauCho/README.md) |
+|     |     |     |     |     |
+| :---: | :---: | :---: | :---: | :---: |
+| [CSL<br>(ECCV'2020)](configs/csl/README.md) | [Oriented R-CNN<br>(ICCV'2021)](configs/oriented_rcnn/README.md) | [PSC<br>(CVPR'2023)](configs/psc/README.md) | [ACM<br>(CVPR'2024)](./projects/ACM/README.md) |[GauCho<br>(CVPR'2025)](projects/GauCho/README.md) |
 </details>
 
 
