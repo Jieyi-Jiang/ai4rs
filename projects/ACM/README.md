@@ -14,15 +14,13 @@ Oriented object detection has been developed rapidly in the past few years where
 
 ## Results and models
 
-### End-to-end training
-
 **DIOR-R**
 
 |         Backbone         |  mAP  | AP50 | AP75 | Angle | lr schd |  Aug | Batch Size |                                                    Configs                                                     |                                                                                                                                                                              Download                                                                                                                                                                              |
 | :----------------------: | :---: | :---: | :-----: | :------: | :------------: | :-: | :--------: | :------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 | ResNet50 (800,800,200) | 35.33 | 60.23  |  34.82  |   le90   |      1x      |  -  | 2=1gpu*<br>2img/gpu      | [rotated-fcos-le90_r50_fpn_acm_1x_dior.py](./configs/rotated-fcos-le90_r50_fpn_acm_1x_dior.py) | [last epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/ACM/rotated-fcos-le90_r50_fpn_acm_1x_dior/epoch_12.pth) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/ACM/rotated-fcos-le90_r50_fpn_acm_1x_dior/20250720_163940/20250720_163940.log) \| [all epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) |
 
-Note: This is the unofficial checkpoint. The official code is [here](https://github.com/Pandora-CV/cvpr24acm). 
+Note: This is the **unofficial** checkpoint. The official code is [here](https://github.com/Pandora-CV/cvpr24acm). 
 
 
 
