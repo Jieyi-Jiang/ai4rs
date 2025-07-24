@@ -18,11 +18,10 @@ class DistanceAnglePointCoder(BaseBBoxCoder):
             border of the image. Defaults to True.
     """
 
-    def __init__(self, clip_border=True, angle_version='oc', use_hbox=False):
+    def __init__(self, clip_border=True, angle_version='oc'):
         super(BaseBBoxCoder, self).__init__()
         self.clip_border = clip_border
         self.angle_version = angle_version
-        self.use_hbox = use_hbox
 
     def encode(self, points, gt_bboxes, max_dis=None, eps=0.1):
         """Encode bounding box to distances.
@@ -64,19 +63,15 @@ class DistanceAnglePointCoder(BaseBBoxCoder):
         assert pred_bboxes.size(-1) == 5
         if self.clip_border is False:
             max_shape = None
-        if self.use_hbox:
-            return self.distance2obb_h(points, pred_bboxes, max_shape,
-                                    self.angle_version)
-        else:
-            return self.distance2obb(points, pred_bboxes, max_shape,
-                                    self.angle_version)
+        return self.distance2obb(points, pred_bboxes, max_shape,
+                                 self.angle_version)
 
     def obb2distance(self, points, distance, max_dis=None, eps=None):
-        ctr, wh, angle = torch.split(distance, [2, 2, 1], dim=-1)
+        ctr, wh, angle = torch.split(distance, [2, 2, 1], dim=1)
 
         cos_angle, sin_angle = torch.cos(angle), torch.sin(angle)
         rot_matrix = torch.cat([cos_angle, sin_angle, -sin_angle, cos_angle],
-                               dim=-1).reshape(*ctr.shape[:2], 2, 2)
+                               dim=1).reshape(-1, 2, 2)
 
         offset = points - ctr
         offset = torch.matmul(rot_matrix, offset[..., None])
@@ -111,19 +106,6 @@ class DistanceAnglePointCoder(BaseBBoxCoder):
         wh = distance[..., :2] + distance[..., 2:]
         offset_t = (distance[..., 2:] - distance[..., :2]) / 2
         offset = torch.matmul(rot_matrix, offset_t[..., None]).squeeze(-1)
-        ctr = points[..., :2] + offset
-
-        angle_regular = norm_angle(angle, angle_version)
-        return torch.cat([ctr, wh, angle_regular], dim=-1)
-
-    def distance2obb_h(self,
-                       points,
-                       distance,
-                       max_shape=None,
-                       angle_version='oc'):
-        distance, angle = distance.split([4, 1], dim=-1)
-        wh = distance[..., :2] + distance[..., 2:]
-        offset = (distance[..., 2:] - distance[..., :2]) / 2
         ctr = points[..., :2] + offset
 
         angle_regular = norm_angle(angle, angle_version)
