@@ -16,7 +16,7 @@ Accurately estimating the orientation of visual objects with compact rotated bou
 
 ### End-to-end training
 
-
+wait a minute  ...
 
 ## Citation
 
