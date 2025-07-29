@@ -23,7 +23,7 @@
 ## Introduction
 
 
-We hope to integrate remote sensing related work based on **MMLab**, especially MMDetection and MMRotate.
+We hope to integrate remote sensing related work based on **MMLab**, especially **MMDetection** and MMRotate.
 
 
 ## Model Zoo
