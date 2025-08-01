@@ -33,12 +33,6 @@ DOTA1.5
 NOTE: We also **donnot** reimplement the experiment on **DOTA-V1.5**. The results and checkpoints come from [official github](https://github.com/lwCVer/LEGNet).
 
 
-DIOR-R
-|         Backbone         |  AP50  | Angle | lr schd | Mem (GB) | fps | Aug | Batch Size |                                                    Configs                                                     |                                                                                                                                                                              Download                                                                                                                                                                              |
-| :----------------------: | :---: | :---: | :-----: | :------: | :------------: | :-: | :--------: | :------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| LEGNet-Small <br> (800, 800) | - | le90  |   3x    |   8.5G~   |     -      |  single scale  |   4=2gpu*<br>2img/gpu   |                 [orcnn_legnet_small_dior<br>_test_ss_e36.py](./configs/orcnn_legnet_small_dior_test_ss_e36.py)                  |                   [model]() |  
-
-NOTE: We reimplement the experiment on **DIOR-R**. .
 
 ## Citation
 
