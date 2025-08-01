@@ -22,7 +22,7 @@ DOTA1.0
 | LEGNet-Small <br> (1024,1024,200) | 80.03 | le90  |   3x   |   8.5G~   |      -      |  single scale  |  8=4gpu*<br>2img/gpu  |             [orcnn_legnet_small_dota10<br>_test_ss_e36.py](./configs/orcnn_legnet_small_dota10_test_ss_e36.py)              |   [model](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/LEGNet/lwegnet_small_orcnn_dota10_ss.pth)     |
 
 
-NOTE: We **donnot** reimplement the experiment on **DOTA-V1.0**. The results and checkpoints come from [official github](https://github.com/lwCVer/LEGNet).
+NOTE: The results and checkpoints come from [official github](https://github.com/lwCVer/LEGNet).
 
 Train
 
@@ -59,7 +59,7 @@ DOTA1.5
 | :----------------------: | :---: | :---: | :-----: | :------: | :------------: | :-: | :--------: | :------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 | LEGNet-Small <br> (1024,1024,200) | 72.89 | le90  |   3x    |   8.5G~   |     -      |  single scale  |   8=4gpu*<br>2img/gpu   |                 [orcnn_legnet_small_dota15<br>_test_ss_e36.py](./configs/orcnn_legnet_small_dota15_test_ss_e36.py)                  |                   [model](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/LEGNet/lwegnet_small_orcnn_dota15_ss.pth) |  
 
-NOTE: We also **donnot** reimplement the experiment on **DOTA-V1.5**. The results and checkpoints come from [official github](https://github.com/lwCVer/LEGNet).
+NOTE: The results and checkpoints come from [official github](https://github.com/lwCVer/LEGNet).
 
 
 
