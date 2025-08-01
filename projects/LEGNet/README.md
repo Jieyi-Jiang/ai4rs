@@ -24,6 +24,35 @@ DOTA1.0
 
 NOTE: We **donnot** reimplement the experiment on **DOTA-V1.0**. The results and checkpoints come from [official github](https://github.com/lwCVer/LEGNet).
 
+Train
+
+Single-node single-GPU
+
+```shell
+python tools/train.py projects/LEGNet/configs/orcnn_legnet_tiny_dota10_test_ss_e36.py
+```
+
+Single-node multi-GPU, for example 2 gpus:
+
+```shell 
+bash tools/dist_train.sh projects/LEGNet/configs/orcnn_legnet_tiny_dota10_test_ss_e36.py 2
+```
+
+Test
+
+Single-node single-GPU
+
+```shell
+python tools/test.py projects/LEGNet/configs/orcnn_legnet_tiny_dota10_test_ss_e36.py your_checkpoint_path
+```
+
+
+Single-node multi-GPU, for example 2 gpus:
+
+```shell
+python tools/dist_test.sh projects/LEGNet/configs/orcnn_legnet_tiny_dota10_test_ss_e36.py your_checkpoint_path 2
+```
+
 DOTA1.5
 
 |         Backbone         |  AP50  | Angle | lr schd | Mem (GB) | fps | Aug | Batch Size |                                                    Configs                                                     |                                                                                                                                                                              Download                                                                                                                                                                              |
