@@ -58,6 +58,21 @@ AP75: 0.521672244119724
 mAP: 0.47687469541788785
 
 
+**DOTA1.5**
+
+
+|         Backbone         |  mAP  | AP50 | AP75 | Angle | lr schd |  Aug | Batch Size |                                                    Configs                                                     |                                                                                                                                                                              Download                                                                                                                                                                              |
+| :----------------------: | :---: | :---: | :-----: | :------: | :------------: | :-: | :--------: | :------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| ResNet50 (1024,1024,200) | 41.60 | 67.76  |   42.76    |   le90   |      2x      |  -  | 4=2gpu*<br>2img/gpu      | [GSDet_r50_b900_h2h4<br>_h2r1_r2r1_2x_dotav1.5.py](./configs/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dotav1.5.py) | [last ckpt](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dotav1.5/epoch_24.pth) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dotav1.5/20250801_195757.log) \| [result](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dotav1.5/Task1.zip) \| [all ckpt](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) |
+
+This is your evaluation result for task 1 (VOC metrics):  
+mAP: 0.6775932538835394  
+ap of each class: plane:0.8014766903362498, baseball-diamond:0.7366690430078225, bridge:0.4942253156296784, ground-track-field:0.6994971123660537, small-vehicle:0.5835555375217742, large-vehicle:0.7801513009007439, ship:0.8747843174596853, tennis-court:0.9086324338485723, basketball-court:0.7794249146701522, storage-tank:0.7514437748549189, soccer-ball-field:0.5862729165944337, roundabout:0.6336968107733043, harbor:0.6983827136287671, swimming-pool:0.7157469877864249, helicopter:0.6210445202896426, container-crane:0.17648767246840794  
+COCO style result:  
+AP50: 0.6775932538835394  
+AP75: 0.42759762043819644  
+mAP: 0.4159809401584041
+
 
 **DIOR-R**
 
