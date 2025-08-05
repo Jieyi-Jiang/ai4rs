@@ -30,7 +30,7 @@ def add_parser(parser):
     parser.add_argument(
         '--base-json',
         type=str,
-        default='/root/mmrotate-1.x/tools/data/fair/split/split_configs/fair1m1.0_ss_train.json',
+        default=None,
         help='json config file for split images')
     parser.add_argument(
         '--nproc', type=int, default=10, help='the procession number')
@@ -579,7 +579,7 @@ def main():
         img_ext=args.save_ext,
         lock=manager.Lock(),
         prog=manager.Value('i', 0),
-        total=len(infos),
+        total=len(infos),f
         logger=logger)
 
     if args.nproc > 1:
