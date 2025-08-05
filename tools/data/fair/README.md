@@ -1,0 +1,101 @@
+# Preparing FAIR1M1.0 Dataset
+
+>[FAIR1M: A benchmark dataset for fine-grained object recognition in high-resolution remote sensing imagery](https://www.gaofen-challenge.com/benchmark)
+
+<!-- [DATASET] -->
+
+## Description
+
+<div align=center>
+<img src="https://www.gaofen-challenge.com/img/banner.0c1b4fee.png" />
+</div>
+
+
+This benchmark provides a standard dataset for applying advanced deep learning technology to remote sensing. FAIR1M is a large-scale dataset for Fine-grAined object detection and recognItion in Remote sensing images. To meet the needs of practical applications, images in the FAIR1M dataset are collected from different sensors and platforms, with a spatial resolution ranging from 0.3m to 0.8m. There are more than 1 million instances and more than 40,000 images in this dataset. All objects in the FAIR1M dataset are annotated with respect to 5 categories and 37 sub-categories by oriented bounding boxes. Each image is of the size in the range from 1000 × 1000 to 10,000 × 10,000 pixels and contains objects exhibiting a wide variety of scales, orientations, and shapes.
+
+
+
+## download dota dataset
+
+The dota dataset can be downloaded from [here](https://www.gaofen-challenge.com/benchmark) or [modelscope(魔塔)](https://www.modelscope.cn/datasets/wokaikaixinxin/FAIR1M1.0/files).
+
+**How to use modelscope to download FAIR1M1.0**
+
+1) Install `modelscope`
+
+```shell
+pip install modelscope
+```
+
+2) Download FAIR1M1.0
+
+```shell
+modelscope download --dataset 'wokaikaixinxin/FAIR1M1.0' --local_dir 'your_local_path'
+```
+
+The data structure is as follows:
+
+```none
+ai4rs
+├── ai4rs
+├── tools
+├── configs
+├── data
+│   ├── FAIR1M1.0
+│   │   ├── train
+│   │   │   ├── part1
+│   │   │   │   ├── images
+│   │   │   │   ├── labelXml
+│   │   │   ├── part2
+│   │   │   │   ├── images-1
+│   │   │   │   ├── images-2
+│   │   │   │   ├── labelXml
+│   │   ├── test
+│   │   │   ├── images
+```
+
+## split FAIR1M1.0 dataset
+
+Please crop the original images into 1024×1024 patches with an overlap of 200 by run
+
+```shell
+python tools/data/fair/split/img_split.py --base-json \
+  tools/data/fair/split/split_configs/fair1m1.0_ss_train.json
+
+python tools/data/fair/split/img_split.py --base-json \
+  tools/data/fair/split/split_configs/fair1m1.0_ss_test.json
+```
+
+
+Please update the `img_dirs` and `ann_dirs` in json.
+
+The new data structure is as follows:
+
+```none
+ai4rs
+├── ai4rs
+├── tools
+├── configs
+├── data
+│   ├── split_ss_fair1m1.0
+│   │   ├── train
+│   │   │   ├── images
+│   │   │   ├── annfiles
+│   │   ├── test
+│   │   │   ├── images
+│   │   │   ├── annfiles
+```
+
+Please change `data_root` in `configs/_base_/datasets/dota.py` to `data/split_ss_dota`.
+
+
+```bibtex
+@article{SUN2022116,
+title = {FAIR1M: A benchmark dataset for fine-grained object recognition in high-resolution remote sensing imagery},
+journal = {ISPRS Journal of Photogrammetry and Remote Sensing},
+volume = {184},
+pages = {116-130},
+year = {2022},
+issn = {0924-2716},
+doi = {https://doi.org/10.1016/j.isprsjprs.2021.12.004}}
+```
