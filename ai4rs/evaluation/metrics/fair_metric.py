@@ -23,12 +23,7 @@ from ai4rs.structures.bbox import rbox2qbox
 
 @METRICS.register_module()
 class FAIRMetric(BaseMetric):
-    """DOTA evaluation metric.
-
-    Note:  In addition to format the output results to JSON like CocoMetric,
-    it can also generate the full image's results by merging patches' results.
-    The premise is that you must use the tool provided by us to crop the DOTA
-    large images, which can be found at: ``tools/data/dota/split``.
+    """FAIR evaluation metric.
 
     Args:
         iou_thrs (float or List[float]): IoU threshold. Defaults to 0.5.
@@ -65,7 +60,7 @@ class FAIRMetric(BaseMetric):
             will be used instead. Defaults to None.
     """
 
-    default_prefix: Optional[str] = 'dota'
+    default_prefix: Optional[str] = 'fair'
 
     def __init__(self,
                  iou_thrs: Union[float, List[float]] = 0.5,
@@ -109,10 +104,10 @@ class FAIRMetric(BaseMetric):
     def merge_results(self, results: Sequence[dict],
                       outfile_prefix: str) -> str:
         """Merge patches' predictions into full image's results and generate a
-        zip file for DOTA online evaluation.
+        zip file for fair online evaluation.
 
         You can submit it at:
-        https://captain-whu.github.io/DOTA/evaluation.html
+        https://www.gaofen-challenge.com/benchmark
 
         Args:
             results (Sequence[dict]): Testing results of the
