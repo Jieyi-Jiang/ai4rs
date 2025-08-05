@@ -1,7 +1,4 @@
-# Copyright (c) OpenMMLab. All rights reserved.
-# Written by jbwang1997
-# Reference: https://github.com/jbwang1997/BboxToolkit
-
+# Copyright (c) ai4rs. All rights reserved.
 import argparse
 import codecs
 import datetime
