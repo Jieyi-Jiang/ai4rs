@@ -2,20 +2,20 @@
 
 >[FAIR1M: A benchmark dataset for fine-grained object recognition in high-resolution remote sensing imagery](https://www.gaofen-challenge.com/benchmark)
 
-[Paper link](https://arxiv.org/abs/2103.05569)
+
 
 <!-- [DATASET] -->
 
 ## Description
 
 <div align=center>
-<img src="https://www.gaofen-challenge.com/img/banner.0c1b4fee.png" />
+<img src="https://www.gaofen-challenge.com/img/pictures.ce6bc705.jpg" />
 </div>
 
 
 This benchmark provides a standard dataset for applying advanced deep learning technology to remote sensing. FAIR1M is a large-scale dataset for Fine-grAined object detection and recognItion in Remote sensing images. To meet the needs of practical applications, images in the FAIR1M dataset are collected from different sensors and platforms, with a spatial resolution ranging from 0.3m to 0.8m. There are more than 1 million instances and more than 40,000 images in this dataset. All objects in the FAIR1M dataset are annotated with respect to 5 categories and 37 sub-categories by oriented bounding boxes. Each image is of the size in the range from 1000 × 1000 to 10,000 × 10,000 pixels and contains objects exhibiting a wide variety of scales, orientations, and shapes.
 
-
+[Paper link](https://arxiv.org/abs/2103.05569)
 
 ## Download FAIR1M dataset
 
