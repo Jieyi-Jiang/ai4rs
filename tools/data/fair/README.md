@@ -2,6 +2,8 @@
 
 >[FAIR1M: A benchmark dataset for fine-grained object recognition in high-resolution remote sensing imagery](https://www.gaofen-challenge.com/benchmark)
 
+[Paper link](https://arxiv.org/abs/2103.05569)
+
 <!-- [DATASET] -->
 
 ## Description
@@ -15,11 +17,11 @@ This benchmark provides a standard dataset for applying advanced deep learning t
 
 
 
-## download dota dataset
+## Download FAIR1M dataset
 
-The dota dataset can be downloaded from [here](https://www.gaofen-challenge.com/benchmark) or [modelscope(魔塔)](https://www.modelscope.cn/datasets/wokaikaixinxin/FAIR1M1.0/files).
+The dota dataset can be downloaded from [benchmark page](https://www.gaofen-challenge.com/benchmark) or [official baidu netdist](https://pan.baidu.com/share/init?surl=alWnbCbucLOQJJhi4WsZAw&pwd=u2xg) or [modelscope(魔塔)](https://www.modelscope.cn/datasets/wokaikaixinxin/FAIR1M1.0/files).
 
-**How to use modelscope to download FAIR1M1.0**
+**How to use modelscope(魔塔) to download FAIR1M1.0**
 
 1) Install `modelscope`
 
