@@ -6,20 +6,9 @@
 
 <!-- [DATASET] -->
 
-## Description
-
-<div align=center>
-<img src="https://pica.zhimg.com/v2-fa0551a68bb4931a519bb049f647a02c_1440w.jpg" width="600" />
-</div>
-
-
-This benchmark provides a standard dataset for applying advanced deep learning technology to remote sensing. FAIR1M is a large-scale dataset for Fine-grAined object detection and recognItion in Remote sensing images. To meet the needs of practical applications, images in the FAIR1M dataset are collected from different sensors and platforms, with a spatial resolution ranging from 0.3m to 0.8m. There are more than 1 million instances and more than 40,000 images in this dataset. All objects in the FAIR1M dataset are annotated with respect to 5 categories and 37 sub-categories by oriented bounding boxes. Each image is of the size in the range from 1000 × 1000 to 10,000 × 10,000 pixels and contains objects exhibiting a wide variety of scales, orientations, and shapes.
-
-[Paper link](https://arxiv.org/abs/2103.05569)
-
 ## Download FAIR1M dataset
 
-The dota dataset can be downloaded from [benchmark page](https://www.gaofen-challenge.com/benchmark) or [official baidu netdist](https://pan.baidu.com/share/init?surl=alWnbCbucLOQJJhi4WsZAw&pwd=u2xg) or [modelscope(魔塔)](https://www.modelscope.cn/datasets/wokaikaixinxin/FAIR1M1.0/files).
+The FAIR1M dataset can be downloaded from [benchmark page](https://www.gaofen-challenge.com/benchmark) or [official baidu netdist](https://pan.baidu.com/share/init?surl=alWnbCbucLOQJJhi4WsZAw&pwd=u2xg) or [modelscope(魔塔)](https://www.modelscope.cn/datasets/wokaikaixinxin/FAIR1M1.0/files).
 
 **How to use modelscope(魔塔) to download FAIR1M1.0**
 
@@ -89,6 +78,17 @@ ai4rs
 ```
 
 Please change `data_root` in `configs/_base_/datasets/dota.py` to `data/split_ss_dota`.
+
+
+## Description
+
+This benchmark provides a standard dataset for applying advanced deep learning technology to remote sensing. FAIR1M is a large-scale dataset for Fine-grAined object detection and recognItion in Remote sensing images. To meet the needs of practical applications, images in the FAIR1M dataset are collected from different sensors and platforms, with a spatial resolution ranging from 0.3m to 0.8m. There are more than 1 million instances and more than 40,000 images in this dataset. All objects in the FAIR1M dataset are annotated with respect to 5 categories and 37 sub-categories by oriented bounding boxes. Each image is of the size in the range from 1000 × 1000 to 10,000 × 10,000 pixels and contains objects exhibiting a wide variety of scales, orientations, and shapes.
+
+[Paper link](https://arxiv.org/abs/2103.05569)
+
+<div align=center>
+<img src="https://pica.zhimg.com/v2-fa0551a68bb4931a519bb049f647a02c_1440w.jpg" />
+</div>
 
 
 ```bibtex
