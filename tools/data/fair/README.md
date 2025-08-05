@@ -9,7 +9,7 @@
 ## Description
 
 <div align=center>
-<img src="https://www.gaofen-challenge.com/img/pictures.ce6bc705.jpg" />
+<img src="https://pica.zhimg.com/v2-fa0551a68bb4931a519bb049f647a02c_1440w.jpg" />
 </div>
 
 
