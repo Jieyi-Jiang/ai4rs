@@ -15,6 +15,7 @@ Datasets supported in ai4rs:
 - [ICDAR2015 Dataset](icdar2015/README.md)
 - [SARDet 100K Dataset](./sardet_100k/README.md)
 - [RSAR Dataset](./rsar/README.md)
+- [FAIR1M Dataset](./fair/README.md) \[ [Homepage](https://www.gaofen-challenge.com/benchmark) \]
 
 
 ```
@@ -70,4 +71,22 @@ ai4rs
 │   │   ├── test
 │   │   │   ├── annfiles
 │   │   │   ├── images
+│   ├── FAIR1M1.0
+│   │   ├── train
+│   │   │   ├── part1
+│   │   │   │   ├── images
+│   │   │   │   ├── labelXml
+│   │   │   ├── part2
+│   │   │   │   ├── images-1
+│   │   │   │   ├── images-2
+│   │   │   │   ├── labelXml
+│   │   ├── test
+│   │   │   ├── images
+│   ├── split_ss_fair1m1.0
+│   │   ├── train
+│   │   │   ├── images
+│   │   │   ├── annfiles
+│   │   ├── test
+│   │   │   ├── images
+│   │   │   ├── annfiles
 ```
