@@ -48,7 +48,7 @@ Oriented object detection has advanced with the development of convolutional neu
 
 |      Backbone      |     mAP  | Scale | Angle  |  lr schd  |  BS  | Config | Download |
 | :----------: |  :---: | :----: |  :----: |:-------: | :--: | :-----: | :---------------: |
-| ResNet50<br> (1024,1024) |  38.21 | single<br>scale | `le90` | `2x` |  4=2gpu*<br>2img/gpu   | [GSDet_r50_b900_h2h4_h2r1_r2r1_2x_fair1m1.0.py](./configs/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_fair1m1.0.py | [last ckpt]() \| <br> [all ckpt]() \| <br> [log]() \| [result]() |
+| ResNet50<br> (1024,1024) |  38.21 | single<br>scale | `le90` | `2x` |  4=2gpu*<br>2img/gpu   | [GSDet_r50_b900_h2h4_h2r1_r2r1_2x_fair1m1.0.py](./configs/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_fair1m1.0.py) | [last ckpt]() \| <br> [all ckpt]() \| <br> [log]() \| [result]() |
 
 **DOTA1.0**
 
