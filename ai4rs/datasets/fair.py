@@ -27,23 +27,35 @@ class FAIRDataset(BaseDataset):
 
     METAINFO = {
         'classes':
-        ('Boeing737', 'Boeing747', 'Boeing777', 'Boeing787', 'C919', 'A220',
-         'A321', 'A330', 'A350', 'ARJ21', 'Passenger Ship', 'Motorboat',
-         'Fishing Boat', 'Tugboat', 'Engineering Ship', 'Liquid Cargo Ship',
-         'Dry Cargo Ship', 'Warship', 'Small Car', 'Bus', 'Cargo Truck',
-         'Dump Truck', 'Van', 'Trailer', 'Tractor', 'Excavator',
-         'Truck Tractor', 'Basketball Court', 'Tennis Court', 'Football Field',
-         'Baseball Field', 'Intersection', 'Roundabout', 'Bridge'),
+        (
+            # ship 9
+            'Passenger Ship', 'Liquid Cargo Ship', 'Dry Cargo Ship','Motorboat',
+            'Fishing Boat','Warship','Engineering Ship', 'other-ship', 'Tugboat',
+            # vehicle 10
+            'Small Car','Cargo Truck', 'Van', 'Trailer','other-vehicle','Dump Truck',
+            'Bus', 'Tractor', 'Excavator', 'Truck Tractor',
+            # airplane 11
+            'Boeing737','Boeing747','Boeing777','Boeing787','other-airplane',
+            'C919','A220','A321','A330','A350','ARJ21',
+            # court 4
+            'Tennis Court', 'Football Field', 'Basketball Court', 'Baseball Field',
+            # road 3
+            'Intersection', 'Bridge', 'Roundabout'
+        ),
         # palette is a list of color tuples, which is used for visualization.
-        'palette':
-        [(220, 20, 60), (119, 11, 32), (0, 0, 142), (0, 0, 230), (106, 0, 228),
-         (0, 60, 100), (0, 80, 100), (0, 0, 70), (0, 0, 192), (250, 170, 30),
-         (100, 170, 30), (220, 220, 0), (175, 116, 175), (250, 0, 30),
-         (165, 42, 42), (255, 77, 255), (0, 226, 252), (182, 182, 255),
-         (0, 82, 0), (120, 166, 157), (22, 226, 252), (200, 182, 255),
-         (22, 82, 0), (0, 246, 252), (182, 202, 255), (0, 102, 0),
-         (255, 77, 155), (0, 226, 152), (182, 182, 155), (0, 82, 100),
-         (120, 166, 254), (22, 226, 152), (200, 182, 155), (22, 82, 100)]
+        'palette': [(165, 42, 42), (189, 183, 107), (0, 255, 0), (255, 0, 0),
+                    (138, 43, 226), (255, 128, 0), (255, 0, 255),
+                    (0, 255, 255), (255, 193, 193), (0, 51, 153),
+                    (255, 250, 205), (0, 139, 139), (255, 255, 0),
+                    (147, 116, 116), (0, 0, 255), (220, 20, 60),
+
+                    (220, 20, 60), (119, 11, 32), (0, 0, 142), (0, 0, 230),
+                    (106, 0, 228), (0, 60, 100), (0, 80, 100), (0, 0, 70),
+                    (0, 0, 192), (250, 170, 30), (100, 170, 30), (220, 220, 0),
+                    (175, 116, 175), (250, 0, 30), (165, 42, 42),
+                    (255, 77, 255), (0, 226, 252), (182, 182, 255), (0, 82, 0),
+                    (120, 166, 157), (110, 76, 0)
+                    ]
     }
 
     def __init__(self, **kwargs) -> None:

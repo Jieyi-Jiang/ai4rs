@@ -10,7 +10,7 @@ custom_imports = dict(
 pretrain = 'https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/' \
             'pretrain/diffusiondet_r50_fpn_500-proposals_1-step_crop-ms-480-800-450k_coco_new2.pth'
 
-num_classes = 34
+num_classes = 37
 num_proposals = 900
 hbox2hbox = 4
 hbox2rbox = 1
