@@ -6,11 +6,13 @@
 
 ## Insight
 
+<!--
 - 模型能将随机输入学习得到目标。随机输入都可行，其他类型的输入大概率也是可行的。
 - 旋转框可以表征为概率分布，如高斯分布。万物都可以表征为不同的概率分布。
 - 扩散模型、高斯泼溅等都涉及概率分布，都涉及随机性。
 - 架构是decoder-only型，由多层decoder layer堆叠。代码借用了openmmlab 中two-stage类作为父类，事实上，将one-stage或transformer作为父类都可以。
 - 这是GSDet的baseline。
+-->
 
 - The model can learn targets from random inputs. If random inputs work, other types of inputs are likely feasible as well.  
 - Oriented boxes can be represented as probability distributions, such as Gaussian distributions. Everything can be characterized by different probability distributions.  
@@ -20,7 +22,7 @@
 
 ## New
 
-&#x2705; 旋转卡壳算法-求点集的最小外接矩形  
+<!-- &#x2705; 旋转卡壳算法-求点集的最小外接矩形 --> 
 &#x2705; Rotating Calipers Algorithm - Finding the Minimum Bounding Rectangle of a Point Set
 
 ## Abstract
@@ -42,12 +44,18 @@ Oriented object detection has advanced with the development of convolutional neu
 **NOTE: For the RSAR dataset, the reported mAP, AP50, and AP75 are evaluated on the test set, not the validation set !!!**
 
 
+**FAIR1M 1.0**
+
+|      Backbone      |     mAP  | Scale | Angle  |  lr schd  |  BS  | Config | Download |
+| :----------: |  :---: | :----: |  :----: |:-------: | :--: | :-----: | :---------------: |
+| ResNet50<br> (1024,1024) |  38.21 | single<br>scale | `le90` | `2x` |  4=2gpu*<br>2img/gpu   | [GSDet_r50_b900_h2h4_h2r1_r2r1_2x_fair1m1.0.py](./configs/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_fair1m1.0.py | [last ckpt]() \| <br> [all ckpt]() \| <br> [log]() \| [result]() |
+
 **DOTA1.0**
 
 
 |         Backbone         |  mAP  | AP50 | AP75 | Angle | lr schd |  Aug | Batch Size |                                                    Configs                                                     |                                                                                                                                                                              Download                                                                                                                                                                              |
 | :----------------------: | :---: | :---: | :-----: | :------: | :------------: | :-: | :--------: | :------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| ResNet50 (1024,1024,200) | 47.69 | 73.88  |   52.17    |   le90   |      2x      |  -  | 4=2gpu*<br>2img/gpu      | [GSDet_r50_b900_h2h4<br>_h2r1_r2r1_2x_dotav1.0.py](./configs/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dotav1.0.py) | [all clpt](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dotav1.0/20250703_225830/20250703_225830.log) \| [result](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dotav1.0/Task1.zip) \| [last ckpt](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dotav1.0/epoch_24.pth) |
+| ResNet50 (1024,1024,200) | 47.69 | 73.88  |   52.17    |   `le90`   |      `2x`      |  -  | 4=2gpu*<br>2img/gpu      | [GSDet_r50_b900_h2h4<br>_h2r1_r2r1_2x_dotav1.0.py](./configs/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dotav1.0.py) | [all clpt](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dotav1.0/20250703_225830/20250703_225830.log) \| [result](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dotav1.0/Task1.zip) \| [last ckpt](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dotav1.0/epoch_24.pth) |
 
 This is your evaluation result for task 1 (VOC metrics):  
 mAP: 0.7387758407976989  
@@ -64,7 +72,7 @@ mAP: 0.47687469541788785
 
 |         Backbone         |  mAP  | AP50 | AP75 | Angle | lr schd |  Aug | Batch Size |                                                    Configs                                                     |                                                                                                                                                                              Download                                                                                                                                                                              |
 | :----------------------: | :---: | :---: | :-----: | :------: | :------------: | :-: | :--------: | :------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| ResNet50 (1024,1024,200) | 41.60 | 67.76  |   42.76    |   le90   |      2x      |  -  | 4=2gpu*<br>2img/gpu      | [GSDet_r50_b900_h2h4<br>_h2r1_r2r1_2x_dotav1.5.py](./configs/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dotav1.5.py) | [last ckpt](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dotav1.5/epoch_24.pth) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dotav1.5/20250801_195757.log) \| [result](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dotav1.5/Task1.zip) \| [all ckpt](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) |
+| ResNet50 (1024,1024,200) | 41.60 | 67.76  |   42.76    |   `le90`   |      `2x`      |  -  | 4=2gpu*<br>2img/gpu      | [GSDet_r50_b900_h2h4<br>_h2r1_r2r1_2x_dotav1.5.py](./configs/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dotav1.5.py) | [last ckpt](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dotav1.5/epoch_24.pth) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dotav1.5/20250801_195757.log) \| [result](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dotav1.5/Task1.zip) \| [all ckpt](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) |
 
 This is your evaluation result for task 1 (VOC metrics):  
 mAP: 0.6775932538835394  
@@ -79,7 +87,7 @@ mAP: 0.4159809401584041
 
 |         Backbone         |  mAP  | AP50 | AP75 | Angle | lr schd |  Aug | Batch Size |                                                    Configs                                                     |                                                                                                                                                                              Download                                                                                                                                                                              |
 | :----------------------: | :---: | :---: | :-----: | :------: | :------------: | :-: | :--------: | :------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| ResNet50 (800,800,200) | 46.34 | 69.80  |   48.16    |   le90   |      2x      |  -  | 4=2gpu*<br>2img/gpu      | [GSDet_r50_b900_h2h4<br>_h2r1_r2r1_2x_dior.py](./configs/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dior.py) | [model](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dior/20241208_124846/20241208_124846.log) \| [results](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dior/20250704_182754/20250704_182754.log) |
+| ResNet50 (800,800,200) | 46.34 | 69.80  |   48.16    |   `le90`   |      `2x`      |  -  | 4=2gpu*<br>2img/gpu      | [GSDet_r50_b900_h2h4<br>_h2r1_r2r1_2x_dior.py](./configs/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dior.py) | [model](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dior/20241208_124846/20241208_124846.log) \| [results](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dior/20250704_182754/20250704_182754.log) |
 
 
 ---------------iou_thr: 0.5---------------
