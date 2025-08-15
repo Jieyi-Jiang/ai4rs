@@ -79,6 +79,28 @@ ai4rs
 
 Please change `data_root` in `configs/_base_/datasets/dota.py` to `data/split_ss_dota`.
 
+## Classes of FAIR1M
+
+The 37 classes including `other-ship`, `other-vehicle`, `other-airplane` are used. Details in the [FAIRDataset](../../../ai4rs/datasets/fair.py).
+
+```
+'classes':
+(
+    # ship 9
+    'Passenger Ship', 'Liquid Cargo Ship', 'Dry Cargo Ship','Motorboat',
+    'Fishing Boat','Warship','Engineering Ship', 'other-ship', 'Tugboat',
+    # vehicle 10
+    'Small Car','Cargo Truck', 'Van', 'Trailer','other-vehicle','Dump Truck',
+    'Bus', 'Tractor', 'Excavator', 'Truck Tractor',
+    # airplane 11
+    'Boeing737','Boeing747','Boeing777','Boeing787','other-airplane',
+    'C919','A220','A321','A330','A350','ARJ21',
+    # court 4
+    'Tennis Court', 'Football Field', 'Basketball Court', 'Baseball Field',
+    # road 3
+    'Intersection', 'Bridge', 'Roundabout'
+)
+```
 
 ## Description
 
