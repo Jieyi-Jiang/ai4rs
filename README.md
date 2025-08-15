@@ -33,7 +33,7 @@ We hope to integrate remote sensing related work based on **MMLab**, especially 
 
 |     |     |     |     |
 | :---: | :---: | :---: | :---: |
-|[Rotated YOLOX <br>(arXiv 2021)](./projects/rotated_yolox/README.md) |     |     |     |
+|[Rotated YOLOX (arXiv 2021)](./projects/rotated_yolox/README.md) |     |     |     |
 
 </details>
 
