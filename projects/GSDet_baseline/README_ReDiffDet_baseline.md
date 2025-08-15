@@ -6,11 +6,13 @@
 
 ## Insight
 
+<!--
 - 模型能将随机输入学习得到目标。随机输入都可行，其他类型的输入大概率也是可行的。
 - 旋转框可以表征为概率分布，如高斯分布。万物都可以表征为不同的概率分布。
 - 扩散模型、高斯泼溅等都涉及概率分布，都涉及随机性。
 - 架构是decoder-only型，由多层decoder layer堆叠。代码借用了openmmlab 中two-stage类作为父类，事实上，将one-stage或transformer作为父类都可以。
-- 这是ReDiffDet的baseline。
+- 这是GSDet的baseline。
+-->
 
 - The model can learn targets from random inputs. If random inputs work, other types of inputs are likely feasible as well.  
 - Oriented boxes can be represented as probability distributions, such as Gaussian distributions. Everything can be characterized by different probability distributions.  
@@ -20,7 +22,7 @@
 
 ## New
 
-&#x2705; 旋转卡壳算法-求点集的最小外接矩形  
+<!-- &#x2705; 旋转卡壳算法-求点集的最小外接矩形 --> 
 &#x2705; Rotating Calipers Algorithm - Finding the Minimum Bounding Rectangle of a Point Set
 
 ## Abstract
@@ -40,6 +42,26 @@ The diffusion model has been successfully applied to various detection tasks. Ho
 | ResNet50<br> (800,800) |  ReDiffDet_base     | 35.58 | 68.00 | 33.50 | `le90` | `1x` |  4=2gpu*<br>2img/gpu   | [GSDet_r50_b900_h2h4<br>_h2r1_r2r1_1x_rsar.py](./configs/GSDet_r50_b900_h2h4_h2r1_r2r1_1x_rsar.py) | [last ckpt](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_1x_rsar/epoch_12.pth) \| <br> [all ckpt](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| <br> [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_1x_rsar/20250712_230231.log) \| [result](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_1x_rsar/20250714_164452.log) |
 
 **NOTE: For the RSAR dataset, the reported mAP, AP50, and AP75 are evaluated on the test set, not the validation set !!!**
+
+**FAIR1M 1.0**
+
+|      Backbone      |     mAP  | Scale | Angle  |  lr schd  |  BS  | Config | Download |
+| :----------: |  :---: | :----: |  :----: |:-------: | :--: | :-----: | :---------------: |
+| ResNet50<br> (1024,1024) |  38.21 | single<br>scale | `le90` | `2x` |  4=2gpu*<br>2img/gpu   | [GSDet_r50_b900_h2h4<br>_h2r1_r2r1_2x_fair1m1.0.py](./configs/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_fair1m1.0.py) | [last ckpt](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_fair1m1.0/epoch_24.pth) \| <br> [all ckpt](https://modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| <br> [log](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_fair1m1.0/20250806_015925.log) \| [result](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_fair1m1.0/Task1.zip) |
+
+The accuracy of each category of the FAIR1M1.0 dataset:
+
+| mAP | Boeing737 | Boeing747 | Boeing777 | Boeing787 | C919 | A220 | A321 | A330 | A350 | ARJ21 |
+|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|
+| 38.2148 | 39.5562 | 80.0102 | 14.8915 | 46.6622 | 24.008 | 45.3125 | 61.6583 | 67.3039 | 66.7712 | 30.8361 |
+|  | **Passenger Ship** | **Motorboat** | **Fishing Boat** | **Tugboat** | **Engineering Ship** | **Liquid Cargo Ship** | **Dry Cargo Ship** | **Warship** |     |       |
+|  | 14.8353 | 53.8367 | 9.6549 | 34.7008 | 14.4206 | 22.7274 | 40.6588 | 34.6612 |     |      | 
+|  | **Small Car** | **Bus** | **Cargo Truck** | **Dump Truck** | **Van** | **Trailer** | **Tractor** | **Excavator** | **Truck Tractor** | |
+|  | 66.1281   | 14.2996 | 38.19 | 44.8073 | 64.0166 | 8.8786  | 2.563 | 9.6816 | 0.1855 | |
+|  | **Basketball Court** | **Tennis Court** | **Football Field** | **Baseball Field** | |  |  |  |  |  |
+|  | 38.3167          | 80.818       | 58.5274        | 88.2552        | |  |  |  |  |  |
+|  | **Intersection** | **Roundabout** | **Bridge** |     |       |       |       |       |       |      |
+|  | 46.2169      | 7.6276     | 28.2851  |     |       |       |       |       |       |      |
 
 **DOTA1.0**
 
