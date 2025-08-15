@@ -50,17 +50,18 @@ Oriented object detection has advanced with the development of convolutional neu
 | :----------: |  :---: | :----: |  :----: |:-------: | :--: | :-----: | :---------------: |
 | ResNet50<br> (1024,1024) |  38.21 | single<br>scale | `le90` | `2x` |  4=2gpu*<br>2img/gpu   | [GSDet_r50_b900_h2h4<br>_h2r1_r2r1_2x_fair1m1.0.py](./configs/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_fair1m1.0.py) | [last ckpt](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_fair1m1.0/epoch_24.pth) \| <br> [all ckpt](https://modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| <br> [log](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_fair1m1.0/20250806_015925.log) \| [result](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_fair1m1.0/Task1.zip) |
 
+The accuracy of each category of the FAIR1M1.0 dataset:
 
 | mAP | Boeing737 | Boeing747 | Boeing777 | Boeing787 | C919 | A220 | A321 | A330 | A350 | ARJ21 |
 |-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|
 | 38.2148 | 39.5562 | 80.0102 | 14.8915 | 46.6622 | 24.008 | 45.3125 | 61.6583 | 67.3039 | 66.7712 | 30.8361 |
-|  | Passenger Ship | Motorboat | Fishing Boat | Tugboat | Engineering Ship | Liquid Cargo Ship | Dry Cargo Ship | Warship |     |       |
+|  | **Passenger Ship** | **Motorboat** | **Fishing Boat** | **Tugboat** | **Engineering Ship** | **Liquid Cargo Ship** | **Dry Cargo Ship** | **Warship** |     |       |
 |  | 14.8353 | 53.8367 | 9.6549 | 34.7008 | 14.4206 | 22.7274 | 40.6588 | 34.6612 |     |      | 
-|  | Small Car | Bus | Cargo Truck | Dump Truck | Van | Trailer | Tractor | Excavator | Truck Tractor | |
+|  | **Small Car** | **Bus** | **Cargo Truck** | **Dump Truck** | **Van** | **Trailer** | **Tractor** | **Excavator** | **Truck Tractor** | |
 |  | 66.1281   | 14.2996 | 38.19 | 44.8073 | 64.0166 | 8.8786  | 2.563 | 9.6816 | 0.1855 | |
-|  | Basketball Court | Tennis Court | Football Field | Baseball Field | |  |  |  |  |  |
+|  | **Basketball Court** | **Tennis Court** | **Football Field** | **Baseball Field** | |  |  |  |  |  |
 |  | 38.3167          | 80.818       | 58.5274        | 88.2552        | |  |  |  |  |  |
-|  | Intersection | Roundabout | Bridge   |     |       |       |       |       |       |      |
+|  | **Intersection** | **Roundabout** | **Bridge** |     |       |       |       |       |       |      |
 |  | 46.2169      | 7.6276     | 28.2851  |     |       |       |       |       |       |      |
 
 **DOTA1.0**
