@@ -36,6 +36,8 @@ mAP: 0.46267007542788247
 | :----------------------: | :---: | :---: | :-----: | :------: | :------------: | :-: | :--------: | :------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 |  YOLOX-s <br> (800, 800) | - | 64.38  | 44.38 |   `le90`   |      `300e`      |  single <br> scale  | 8=2gpu*<br>4img/gpu   | [rotated_yolox_s_300e_dior_le90.py](./configs/rotated_yolox_s_300e_dior_le90.py) | [all ckpt](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_yolox/rotated_yolox_s_300e_dior_le90/20250809_212335.log)  \| [best ckpt](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_yolox/rotated_yolox_s_300e_dior_le90/epoch_290.pth) |
 
+**Note**: The results are reported by `epoch_290.pth`
+
 **Note**: Since we configured `auto_scale_lr = dict(base_batch_size=64, enable=True)` in `rotated_yolox_s_300e_dior_le90.py`, the learning rate will be automatically scaled. Specifically, with our actual batch size of `8=2gpu*4img/gpu`, the learning rate is automatically reduced to 1/8 of the original value.
 
 ## Citation
