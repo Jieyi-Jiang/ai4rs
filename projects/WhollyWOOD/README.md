@@ -12,6 +12,10 @@
 
 Accurately estimating the orientation of visual objects with compact rotated bounding boxes (RBoxes) has become a prominent demand, which challenges existing object detection paradigms that only use horizontal bounding boxes (HBoxes). To equip the detectors with orientation awareness, supervised regression/classification modules have been introduced at the high cost of rotation annotation. Meanwhile, some existing datasets with oriented objects are already annotated with horizontal boxes or even single points. It becomes attractive yet remains open for effectively utilizing weaker single point and horizontal annotations to train an oriented object detector (OOD). We develop Wholly-WOOD, a weakly-supervised OOD framework, capable of wholly leveraging various labeling forms (Points, HBoxes, RBoxes, and their combination) in a unified fashion. By only using HBox for training, our Wholly-WOOD achieves performance very close to that of the RBox-trained counterpart on remote sensing and other areas, significantly reducing the tedious efforts on labor-intensive annotation for oriented objects.
 
+## Basic patterns
+
+Extract [basic_patterns.zip](https://github.com/open-mmlab/mmrotate/files/13816461/basic_patterns.zip) to data folder. The path can also be modified in config files.
+
 ## Results and models
 
 ### End-to-end training
