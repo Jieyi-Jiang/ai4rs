@@ -1,4 +1,3 @@
-# Copyright (c) OpenMMLab. All rights reserved.
 from .convex_assigner import ConvexAssigner
 from .max_convex_iou_assigner import MaxConvexIoUAssigner
 from .rotate_iou2d_calculator import (FakeRBboxOverlaps2D,
