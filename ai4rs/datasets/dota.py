@@ -1,7 +1,7 @@
-# Copyright (c) OpenMMLab. All rights reserved.
 import glob
 import os.path as osp
 from typing import List
+import json
 
 from mmengine.dataset import BaseDataset
 
@@ -67,6 +67,30 @@ class DOTADataset(BaseDataset):
 
                 instance = dict(bbox=[], bbox_label=[], ignore_flag=0)
                 data_info['instances'] = [instance]
+                data_list.append(data_info)
+
+            return data_list
+        elif self.ann_file.endswith('.json'):
+            with open(self.ann_file, 'r') as f:
+                root = json.loads(f.read())
+
+            instances = {}
+            for item in root:
+                img_id = item['image_id']
+                if img_id not in instances.keys():
+                    instances[img_id] = []
+                instances[img_id].append({'bbox': item['bbox'],
+                                          'bbox_label': item['category_id'],
+                                          'ignore_flag': 0})
+
+            for img_id in instances.keys():
+                data_info = {}
+                data_info['img_id'] = img_id
+                img_name = img_id + f'.{self.img_suffix}'
+                data_info['file_name'] = img_name
+                data_info['img_path'] = osp.join(self.data_prefix['img_path'],
+                                                 img_name)
+                data_info['instances'] = instances[img_id]
                 data_list.append(data_info)
 
             return data_list
