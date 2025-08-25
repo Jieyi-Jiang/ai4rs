@@ -57,7 +57,7 @@ We hope to integrate remote sensing related work based on **MMLab**, especially 
 
 |     |     |     |     |
 | :---: | :---: | :---: | :---: |
-| [GWD(ICML'2021)](configs/gwd/README.md) | [KLD(NeurIPS'2021)](configs/kld/README.md) | [KFIoU(ICLR'2023)](configs/kfiou/README.md) | |
+| [GWD<br>(ICML'2021)](configs/gwd/README.md) | [KLD<br>(NeurIPS'2021)](configs/kld/README.md) | [KFIoU<br>(ICLR'2023)](configs/kfiou/README.md) | |
 </details>
 
 <details open>
@@ -65,7 +65,7 @@ We hope to integrate remote sensing related work based on **MMLab**, especially 
 
 |     |     |     |     |     |
 | :---: | :---: | :---: | :---: | :---: |
-| [CSL(ECCV'2020)](configs/csl/README.md) | [Oriented R-CNN(ICCV'2021)](configs/oriented_rcnn/README.md) | [PSC(CVPR'2023)](configs/psc/README.md) | [ACM(CVPR'2024)](./projects/ACM/README.md) |[GauCho(CVPR'2025)](projects/GauCho/README.md) |
+| [CSL<br>(ECCV'2020)](configs/csl/README.md) | [Oriented R-CNN<br>(ICCV'2021)](configs/oriented_rcnn/README.md) | [PSC<br>(CVPR'2023)](configs/psc/README.md) | [ACM<br>(CVPR'2024)](./projects/ACM/README.md) |[GauCho<br>(CVPR'2025)](projects/GauCho/README.md) |
 </details>
 
 
