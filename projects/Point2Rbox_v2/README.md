@@ -90,7 +90,7 @@ Use the above trained model (1st stage, train Point2RBox-v2) as the pseudo gener
 python tools/test.py projects/Point2Rbox_v2/configs/point2rbox_v2-pseudo-generator-dota.py work_dirs/point2rbox_v2-1x-dota/epoch_12.pth
 ```
 
-Now the pseudo labels for trainval set have been saved at `data/split_ss_dota/point2rbox_v2_pseudo_labels.bbox.json`
+Now the pseudo labels for trainval set have been saved at `data/split_ss_dota/point2rbox_v2_pseudo_labels.bbox.json`. The **unofficial** point2rbox_v2 dota1.0 pseudo labels are available for [download here](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/Point2Rbox_v2/point2rbox_v2_dotav1.0_rotated-fcos-1x-dota-using-pseudo/point2rbox_v2_pseudo_labels.bbox.json)
 
 ##### Step 2: Train FCOS using pseudo labels
 
