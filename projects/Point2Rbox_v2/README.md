@@ -75,36 +75,54 @@ python tools/train.py projects/Point2Rbox_v2/configs/point2rbox_v2-1x-dota.py
 python tools/test.py projects/Point2Rbox_v2/configs/point2rbox_v2-1x-dota.py work_dirs/point2rbox_v2-1x-dota/epoch_12.pth
 ```
 
-<!--
+
 ### Two-stage training
 
+#### DOTA-v1.0
+
+##### Step 1: Pseudo Generator
+
 Use the above trained model (1st stage, train Point2RBox-v2) as the pseudo generator:
+
 ```
 # this config file runs inference on trainval set
-# DIOR-R
-python tools/test.py projects/Point2Rbox_v2/configs/point2rbox_v2-pseudo-generator-dior.py work_dirs/point2rbox_v2-1x-dior/epoch_12.pth
 # DOTA-v1.0
 python tools/test.py projects/Point2Rbox_v2/configs/point2rbox_v2-pseudo-generator-dota.py work_dirs/point2rbox_v2-1x-dota/epoch_12.pth
 ```
 
-Now the pseudo labels for trainval set have been saved at `data/DIOR/point2rbox_v2_pseudo_labels.bbox.json` or `data/split_ss_dota/point2rbox_v2_pseudo_labels.bbox.json`, with which we can train/test/visualize the FCOS detector (2nd stage, train FCOS):
+Now the pseudo labels for trainval set have been saved at `data/split_ss_dota/point2rbox_v2_pseudo_labels.bbox.json`
+
+##### Step 2: Train FCOS using pseudo labels
+
+The pseudo labels for trainval set have been saved at `data/split_ss_dota/point2rbox_v2_pseudo_labels.bbox.json`, with which we can train/test/visualize the FCOS detector (2nd stage, train FCOS):
 
 **Train**
 ```
-# DIOR-R
-python tools/train.py projects/Point2Rbox_v2/configs/rotated-fcos-1x-dior-using-pseudo.py
-# DOTA-v1.0
-python tools/train.py projects/Point2Rbox_v2/configs/rotated-fcos-1x-dota-using-pseudo.py
+# DOTA-v1.0, two gpus
+bash tools/dist_train.sh projects/Point2Rbox_v2/configs/rotated-fcos-1x-dota-using-pseudo.py 2
 ```
 
 **Test**
 ```
-# DIOR-R
-python tools/test.py projects/Point2Rbox_v2/configs/rotated-fcos-1x-dior-using-pseudo.py work_dirs/rotated-fcos-1x-dior-using-pseudo/epoch_12.pth
-# DOTA-v1.0
-python tools/test.py projects/Point2Rbox_v2/configs/rotated-fcos-1x-dota-using-pseudo.py work_dirs/rotated-fcos-1x-dota-using-pseudo/epoch_12.pth
+# DOTA-v1.0, two gpus
+bash tools/dist_test.sh projects/Point2Rbox_v2/configs/rotated-fcos-1x-dota-using-pseudo.py work_dirs/rotated-fcos-1x-dota-using-pseudo/epoch_12.pth 2
 ```
--->
+
+**Resutls**
+|         Backbone         |  mAP  | AP50 | AP75 | Angle | lr schd |  Aug | lr | Batch Size |                                                    Configs                                                     |                                                                                                                                                                              Download                                                                                                                                                                              |
+| :----------------------: | :---: | :---: | :-----: | :------: | :------------: | :-: | :---: | :--------: | :---------------------------------------------: | :-------------------------------: |
+| ResNet50 <br> (1024,1024,200) | 30.13 | 59.72  |  25.96  |   le90   |  1x  | -  | 5e-5 | 4=2gpu*<br>2img/gpu      | [rotated-fcos-1x-dota<br>-using-pseudo.py](./configs/rotated-fcos-1x-dota-using-pseudo.py) | [last epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/Point2Rbox_v2/point2rbox_v2_dotav1.0_rotated-fcos-1x-dota-using-pseudo/epoch_12.pth) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/Point2Rbox_v2/point2rbox_v2_dotav1.0_rotated-fcos-1x-dota-using-pseudo/20250824_205758/20250824_205758.log) |\ [log json](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/Point2Rbox_v2/point2rbox_v2_dotav1.0_rotated-fcos-1x-dota-using-pseudo/20250824_205758/vis_data/20250824_205758.json) \| <br> [all epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| [result](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/Point2Rbox_v2/point2rbox_v2_dotav1.0_rotated-fcos-1x-dota-using-pseudo/Task1.zip)|
+
+Note: This is the **unofficial** checkpoint. The official code is [here](https://github.com/VisionXLab/point2rbox-v2).  
+Note: The official result is **62.61 AP50** on DOTA-v1.0, but in this project the result is **59.72 AP50** on DOTA-v1.0.
+
+This is your evaluation result for task 1 (VOC metrics):  
+mAP: 0.5971806950191928  
+ap of each class: plane:0.8821492602611487, baseball-diamond:0.6976029709533964, bridge:0.23295956370696166, ground-track-field:0.4422073192152871, small-vehicle:0.7981679875980286, large-vehicle:0.7618276501438279, ship:0.8708650319927672, tennis-court:0.8927201081861138, basketball-court:0.44973190926571155, storage-tank:0.8326338727989608, soccer-ball-field:0.1618861439131032, roundabout:0.41003620166821614, harbor:0.44950578316259227, swimming-pool:0.5799995657964826, helicopter:0.49541705662529406  
+COCO style result:  
+AP50: 0.5971806950191928  
+AP75: 0.25957322565256036  
+mAP: 0.30134339372567415
 
 ## Citation
 
