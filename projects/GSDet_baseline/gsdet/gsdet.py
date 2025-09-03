@@ -130,6 +130,9 @@ class GSDet(TwoStageDetector):
         """
         results = ()
         x = self.extract_feat(batch_inputs)
-        roi_outs = self.roi_head.forward(x, batch_data_samples)
+        rpn_results_list = self.rpn_head.predict(
+            x, batch_data_samples)
+        roi_outs = self.roi_head.forward(x, rpn_results_list,
+                                         batch_data_samples)
         results = results + (roi_outs, )
         return results

@@ -386,24 +386,21 @@ class Decoder(CascadeRoIHead):
             tuple: A tuple of features from ``bbox_head`` and ``mask_head``
             forward.
         """
-        # todo: finish this function
         results = ()
         batch_img_metas = [
             data_samples.metainfo for data_samples in batch_data_samples
         ]
-        proposals = [rpn_results.bboxes for rpn_results in rpn_results_list]
-        num_proposals_per_img = tuple(len(p) for p in proposals)
-        rois = bbox2roi(proposals)
-        # bbox head
-        if self.with_bbox:
-            rois, cls_scores, bbox_preds = self._refine_roi(
-                x, rois, batch_img_metas, num_proposals_per_img)
-            results = results + (cls_scores, bbox_preds)
+        proposal_list = [res.bboxes for res in rpn_results_list]
+        weight = []
+        for idx in range(len(rpn_results_list)):
+            weight.append(rpn_results_list[idx].weight)
+        weight = torch.cat(weight, dim=0).unsqueeze(0) # bs*num_box, 256
 
-            merged_masks = []
-            for i in range(len(batch_img_metas)):
-                aug_mask = [mask[i] for mask in aug_masks]
-                merged_mask = merge_aug_masks(aug_mask, batch_img_metas[i])
-                merged_masks.append(merged_mask)
-            results = results + (merged_masks,)
+        for stage in range(self.num_stages):
+            rois = bbox2roi(proposal_list)
+            bbox_results = self._bbox_forward(stage, x, rois, weight, batch_img_metas)
+            weight = bbox_results['weight']
+            proposal_list = bbox_results['detached_proposals']
+            results = results + (bbox_results,)
+
         return results
