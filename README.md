@@ -47,8 +47,7 @@ We hope to integrate remote sensing related work based on **MMLab**, especially 
 | [RoI Transformer<br>(CVPR'2019)](configs/roi_trans/README.md) | [Gliding Vertex<br>(TPAMI'2020)](configs/gliding_vertex/README.md) | [Rotated ATSS-OBB<br>(CVPR'2020)](configs/rotated_atss/README.md) | [R<sup>3</sup>Det<br>(AAAI'2021)](configs/r3det/README.md) |
  | [S<sup>2</sup>A-Net<br>(TGRS'2021)](configs/s2anet/README.md) | [ReDet<br>(CVPR'2021)](configs/redet/README.md) | [Beyond Bounding-Box<br>(CVPR'2021)](configs/cfa/README.md) | [Oriented R-CNN<br>(ICCV'2021)](configs/oriented_rcnn/README.md) | 
 | [Rotated YOLOX <br>(arXiv 2021)](./projects/rotated_yolox/README.md) |[SASM<br>(AAAI'2022)](configs/sasm_reppoints/README.md) | [Oriented RepPoints<br>(CVPR'2022)](configs/oriented_reppoints/README.md) | [RTMDet<br>(arXiv 2022)](configs/rotated_rtmdet/README.md) | 
-|[Rotated DiffusionDet<br>(ICCV'2023)](./projects/rotated_DiffusionDet/README.md) |
- [OrientedFormer<br>(TGRS' 2024)](projects/OrientedFormer/README.md)|[ReDiffDet base<br>(CVPR'2025)](./projects/GSDet_baseline/README_ReDiffDet_baseline.md)|[GSDet base<br>(IJCAI'2025)](./projects/GSDet_baseline/README_GSDet_baseline.md)| 
+|[Rotated DiffusionDet<br>(ICCV'2023)](./projects/rotated_DiffusionDet/README.md) | [OrientedFormer<br>(TGRS' 2024)](projects/OrientedFormer/README.md)|[ReDiffDet base<br>(CVPR'2025)](./projects/GSDet_baseline/README_ReDiffDet_baseline.md)|[GSDet base<br>(IJCAI'2025)](./projects/GSDet_baseline/README_GSDet_baseline.md)| 
  | [Rotated YOLOMS (TPAMI 2025)](./projects/rotated_yoloms/README.md) |     |     |     |
 </details>
 
