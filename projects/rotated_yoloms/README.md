@@ -31,6 +31,23 @@ AP50: 0.765460659633011
 AP75: 0.5564636731501145  
 mAP: 0.5045991125776231
 
+**Train**:
+
+```
+bash tools/dist_train.sh projects/rotated_yoloms/configs/yoloms-s_syncbn_fast_2xb4-36e_dota_previous.py 2
+```
+
+**Test**:
+
+```
+bash tools/dist_test.sh projects/rotated_yoloms/configs/yoloms-s_syncbn_fast_2xb4-36e_dota_previous.py work_dirs/yoloms-s_syncbn_fast_2xb4-36e_dota_previous/epoch_36.pth 2
+```
+
+**Get Params and FLOPS**:
+
+```
+python tools/analysis_tools/get_flops.py projects/rotated_yoloms/configs/yoloms-s_syncbn_fast_2xb4-36e_dota_previous.py
+```
 
 **Note**:
 
