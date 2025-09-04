@@ -1,6 +1,7 @@
 # YOLO-MS (TPAMI 2025)
 
 > IEEE Link [YOLO-MS: Rethinking Multi-Scale Representation Learning for Real-Time Object Detection](https://ieeexplore.ieee.org/document/10872821)
+
 > ArXiv Link [YOLO-MS: Rethinking Multi-Scale Representation Learning for Real-Time Object Detection](https://arxiv.org/abs/2308.05480)
 
 <!-- [ALGORITHM] -->
