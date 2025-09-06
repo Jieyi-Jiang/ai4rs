@@ -4,6 +4,8 @@
 
 > ArXiv Link [YOLO-MS: Rethinking Multi-Scale Representation Learning for Real-Time Object Detection](https://arxiv.org/abs/2308.05480)
 
+> Official Code [Link](https://github.com/FishAndWasabi/YOLO-MS)
+
 <!-- [ALGORITHM] -->
 
 ## Abstract
