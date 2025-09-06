@@ -31,6 +31,18 @@ AP50: 0.765460659633011
 AP75: 0.5564636731501145  
 mAP: 0.5045991125776231
 
+|  Model  | pretrain |  Aug  | mAP  | AP50 | AP75 | Params(M) | FLOPS(G) | batch size |                          Config                          |                                                                                                                                                                       Download                                                                                                                                                                       |
+| :---------: | :------: | :---: | :---: | :---: | :---: | :-------: | :------: | :------------------: | :------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| YOLO-MS-XS |    COCO   |  RR   | 49.30 | 75.88 | 53.81 |   4.48  |  22.24   |    8=2gpu*<br>4img/gpu     |        [config](./configs/yoloms-xs_syncbn_fast_2xb4-36e_dota_previous.py)   |  [last epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_yoloms/yoloms-xs_syncbn_fast_2xb4-36e_dota_previous/epoch_36.pth) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_yoloms/yoloms-xs_syncbn_fast_2xb4-36e_dota_previous/20250904_152409/20250904_152409.log) \|<br> [all epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| [result](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_yoloms/yoloms-xs_syncbn_fast_2xb4-36e_dota_previous/Task1.zip) |
+
+This is your evaluation result for task 1 (VOC metrics):  
+mAP: 0.758775701719842  
+ap of each class: plane:0.8944230339878622, baseball-diamond:0.842146703095921, bridge:0.5263208048478161, ground-track-field:0.7407278936319676, small-vehicle:0.8176438257248919, large-vehicle:0.8251346237459852, ship:0.8870831668864025, tennis-court:0.9090233186887464, basketball-court:0.8765827014695793, storage-tank:0.8650064504374552, soccer-ball-field:0.6304304519950606, roundabout:0.5883983913819532, harbor:0.7650530632537562, swimming-pool:0.6918867394821042, helicopter:0.5217743571681305  
+COCO style result:  
+AP50: 0.758775701719842  
+AP75: 0.5380872925688465  
+mAP: 0.49298488279895897
+
 **Train**:
 
 ```
@@ -49,17 +61,6 @@ bash tools/dist_test.sh projects/rotated_yoloms/configs/yoloms-s_syncbn_fast_2xb
 python tools/analysis_tools/get_flops.py projects/rotated_yoloms/configs/yoloms-s_syncbn_fast_2xb4-36e_dota_previous.py
 ```
 
-|  Model  | pretrain |  Aug  | mAP  | AP50 | AP75 | Params(M) | FLOPS(G) | batch size |                          Config                          |                                                                                                                                                                       Download                                                                                                                                                                       |
-| :---------: | :------: | :---: | :---: | :---: | :---: | :-------: | :------: | :------------------: | :------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| YOLO-MS-XS |    COCO   |  RR   | 49.30 | 75.88 | 53.81 |   4.48  |  22.24   |    8=2gpu*<br>4img/gpu     |        [config](./configs/yoloms-xs_syncbn_fast_2xb4-36e_dota_previous.py)   |  [last epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_yoloms/yoloms-xs_syncbn_fast_2xb4-36e_dota_previous/epoch_36.pth) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_yoloms/yoloms-xs_syncbn_fast_2xb4-36e_dota_previous/20250904_152409/20250904_152409.log) \|<br> [all epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| [result](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_yoloms/yoloms-xs_syncbn_fast_2xb4-36e_dota_previous/Task1.zip) |
-
-This is your evaluation result for task 1 (VOC metrics):  
-mAP: 0.758775701719842  
-ap of each class: plane:0.8944230339878622, baseball-diamond:0.842146703095921, bridge:0.5263208048478161, ground-track-field:0.7407278936319676, small-vehicle:0.8176438257248919, large-vehicle:0.8251346237459852, ship:0.8870831668864025, tennis-court:0.9090233186887464, basketball-court:0.8765827014695793, storage-tank:0.8650064504374552, soccer-ball-field:0.6304304519950606, roundabout:0.5883983913819532, harbor:0.7650530632537562, swimming-pool:0.6918867394821042, helicopter:0.5217743571681305  
-COCO style result:  
-AP50: 0.758775701719842  
-AP75: 0.5380872925688465  
-mAP: 0.49298488279895897
 
 **Note**:
 
