@@ -2,6 +2,8 @@
 
 > [GRA: Detecting Oriented Objects through Group-wise Rotating and Attention](https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/02600.pdf)
 
+> Official Code [Link](https://github.com/wangjiangshan0725/GRA)
+
 <!-- [ALGORITHM] -->
 
 ## Abstract
