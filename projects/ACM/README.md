@@ -2,6 +2,8 @@
 
 > [Rethinking Boundary Discontinuity Problem for Oriented Object Detection](https://openaccess.thecvf.com/content/CVPR2024/html/Xu_Rethinking_Boundary_Discontinuity_Problem_for_Oriented_Object_Detection_CVPR_2024_paper.html)
 
+> Official Code [Link](https://github.com/Pandora-CV/cvpr24acm)
+
 <!-- [ALGORITHM] -->
 
 ## Abstract
