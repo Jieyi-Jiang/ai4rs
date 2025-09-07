@@ -16,9 +16,8 @@ We aim at providing the object detection community with an efficient and perform
 <img src="https://i-blog.csdnimg.cn/img_convert/a6ae33d000432d002f498bc79f75cc2b.png" height="360"/>
 </div>
 
-## Results and Models
 
-### YOLO-MS Previous Version
+## YOLO-MS Previous Version
 
 ### DOTA-v1.0
 
@@ -85,6 +84,53 @@ python tools/analysis_tools/get_flops.py projects/rotated_yoloms/configs/yoloms-
 python tools/analysis_tools/get_flops.py projects/rotated_yoloms/configs/yoloms_syncbn_fast_2xb4-36e_dota_previous.py
 ```
 
+## YOLO-MS
+
+
+### DOTA-v1.0
+
+|  Model  | pretrain |  Aug  | mAP  | AP50 | AP75 | Params(M) | FLOPS(G) | batch size |                          Config                          |                                                                                                                                                                       Download                                                                                                                                                                       |
+| :---------: | :------: | :---: | :---: | :---: | :---: | :-------: | :------: | :------------------: | :------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| YOLO-MS-XS |    COCO   |  RR   |  49.16 | 76.65 | 52.41 |  5.09  |  22.02  |    8=2gpu*<br>4img/gpu     |        [config](./configs/yoloms-xs_syncbn_fast_2xb4-36e_dota.py)   |  [last epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_yoloms/yoloms-xs_syncbn_fast_2xb4-36e_dota/epoch_36.pth) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_yoloms/yoloms-xs_syncbn_fast_2xb4-36e_dota/20250906_215214/20250906_215214.log) \|<br> [all epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| [result](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_yoloms/yoloms-xs_syncbn_fast_2xb4-36e_dota/Task1.zip) |
+
+This is your evaluation result for task 1 (VOC metrics):  
+mAP: 0.7665371340189844  
+ap of each class: plane:0.8916935332940078, baseball-diamond:0.814094312395071, bridge:0.5084526408289133, ground-track-field:0.7269527793045261, small-vehicle:0.8115511649453246, large-vehicle:0.8409107048135034, ship:0.8869555205944052, tennis-court:0.9089586776859506, basketball-court:0.8770591478285379, storage-tank:0.8630198381343265, soccer-ball-field:0.6132339176153921, roundabout:0.6506499435928538, harbor:0.7620437751544, swimming-pool:0.811402535938293, helicopter:0.5310785181592597  
+COCO style result:  
+AP50: 0.7665371340189844  
+AP75: 0.5240587149252313  
+mAP: 0.49159514215398037
+
+
+**Train**:
+
+```
+bash tools/dist_train.sh projects/rotated_yoloms/configs/yoloms-xs_syncbn_fast_2xb4-36e_dota.py 2
+
+bash tools/dist_train.sh projects/rotated_yoloms/configs/yoloms-s_syncbn_fast_2xb4-36e_dota.py 2
+
+bash tools/dist_train.sh projects/rotated_yoloms/configs/yoloms_syncbn_fast_2xb4-36e_dota.py 2
+```
+
+**Test**:
+
+```
+bash tools/dist_test.sh projects/rotated_yoloms/configs/yoloms-xs_syncbn_fast_2xb4-36e_dota.py work_dirs/yoloms-xs_syncbn_fast_2xb4-36e_dota/epoch_36.pth 2
+
+bash tools/dist_test.sh projects/rotated_yoloms/configs/yoloms-s_syncbn_fast_2xb4-36e_dota.py work_dirs/yoloms-s_syncbn_fast_2xb4-36e_dota/epoch_36.pth 2
+
+bash tools/dist_test.sh projects/rotated_yoloms/configs/yoloms_syncbn_fast_2xb4-36e_dota.py work_dirs/yoloms_syncbn_fast_2xb4-36e_dota/epoch_36.pth 2
+```
+
+**Get Params and FLOPS**:
+
+```
+python tools/analysis_tools/get_flops.py  projects/rotated_yoloms/configs/yoloms-xs_syncbn_fast_2xb4-36e_dota.py
+
+python tools/analysis_tools/get_flops.py projects/rotated_yoloms/configs/yoloms-s_syncbn_fast_2xb4-36e_dota.py
+
+python tools/analysis_tools/get_flops.py projects/rotated_yoloms/configs/yoloms_syncbn_fast_2xb4-36e_dota.py
+```
 
 **Note**:
 
