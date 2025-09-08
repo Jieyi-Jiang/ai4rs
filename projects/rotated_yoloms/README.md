@@ -101,6 +101,24 @@ AP50: 0.7665371340189844
 AP75: 0.5240587149252313  
 mAP: 0.49159514215398037
 
+|  Model  | pretrain |  Aug  | mAP  | AP50 | AP75 | Params(M) | FLOPS(G) | batch size |                          Config                          |                                                                                                                                                                       Download                                                                                                                                                                       |
+| :---------: | :------: | :---: | :---: | :---: | :---: | :-------: | :------: | :------------------: | :------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| YOLO-MS-S |    COCO   |  RR   | 50.43  | 77.22 | 54.13 |  8.72  |  38.07  |    8=2gpu*<br>4img/gpu     |        [config](./configs/yoloms-s_syncbn_fast_2xb4-36e_dota.py)   |  [last epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_yoloms/yoloms-s_syncbn_fast_2xb4-36e_dota/epoch_36.pth) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_yoloms/yoloms-s_syncbn_fast_2xb4-36e_dota/20250907_125043/20250907_125043.log) \|<br> [all epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| [result](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_yoloms/yoloms-s_syncbn_fast_2xb4-36e_dota/Task1.zip) |
+
+This is your evaluation result for task 1 (VOC metrics):  
+mAP: 0.7722389970489156  
+ap of each class: plane:0.8950727591139864, baseball-diamond:0.8289477391782069, bridge:0.5280990505176452, ground-track-field:0.747512721794236, small-vehicle:0.8115115979676332, large-vehicle:0.837990844483579, ship:0.8858722167760349, tennis-court:0.9089555269748868, basketball-court:0.8739596275006111, storage-tank:0.8621823159844082, soccer-ball-field:0.6385742669304498, roundabout:0.6627481300027679, harbor:0.7738014402951015, swimming-pool:0.804580969590782, helicopter:0.523775748623405  
+COCO style result:  
+AP50: 0.7722389970489156  
+AP75: 0.5412921155184615  
+mAP: 0.5043088492422652
+
+
+|  Model  | pretrain |  Aug  | mAP  | AP50 | AP75 | Params(M) | FLOPS(G) | batch size |                          Config                          |                                                                                                                                                                       Download                                                                                                                                                                       |
+| :---------: | :------: | :---: | :---: | :---: | :---: | :-------: | :------: | :------------------: | :------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| YOLO-MS |    COCO   |  RR   | -  | - | - |  23.12  |  98.47  |    8=2gpu*<br>4img/gpu     |        [config](./configs/yoloms_syncbn_fast_2xb4-36e_dota.py)   |  last epoch \| log \|<br> all epoch \| result |
+
+Sorry, I don't have enough GPU resources to run `yoloms_syncbn_fast_2xb4-36e_dota.py`
 
 **Train**:
 
