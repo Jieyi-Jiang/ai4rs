@@ -1,4 +1,4 @@
-# Rotated Deformable DETR ()
+# Rotated Deformable DETR (ICLR 2021)
 
 
 > [Deformable DETR: Deformable Transformers for End-to-End Object Detection](https://arxiv.org/abs/2010.04159)
@@ -12,15 +12,15 @@ DETR has been recently proposed to eliminate the need for many hand-designed com
 
 
 <div align=center>
-<img src="https://user-images.githubusercontent.com/40661020/143877617-ad9b24fd-77ce-46aa-9689-1a44b5594132.png"/>
+<img src="https://user-images.githubusercontent.com/40661020/143877617-ad9b24fd-77ce-46aa-9689-1a44b5594132.png" width="800"/>
 </div>
 
 
 ### DOTA-v1.0
 
-|  Model  | bb |  Aug  | mAP  | AP50 | AP75 | Params(M) | lr schd | lr | batch size |                          Config                          |                                                                                                                                                                       Download                                                                                                                                                                       |
+|  Model  | bb |  Aug  | mAP  | AP50 | AP75 | Params | lr schd | lr | batch size |                          Config                          |                                                                                                                                                                       Download                                                                                                                                                                       |
 | :---------: | :------: | :---: | :---: | :---: | :---: | :---: | :-------: | :------: | :------------------: | :------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| Deformable DETR  |    R-50   |  -   | 39.63 | 68.65 | 39.83 |   40.41  | 50epoch |  1e-4   |    4=2gpu*<br>2img/gpu     |        [config](./configs/rotated_deformable-detr_r50_2xb2-50e_dota.py)   |  [last epoch](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_r50_2xb2-50e_dota/epoch_50.pth) \| [log](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_r50_2xb2-50e_dota/20250909_215737/20250909_215737.log) \|<br> [all epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| [result](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_r50_2xb2-50e_dota/Task1.zip) |
+| Deformable<br>DETR  |    R-50   |  -   | 39.63 | 68.65 | 39.83 |   40.41M  | 50e |  1e-4   |    4=2gpu*<br>2img/gpu     |        [config](./configs/rotated_deformable-detr_r50_2xb2-50e_dota.py)   |  [last epoch](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_r50_2xb2-50e_dota/epoch_50.pth) \| [log](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_r50_2xb2-50e_dota/20250909_215737/20250909_215737.log) \|<br> [all epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| [result](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_r50_2xb2-50e_dota/Task1.zip) |
 
 This is your evaluation result for task 1 (VOC metrics):  
 mAP: 0.6864634948018359  
