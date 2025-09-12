@@ -59,14 +59,13 @@ bash tools/dist_test.sh projects/rotated_deformable_detr/configs/rotated_deforma
 
 bash tools/dist_test.sh projects/rotated_deformable_detr/configs/rotated_deformable-detr_refine_r50_2xb2-50e_dota.py work_dirs/rotated_deformable-detr_refine_r50_2xb2-50e_dota/epoch_50.pth 2
 
- bash tools/dist_test.sh projects/rotated_deformable_detr/configs/rotated_deformable-detr_refine_twostage_r50_16xb2-50e_dota.py work_dirs/rotated_deformable-detr_refine_twostage_r50_16xb2-50e_dota/epoch_50.pth 2
+bash tools/dist_test.sh projects/rotated_deformable_detr/configs/rotated_deformable-detr_refine_twostage_r50_16xb2-50e_dota.py work_dirs/rotated_deformable-detr_refine_twostage_r50_16xb2-50e_dota/epoch_50.pth 2
 ```
 
 **Get Params and FLOPS**:
 
 ```
 python tools/analysis_tools/get_flops.py projects/rotated_deformable_detr/configs/rotated_deformable-detr_r50_2xb2-50e_dota.py
-
 ```
 
 
