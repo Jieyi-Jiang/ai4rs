@@ -30,18 +30,36 @@ AP50: 0.6864634948018359
 AP75: 0.3982598761971252  
 mAP: 0.39634542377772963
 
+|  Model  | bb |  Aug  | mAP  | AP50 | AP75 | Params | lr schd | lr | batch size |                          Config                          |                                                                                                                                                                       Download                                                                                                                                                                       |
+| :---------: | :------: | :---: | :---: | :---: | :---: | :---: | :-------: | :------: | :------------------: | :------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| Deformable<br>DETR refine  |    R-50   |  -   | 38.60 | 67.55 | 39.00 |  - | 50e |  1e-4   |    4=2gpu*<br>2img/gpu     |        [config](./configs/rotated_deformable-detr_refine_r50_2xb2-50e_dota.py)   |  [last epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_refine_r50_2xb2-50e_dota/epoch_50.pth) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_refine_r50_2xb2-50e_dota/20250911_104139/20250911_104139.log) \|<br> [all epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| [result](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_refine_r50_2xb2-50e_dota/Task1.zip) |
 
+This is your evaluation result for task 1 (VOC metrics):  
+mAP: 0.6755119657279754  
+ap of each class: plane:0.7829868044925622, baseball-diamond:0.6666981427431674, bridge:0.417807010717146, ground-track-field:0.59806353394589, small-vehicle:0.697294859807839, large-vehicle:0.7362915837309918, ship:0.8465725513223994, tennis-court:0.8993336551138541, basketball-court:0.7868580476993534, storage-tank:0.7071923681260949, soccer-ball-field:0.5268902759769157, roundabout:0.5750922608428727, harbor:0.629763935872444, swimming-pool:0.6816054790418768, helicopter:0.5802289764862243  
+COCO style result:  
+AP50: 0.6755119657279754  
+AP75: 0.39003965791712775  
+mAP: 0.3859510486962555
 
 **Train**:
 
 ```
  bash tools/dist_train.sh projects/rotated_deformable_detr/configs/rotated_deformable-detr_r50_2xb2-50e_dota.py 2
+
+ bash tools/dist_train.sh projects/rotated_deformable_detr/configs/rotated_deformable-detr_refine_r50_2xb2-50e_dota.py 2
+
+ bash tools/dist_train.sh projects/rotated_deformable_detr/configs/rotated_deformable-detr_refine_twostage_r50_16xb2-50e_dota.py 2
 ```
 
 **Test**:
 
 ```
 bash tools/dist_test.sh projects/rotated_deformable_detr/configs/rotated_deformable-detr_r50_2xb2-50e_dota.py work_dirs/rotated_deformable-detr_r50_2xb2-50e_dota/epoch_50.pth 2
+
+bash tools/dist_test.sh projects/rotated_deformable_detr/configs/rotated_deformable-detr_refine_r50_2xb2-50e_dota.py work_dirs/rotated_deformable-detr_refine_r50_2xb2-50e_dota/epoch_50.pth 2
+
+ bash tools/dist_test.sh projects/rotated_deformable_detr/configs/rotated_deformable-detr_refine_twostage_r50_16xb2-50e_dota.py work_dirs/rotated_deformable-detr_refine_twostage_r50_16xb2-50e_dota/epoch_50.pth 2
 ```
 
 **Get Params and FLOPS**:
