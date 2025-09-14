@@ -68,7 +68,9 @@ bash tools/dist_test.sh projects/rotated_deformable_detr/configs/rotated_deforma
 python tools/analysis_tools/get_flops.py projects/rotated_deformable_detr/configs/rotated_deformable-detr_r50_2xb2-50e_dota.py
 ```
 
+## NOTE
 
+This project refactors [RHINO](https://github.com/SIAnalytics/RHINO). The author of [RHINO](https://github.com/SIAnalytics/RHINO) is [Hakjin Lee](https://github.com/nijkah).
 
 ## Citation
 
@@ -86,5 +88,7 @@ url={https://openreview.net/forum?id=gZ9hCDWe6ke}
 
 
 ## Acknowledgement
+
+[Hakjin Lee](https://github.com/nijkah)
 
 [RHINO](https://github.com/SIAnalytics/RHINO)
