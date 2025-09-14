@@ -29,11 +29,11 @@ We hope to integrate remote sensing related work based on **MMLab**, especially 
 ## Model Zoo
 
 <details open>
-<summary><b>YOLO </b></summary>
+<summary><b>Real Time </b></summary>
 
 |     |     |     |     |
 | :---: | :---: | :---: | :---: |
-|[Rotated YOLOX (arXiv 2021)](./projects/rotated_yolox/README.md) |   [Rotated YOLOMS (TPAMI 2025)](./projects/rotated_yoloms/README.md)  |     |     |
+|[Rotated YOLOX (arXiv 2021)](./projects/rotated_yolox/README.md) |[RTMDet (arXiv 2022)](configs/rotated_rtmdet/README.md)  |  [Rotated YOLOMS (TPAMI 2025)](./projects/rotated_yoloms/README.md)    |  [RTDETR (CVPR' 2024)](./projects/rtdetr/README.md)   |
 
 </details>
 
