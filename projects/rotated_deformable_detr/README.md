@@ -18,7 +18,7 @@ DETR has been recently proposed to eliminate the need for many hand-designed com
 
 ### DOTA-v1.0
 
-|  Model  | bb |  Aug  | mAP  | AP50 | AP75 | Params | lr schd | lr | batch size |                          Config                          |                                                                                                                                                                       Download                                                                                                                                                                       |
+|  Model  | bs |  Aug  | mAP  | AP50 | AP75 | Params | lr schd | lr | batch size |                          Config                          |                                                                                                                                                                       Download                                                                                                                                                                       |
 | :---------: | :------: | :---: | :---: | :---: | :---: | :---: | :-------: | :------: | :------------------: | :------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 | Deformable<br>DETR  |    R-50   |  -   | 39.63 | 68.65 | 39.83 |   40.41M  | 50e |  1e-4   |    4=2gpu*<br>2img/gpu     |        [config](./configs/rotated_deformable-detr_r50_2xb2-50e_dota.py)   |  [last epoch](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_r50_2xb2-50e_dota/epoch_50.pth) \| [log](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_r50_2xb2-50e_dota/20250909_215737/20250909_215737.log) \|<br> [all epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| [result](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_r50_2xb2-50e_dota/Task1.zip) |
 
@@ -30,9 +30,9 @@ AP50: 0.6864634948018359
 AP75: 0.3982598761971252  
 mAP: 0.39634542377772963
 
-|  Model  | bb |  Aug  | mAP  | AP50 | AP75 | Params | lr schd | lr | batch size |                          Config                          |                                                                                                                                                                       Download                                                                                                                                                                       |
+|  Model  | bs |  Aug  | mAP  | AP50 | AP75 | Param | lr schd | lr | batch size |                          Config                          |                                                                                                                                                                       Download                                                                                                                                                                       |
 | :---------: | :------: | :---: | :---: | :---: | :---: | :---: | :-------: | :------: | :------------------: | :------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| Deformable<br>DETR refine  |    R-50   |  -   | 38.60 | 67.55 | 39.00 |  - | 50e |  1e-4   |    4=2gpu*<br>2img/gpu     |        [config](./configs/rotated_deformable-detr_refine_r50_2xb2-50e_dota.py)   |  [last epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_refine_r50_2xb2-50e_dota/epoch_50.pth) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_refine_r50_2xb2-50e_dota/20250911_104139/20250911_104139.log) \|<br> [all epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| [result](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_refine_r50_2xb2-50e_dota/Task1.zip) |
+| Deformable<br>DETR +refine  |    R-50   |  -   | 38.60 | 67.55 | 39.00 |  - | 50e |  1e-4   |    4=2gpu*<br>2img/gpu     |        [config](./configs/rotated_deformable-detr_refine_r50_2xb2-50e_dota.py)   |  [last epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_refine_r50_2xb2-50e_dota/epoch_50.pth) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_refine_r50_2xb2-50e_dota/20250911_104139/20250911_104139.log) \|<br> [all epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| [result](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_refine_r50_2xb2-50e_dota/Task1.zip) |
 
 This is your evaluation result for task 1 (VOC metrics):  
 mAP: 0.6755119657279754  
@@ -41,6 +41,21 @@ COCO style result:
 AP50: 0.6755119657279754  
 AP75: 0.39003965791712775  
 mAP: 0.3859510486962555
+
+
+|  Model  | bs |  Aug  | mAP  | AP50 | AP75 | Param | lr schd | lr | batch size |                          Config                          |                                                                                                                                                                       Download                                                                                                                                                                       |
+| :---------: | :------: | :---: | :---: | :---: | :---: | :---: | :-------: | :------: | :------------------: | :------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| Deformable<br>DETR ++two-stage  |    R-50   |  -   | 37.79 | 69.55 | 40.60 |  - | 50e |  1e-4   |    4=2gpu*<br>2img/gpu     |        [config](./configs/rotated_deformable-detr_refine_twostage_r50_2xb2-50e_dota.py)   |  [last epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_refine_twostage_r50_2xb2-50e_dota/epoch_50.pth) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_refine_twostage_r50_2xb2-50e_dota/20250911_113406/20250911_113406.log) \|<br> [all epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| [result](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_refine_twostage_r50_2xb2-50e_dota/Task1.zip) |
+
+
+This is your evaluation result for task 1 (VOC metrics):  
+mAP: 0.6955358764530221  
+ap of each class: plane:0.8469243661849398, baseball-diamond:0.7146252093523335, bridge:0.4341599847019934, ground-track-field:0.5987553014820587, small-vehicle:0.7401067283502978, large-vehicle:0.772134456656225, ship:0.8691254418541476, tennis-court:0.9084055873404219, basketball-court:0.8289222958987396, storage-tank:0.758888564867986, soccer-ball-field:0.5431705135906438, roundabout:0.5784628948935202, harbor:0.6393071919941057, swimming-pool:0.6972565992886282, helicopter:0.5027930103392865  
+COCO style result:  
+AP50: 0.6955358764530221  
+AP75: 0.406012015029598  
+mAP: 0.3978708527318947
+
 
 **Train**:
 
