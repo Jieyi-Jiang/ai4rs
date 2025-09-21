@@ -136,5 +136,18 @@ DIOR-R/mAP: 0.4634  DIOR-R/AP50: 0.6980  DIOR-R/AP55: 0.6686  DIOR-R/AP60: 0.633
 ## Citation
 
 ```
-
+@inproceedings{ijcai2025p101,
+  title     = {GSDet: Gaussian Splatting for Oriented Object Detection},
+  author    = {Ding, Zeyu and Zhao, Jiaqi and Zhou, Yong and Du, Wen-liang and Zhu, Hancheng and Yao, Rui},
+  booktitle = {Proceedings of the Thirty-Fourth International Joint Conference on
+               Artificial Intelligence, {IJCAI-25}},
+  publisher = {International Joint Conferences on Artificial Intelligence Organization},
+  editor    = {James Kwok},
+  pages     = {900--908},
+  year      = {2025},
+  month     = {8},
+  note      = {Main Track},
+  doi       = {10.24963/ijcai.2025/101},
+  url       = {https://doi.org/10.24963/ijcai.2025/101},
+}
 ```
