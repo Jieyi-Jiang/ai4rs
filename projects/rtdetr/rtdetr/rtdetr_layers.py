@@ -10,7 +10,7 @@ from mmdet.models.layers.transformer.detr_layers import DetrTransformerEncoder
 from mmdet.models.layers.transformer.dino_layers import DinoTransformerDecoder
 from mmdet.registry import MODELS
 from mmdet.utils import ConfigType, OptConfigType, OptMultiConfig
-from mmdet.models.layers.transformer import MLP
+from .utils import MLP
 
 
 class RepVGGBlock(nn.Module):
