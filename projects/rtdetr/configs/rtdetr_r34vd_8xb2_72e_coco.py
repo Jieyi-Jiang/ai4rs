@@ -41,5 +41,6 @@ custom_keys.update({
 })
 
 # optimizer
+optim_wrapper.paramwise_cfg.pop('custom_keys')
 optim_wrapper.update(
-    paramwise_cfg=dict(custom_keys=dict(_delete_=True, **custom_keys)))
+    paramwise_cfg=dict(custom_keys=dict(**custom_keys)))

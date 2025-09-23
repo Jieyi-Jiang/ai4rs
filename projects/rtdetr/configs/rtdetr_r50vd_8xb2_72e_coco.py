@@ -18,7 +18,7 @@ from projects.rtdetr.rtdetr import (BatchSyncRandomResize, PhotoMetricDistortion
 
 with read_base():
     from .coco_detection import *
-    from configs.rotated_rtmdet._base_.default_runtime import *
+    from .default_runtime import *
 
 pretrained = ('https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/'
               'master/rtdetr/resnet50vd_ssld_v2_pretrained_d037e232.pth')  # noqa
