@@ -2,9 +2,10 @@
 from .loading import LoadPatchFromNDArray
 from .transforms import (ConvertBoxType, ConvertMask2BoxType,
                          RandomChoiceRotate, RandomRotate, Rotate,
-                         ConvertWeakSupervision)
+                         ConvertWeakSupervision, RegularizeRotatedBox)
 
 __all__ = [
     'LoadPatchFromNDArray', 'Rotate', 'RandomRotate', 'RandomChoiceRotate',
-    'ConvertBoxType', 'ConvertMask2BoxType', 'ConvertWeakSupervision'
+    'ConvertBoxType', 'ConvertMask2BoxType', 'ConvertWeakSupervision',
+    'RegularizeRotatedBox'
 ]
