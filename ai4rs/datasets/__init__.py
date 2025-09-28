@@ -9,9 +9,14 @@ from .rsar import RSARDataset # noqa: F401, F403
 from .fair import FAIRDataset  # noqa: F401, F403
 from .dataset_wrappers import ConcatDataset  # noqa: F401, F403
 from .transforms import *  # noqa: F401, F403
+from .utils import *  # noqa: F401, F403
+from .yolov5_coco import *  # noqa: F401, F403
+from .yolov5_dota import *  # noqa: F401, F403
+from .yolov5_dota15 import *  # noqa: F401, F403
 
 __all__ = [
     'DOTADataset', 'DOTAv15Dataset', 'DOTAv2Dataset', 'HRSCDataset',
     'DIORDataset', 'ICDAR15Dataset', 'SAR_Det_Finegrained_Dataset',
-    'RSARDataset', 'FAIRDataset', 'ConcatDataset'
+    'RSARDataset', 'FAIRDataset', 'ConcatDataset', 'yolov5_collate',
+    'BatchShapePolicy', 'YOLOv5DOTADataset', 'YOLOv5DOTA15Dataset'
 ]
