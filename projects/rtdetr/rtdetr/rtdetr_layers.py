@@ -519,7 +519,7 @@ class RTDETRHybridEncoder(BaseModule):
             for idx in range(len(use_encoder_idx)):
                 spatial_shapes = tuple(map(tuple, spatial_shapes))
                 position_embedding = self.build_2d_sincos_position_embedding(
-                    *spatial_shapes[idx], in_channels[idx])
+                    *spatial_shapes[idx], in_channels[idx], pe_temperature)
                 self.register_buffer(
                     f'position_embedding_{idx}',
                     position_embedding,
@@ -567,7 +567,7 @@ class RTDETRHybridEncoder(BaseModule):
 
         # encoder
         for i, enc_ind in enumerate(self.use_encoder_idx):
-            h, w = outs[enc_ind].shape[2:]
+            b, c, h, w = outs[enc_ind].shape
             # flatten [B, C, H, W] to [B, HxW, C]
             src_flatten = outs[enc_ind].flatten(2).permute(0, 2,
                                                            1).contiguous()
@@ -576,13 +576,13 @@ class RTDETRHybridEncoder(BaseModule):
                 pos_embed = self.build_2d_sincos_position_embedding(
                     w,
                     h,
-                    embed_dim=self.in_channels[enc_ind],
+                    embed_dim=c,
                     temperature=self.pe_temperature,
                     device=src_flatten.device)
             memory = self.transformer_blocks[i](
                 src_flatten, query_pos=pos_embed, key_padding_mask=None)
             outs[enc_ind] = memory.permute(0, 2, 1).contiguous().reshape(
-                -1, self.in_channels[enc_ind], h, w)
+                b, c, h, w)
 
         return tuple(outs)
 
@@ -694,4 +694,3 @@ class RTDETRTransformerDecoder(DinoTransformerDecoder):
             reference_points = unact_reference_points.sigmoid().detach()
 
         return all_layers_outputs_classes, all_layers_outputs_coords
-
