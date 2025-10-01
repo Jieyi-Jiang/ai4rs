@@ -1,6 +1,8 @@
 from typing import Dict, List, Tuple
 import torch
 from torch import Tensor
+from mmengine.structures import InstanceData
+from mmcv.ops import batched_nms
 from mmdet.structures.bbox import bbox_cxcywh_to_xyxy, bbox_overlaps
 from mmdet.utils import InstanceList, reduce_mean
 from mmdet.models.dense_heads import DINOHead
@@ -26,8 +28,8 @@ class RTDETRHead(DINOHead):
     def split_outputs(all_layers_cls_scores: List[Tensor],
                       all_layers_bbox_preds: List[Tensor],
                       dn_meta: Dict[str, int]) -> Tuple[Tensor]:
-        num_denoising_queries = dn_meta['num_denoising_queries']
         if dn_meta is not None:
+            num_denoising_queries = dn_meta['num_denoising_queries']
             all_layers_denoising_cls_scores = \
                 [o[:, :num_denoising_queries] for o in all_layers_cls_scores]
             all_layers_denoising_bbox_preds = \
@@ -244,3 +246,22 @@ class RTDETRHead(DINOHead):
         loss_bbox = self.loss_bbox(
             bbox_preds, bbox_targets, bbox_weights, avg_factor=num_total_pos)
         return loss_cls, loss_bbox, loss_iou
+
+    def _predict_by_feat_single(self,
+                                cls_score: Tensor,
+                                bbox_pred: Tensor,
+                                img_meta: dict,
+                                rescale: bool = True) -> InstanceData:
+        results = super()._predict_by_feat_single(
+            cls_score, bbox_pred, img_meta, rescale=rescale)
+
+        nms_cfg = self.test_cfg.get('nms', None)
+        if nms_cfg is not None:
+            _, keeps = batched_nms(
+                boxes=results.bboxes,
+                scores=results.scores,
+                idxs=results.labels,
+                nms_cfg=nms_cfg)
+            results = results[keeps]
+
+        return results
