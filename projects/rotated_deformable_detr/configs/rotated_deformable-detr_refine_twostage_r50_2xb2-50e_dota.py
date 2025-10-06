@@ -20,6 +20,7 @@ angle_cfg = dict(
     width_longer=True,
     start_angle=0,
 )
+angle_factor=3.1415926535897932384626433832795
 
 model = dict(
     type=RotatedDeformableDETR,
@@ -80,6 +81,7 @@ model = dict(
         type=RotatedDeformableDETRHead,
         num_classes=15,
         angle_cfg=angle_cfg,
+        angle_factor=angle_factor,
         sync_cls_avg_factor=True,
         loss_cls=dict(
             type=FocalLoss,
@@ -101,7 +103,7 @@ model = dict(
             type=HungarianAssigner,
             match_costs=[
                 dict(type=FocalLossCost, weight=2.0),
-                dict(type=RBoxL1Cost, weight=5.0, box_format='xywha'),
+                dict(type=RBoxL1Cost, weight=5.0, box_format='xywha', angle_factor=angle_factor),
                 dict(
                     type=GDCost,
                     loss_type='kld',
