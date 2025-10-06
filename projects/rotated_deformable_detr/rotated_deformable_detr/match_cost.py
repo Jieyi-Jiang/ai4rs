@@ -9,7 +9,6 @@ from mmdet.models.task_modules.assigners.match_cost import BaseMatchCost, BBoxL1
 from mmdet.structures.bbox import BaseBoxes
 from ai4rs.models.losses.gaussian_dist_loss import (
     postprocess, xy_stddev_pearson_2_xy_sigma, xy_wh_r_2_xy_sigma)
-from ai4rs.registry import TASK_UTILS
 from ai4rs.structures.bbox import rbbox_overlaps
 
 
@@ -101,7 +100,7 @@ def kld_loss(pred, target, fun='log1p', tau=1.0, alpha=1., sqrt=True):
     return postprocess(distance, fun=fun, tau=tau)
 
 
-@TASK_UTILS.register_module()
+
 class RBoxL1Cost(BBoxL1Cost):
     """BBoxL1Cost.
 
@@ -168,7 +167,7 @@ class RBoxL1Cost(BBoxL1Cost):
         return bbox_cost * self.weight
 
 
-@TASK_UTILS.register_module()
+
 class CenterL1Cost(RBoxL1Cost):
     """BBoxL1Cost.
 
@@ -228,7 +227,7 @@ class CenterL1Cost(RBoxL1Cost):
         return bbox_cost * self.weight
 
 
-@TASK_UTILS.register_module()
+
 class GDCost(BaseMatchCost):
     """IoUCost.
 
@@ -318,7 +317,7 @@ class GDCost(BaseMatchCost):
             **_kwargs) * self.weight
 
 
-@TASK_UTILS.register_module()
+
 class HausdorffCost(RBoxL1Cost):
     """BBoxL1Cost.
 
@@ -414,7 +413,7 @@ class HausdorffCost(RBoxL1Cost):
         return bbox_cost * self.weight
 
 
-@TASK_UTILS.register_module()
+
 class RotatedIoUCost(BaseMatchCost):
     """IoUCost.
 

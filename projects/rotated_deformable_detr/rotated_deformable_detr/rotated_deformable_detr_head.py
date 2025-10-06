@@ -6,11 +6,9 @@ from torch import Tensor
 from mmcv.cnn import Linear
 from mmdet.models.dense_heads import DeformableDETRHead
 from mmdet.models.layers import inverse_sigmoid
-from ai4rs.registry import MODELS
 from .rotated_detr_head import RotatedDETRHead
 
 
-@MODELS.register_module()
 class RotatedDeformableDETRHead(DeformableDETRHead, RotatedDETRHead):
     r"""Head of Rotated DeformableDETR
 

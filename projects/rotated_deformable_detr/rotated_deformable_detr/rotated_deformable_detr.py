@@ -5,11 +5,9 @@ from torch import Tensor, nn
 from mmdet.models.detectors import DeformableDETR
 from mmdet.models.layers import (DeformableDetrTransformerEncoder,
                                  SinePositionalEncoding)
-from ai4rs.registry import MODELS
 from .rotated_deformable_detr_layers import RotatedDeformableDetrTransformerDecoder
 
 
-@MODELS.register_module()
 class RotatedDeformableDETR(DeformableDETR):
     """Rotated Deformable-DETR.
 
