@@ -1,6 +1,6 @@
 # GSDet: Gaussian Splatting for Oriented Object Detection
 
-> [GSDet: Gaussian Splatting for Oriented Object Detection]()
+> [GSDet: Gaussian Splatting for Oriented Object Detection](https://www.ijcai.org/proceedings/2025/101)
 
 <!-- [ALGORITHM] -->
 
