@@ -83,9 +83,13 @@ bash tools/dist_test.sh projects/rotated_deformable_detr/configs/rotated_deforma
 python tools/analysis_tools/get_flops.py projects/rotated_deformable_detr/configs/rotated_deformable-detr_r50_2xb2-50e_dota.py
 ```
 
-## NOTE
+### RSAR
 
-This project refactors [RHINO](https://github.com/SIAnalytics/RHINO). The author of [RHINO](https://github.com/SIAnalytics/RHINO) is [Hakjin Lee](https://github.com/nijkah).
+**NOTE: the mAP, AP50, and AP75 are reported on test set, not val set !!!**
+
+|      Backbone      |        Model        |  mAP  |  AP50 | AP75 | Angle  |  lr schd  |  BS  | Config | Download |
+| :----------: | :------------: | :---: | :----: | :----: | :----: |:-------: | :--: | :-----: | :---------------: |
+| ResNet50<br> (800,800) |   [Deformable DETR](../../../projects/rotated_deformable_detr/README.md)   | 33.05 | 66.20 | 28.20 | `le90` | `3x` |  4=2gpu*<br>2img/gpu   | [config](../../../projects/rotated_deformable_detr/configs/rotated_deformable-detr_refine_twostage_r50_2xb2-3x_rsar.py) | [last ckpt](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_refine_twostage_r50_2xb2-3x_rsar/epoch_36.pth) \| <br> [all ckpt](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| <br> [log](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_refine_twostage_r50_2xb2-3x_rsar/20251002_193347/20251002_193347.log) \| [result](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_deformable-detr/rotated_deformable-detr_refine_twostage_r50_2xb2-3x_rsar/20251007_133843/20251007_133843.log) |
 
 ## Citation
 
@@ -103,6 +107,8 @@ url={https://openreview.net/forum?id=gZ9hCDWe6ke}
 
 
 ## Acknowledgement
+
+This project refactors [RHINO](https://github.com/SIAnalytics/RHINO). The author of [RHINO](https://github.com/SIAnalytics/RHINO) is [Hakjin Lee](https://github.com/nijkah).
 
 [Hakjin Lee](https://github.com/nijkah)
 
