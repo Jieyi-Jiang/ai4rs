@@ -44,7 +44,7 @@ python tools/test.py projects/ACM/configs/rotated-fcos-le90_r50_fpn_acm_1x_dior.
 | :----------------------: | :---: | :---: | :-----: | :------: | :------------: | :---: | :--------: | :---------------------------------------------: | :-------------------------------: |
 | ResNet50 <br> (1024,1024,200) | 41.26 | 70.66 |  42.64  |   le90   |  1x  | -  |  2=1gpu*<br>2img/gpu      | [rotated-fcos-le90_r50_<br>fpn_acm_1x_dota.py](./configs/rotated-fcos-le90_r50_fpn_acm_1x_dota.py) | [last epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/ACM/rotated-fcos-le90_r50_fpn_acm_1x_dota/epoch_12.pth) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/ACM/rotated-fcos-le90_r50_fpn_acm_1x_dota/20250720_233414/20250720_233414.log) \| <br> [all epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| [result](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/ACM/rotated-fcos-le90_r50_fpn_acm_1x_dota/Task1.zip)|
 
-Note: This is the **unofficial** checkpoint. The official code is [here](https://github.com/VisionXLab/point2rbox-v2).  
+Note: This is the **unofficial** checkpoint. The official code is [here](https://github.com/Pandora-CV/cvpr24acm).  
 
 This is your evaluation result for task 1 (VOC metrics):  
 mAP: 0.7065559995751901  
