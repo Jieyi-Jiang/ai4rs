@@ -84,6 +84,15 @@ python tools/analysis_tools/get_flops.py projects/rotated_yoloms/configs/yoloms-
 python tools/analysis_tools/get_flops.py projects/rotated_yoloms/configs/yoloms_syncbn_fast_2xb4-36e_dota_previous.py
 ```
 
+
+### DIOR-R
+
+|  Model  | pretrain |  Aug  | mAP  | AP50 | AP75 | Params(M) | FLOPS(G) | batch size |                          Config                          |                                                                                                                                                                       Download                                                                                                                                                                       |
+| :---------: | :------: | :---: | :---: | :---: | :---: | :-------: | :------: | :------------------: | :------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| YOLO-MS-XS<br>previous |    COCO   |  -   | 45.42 | 66.65 | 47.83 |   4.48  |  22.24   |    8=2gpu*<br>4img/gpu     |        [config](./configs/yoloms-xs_syncbn_fast_2xb4-3x_dior_previous.py)   |  [last epoch](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_yoloms/yoloms-xs_syncbn_fast_2xb4-3x_dior_previous/epoch_36.pth) \| [log](https://modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_yoloms/yoloms-xs_syncbn_fast_2xb4-3x_dior_previous/20251107_233434/20251107_233434.log) \|<br> [all epoch](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files)  |
+
+
+
 ## YOLO-MS
 
 
