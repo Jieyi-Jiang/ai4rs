@@ -44,6 +44,7 @@ Notes:
   - `projects/HERO/hero/ResidualORN.py` — residual ORN module
 
 ## Installation
+if you donnot install `hilbertcurve`, please install it first.
 ```bash
 pip install hilbertcurve -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
