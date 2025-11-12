@@ -4,6 +4,8 @@
 
 <!-- [ALGORITHM] -->
 
+## Appendix 
+[GSDet appendix](https://github.com/wokaikaixinxin/GSDet/blob/main/GSDet_appendix.pdf)
 ## Insight
 
 <!--
