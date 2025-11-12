@@ -17,8 +17,8 @@ This repository is the official implementation of “Hilbert Curve-Encoded Rotat
 
 | Model |  mAP  | Angle | lr schd | Batch Size | AUG |                          Configs                          |          Download          |
 | :---: |:-----:| :---: | :-----: |:----------:| :---: |:--------------------------------------------------------:|:--------------------------:|
-| HERO (ResNet-50, FPN) | 79.56 | le90 | 3x |     4    | none | [HERO-3x](./configs/hero_le90_r50_fpn_3x_dota.py) | come soon |
-| HERO (ResNet-50, FPN) | 79.56 | le90 | 3x |     4   | MS  | [HERO-3x](./configs/hero_le90_r50_fpn_3x_dota-ms.py) | come soon |
+| HERO <br>(ResNet-50, FPN) | 79.56 | le90 | 3x |     4    | none | [HERO-3x](./configs/hero_le90_r50_fpn_3x_dota.py) | come soon |
+| HERO <br>(ResNet-50, FPN) | 79.56 | le90 | 3x |     4   | MS  | [HERO-3x](./configs/hero_le90_r50_fpn_3x_dota-ms.py) | come soon |
 
 Notes:
 - We will release checkpoints soon. You can place your files in `tools/model_weight/` and update the links above.
