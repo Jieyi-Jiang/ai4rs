@@ -273,6 +273,12 @@ For detailed user guides and advanced guides, please refer to our [documentation
 
 Please refer to [FAQ](https://github.com/open-mmlab/mmrotate/blob/1.x/docs/en/notes/faq.md) for frequently asked questions.
 
+# 🗓️ Project Plan
+
+- [ ] [SODA](https://shaunyuan22.github.io/SODA/)
+- [ ] [VMamba](https://github.com/AkitsukiM/VMamba-DOTA)
+- [ ] [CastDet](https://github.com/VisionXLab/CastDet)
+
 
 
 
