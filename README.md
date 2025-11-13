@@ -20,13 +20,13 @@
 
 
 
-## Introduction
+## 👋Introduction
 
 
 We hope to integrate remote sensing related work based on **MMLab**, especially **MMDetection** and **MMRotate**.
 
 
-## Model Zoo
+## 🐅Model Zoo
 
 <details open>
 <summary><b>Real Time </b></summary>
@@ -110,7 +110,7 @@ Coming soon
 | :---: | :---: | :---: | :---: |
 | [MMRotate SAM](./projects/mmrotate-sam/README.md) |  |   |     |   
 
-## Installation
+## ⚙️Installation
 
 
 <!--请参考[快速入门文档](https://mmrotate.readthedocs.io/zh_CN/1.x/get_started.html)进行安装。-->
@@ -201,7 +201,7 @@ pip install "numpy<2" -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
 
-## Data Preparation
+## 🗃️Data Preparation
 
 
 
@@ -216,7 +216,7 @@ Please refer to [data_preparation.md](tools/data/README.md) to prepare the data
 
 
 
-## Train
+## 📈Train
 
 **Single-node single-GPU**  
 ```
@@ -236,7 +236,7 @@ For example:
 bash tools/dist_train.sh projects/GSDet_baseline/configs/GSDet_r50_b900_h2h4_h2r1_r2r1_2x_dior.py 2
 ```
 
-## Test
+## 🧪Test
 
 **Single-node single-GPU**  
 ```
@@ -256,7 +256,7 @@ For example:
 bash tools/dist_test.sh configs/h2rbox_v2/h2rbox_v2-le90_r50_fpn-1x_dota.py work_dirs/h2rbox_v2-le90_r50_fpn-1x_dota-fa5ad1d2.pth 2
 ```
 
-## Getting Started
+## 🚀Getting Started
 
 <!--请阅读[概述](https://mmrotate.readthedocs.io/zh_CN/1.x/get_started.html)对 Openmmlab 进行初步的了解。-->
 
@@ -267,13 +267,13 @@ Please see [Overview](https://mmrotate.readthedocs.io/en/1.x/overview.html) for 
 For detailed user guides and advanced guides, please refer to our [documentation](https://mmrotate.readthedocs.io/en/1.x/):
 
 
-## FAQ
+## 🤔FAQ
 
 <!--请参考 [FAQ](docs/en/notes/faq.md) 了解其他用户的常见问题。-->
 
 Please refer to [FAQ](https://github.com/open-mmlab/mmrotate/blob/1.x/docs/en/notes/faq.md) for frequently asked questions.
 
-# 🗓️ Project Plan
+## 🗓️ Project Plan
 
 - [ ] [SODA](https://shaunyuan22.github.io/SODA/)
 - [ ] [VMamba](https://github.com/AkitsukiM/VMamba-DOTA)
@@ -282,7 +282,7 @@ Please refer to [FAQ](https://github.com/open-mmlab/mmrotate/blob/1.x/docs/en/no
 
 
 
-## Acknowledgement
+## 🙏Acknowledgement
 
 [OpenMMLab](https://openmmlab.com)
 
