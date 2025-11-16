@@ -278,6 +278,7 @@ Please refer to [FAQ](https://github.com/open-mmlab/mmrotate/blob/1.x/docs/en/no
 - [ ] [SODA](https://shaunyuan22.github.io/SODA/)
 - [ ] [VMamba](https://github.com/AkitsukiM/VMamba-DOTA)
 - [ ] [CastDet](https://github.com/VisionXLab/CastDet)
+- [ ] [SelectiveMAE](https://github.com/MiliLab/SelectiveMAE)
 
 
 
