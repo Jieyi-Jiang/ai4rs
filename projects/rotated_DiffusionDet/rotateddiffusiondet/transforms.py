@@ -1,5 +1,5 @@
 # Copyright (c) ai4rs. All rights reserved.
-# /ai4rs/structures/bbox/transforms.py
+# /mmrotate/structures/bbox/transforms.py
 from typing import Tuple, Union
 from torch import Tensor
 from mmdet.structures.bbox import BaseBoxes

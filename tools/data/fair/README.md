@@ -28,7 +28,7 @@ The data structure is as follows:
 
 ```none
 ai4rs
-├── ai4rs
+├── mmrotate
 ├── tools
 ├── configs
 ├── data
@@ -64,7 +64,7 @@ The new data structure is as follows:
 
 ```none
 ai4rs
-├── ai4rs
+├── mmrotate
 ├── tools
 ├── configs
 ├── data
