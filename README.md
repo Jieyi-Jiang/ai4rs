@@ -112,19 +112,11 @@ Coming soon
 
 ## Installation ⚙️
 
-
-<!--请参考[快速入门文档](https://mmrotate.readthedocs.io/zh_CN/1.x/get_started.html)进行安装。-->
-<!--Please read the [GET STARTED](https://mmrotate.readthedocs.io/zh_CN/1.x/get_started.html) for installation.-->
-
-
 To support H2rbox_v2, point2rbox, and mamba, we use **pytorch-2.x**
 
 
-<!--**第一步：** 安装Anaconda 或 Miniconda-->
-
 **Step 1:** Install Anaconda or Miniconda
 
-<!--**第二步：** 创建一个虚拟环境并且切换至该虚拟环境中-->
 
 **Step 2:** Create a virtual environment
 
@@ -133,7 +125,6 @@ conda create --name ai4rs python=3.10 -y
 conda activate ai4rs
 ```
 
-<!--**第三步：** 根据 [Pytorch的官方说明](https://pytorch.org/get-started/previous-versions/) 安装Pytorch, 例如：-->
 
 **Step 3:** Install Pytorch according to [official instructions](https://pytorch.org/get-started/previous-versions/). For example:
 
@@ -149,7 +140,6 @@ python -c "import torch; print(torch.cuda.is_available())"
 
 
 
-<!--**第四步：** 安装 MMEngine 和 MMCV, 并且我们建议使用 MIM 来完成安装-->
 
 **Step 4:** Install MMEngine and MMCV, and we recommend using MIM to complete the installation
 
@@ -160,7 +150,6 @@ mim install mmengine -i https://pypi.tuna.tsinghua.edu.cn/simple
 mim install "mmcv>2.0.0rc4, <2.2.0" -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
-<!--**第五步：** 安装 MMDetection-->
 
 **Step 5:** Install MMDetection
 
@@ -168,7 +157,6 @@ mim install "mmcv>2.0.0rc4, <2.2.0" -i https://pypi.tuna.tsinghua.edu.cn/simple
 mim install 'mmdet>3.0.0rc6, <3.4.0' -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
-<!--**第六步：** 安装 ai4rs-->
 
 **Step 6:** Install ai4rs
 
@@ -258,18 +246,15 @@ bash tools/dist_test.sh configs/h2rbox_v2/h2rbox_v2-le90_r50_fpn-1x_dota.py work
 
 ## Getting Started 🚀
 
-<!--请阅读[概述](https://mmrotate.readthedocs.io/zh_CN/1.x/get_started.html)对 Openmmlab 进行初步的了解。-->
 
 Please see [Overview](https://mmrotate.readthedocs.io/en/1.x/overview.html) for the general introduction of Openmmlab.
 
-<!--为了帮助用户更进一步了解 Openmmlab，我们准备了用户指南和进阶指南，请阅读我们的[文档](https://mmrotate.readthedocs.io/zh_CN/1.x/)：-->
 
 For detailed user guides and advanced guides, please refer to our [documentation](https://mmrotate.readthedocs.io/en/1.x/):
 
 
 ## FAQ 🤔
 
-<!--请参考 [FAQ](docs/en/notes/faq.md) 了解其他用户的常见问题。-->
 
 Please refer to [FAQ](https://github.com/open-mmlab/mmrotate/blob/1.x/docs/en/notes/faq.md) for frequently asked questions.
 
@@ -295,7 +280,6 @@ Please refer to [FAQ](https://github.com/open-mmlab/mmrotate/blob/1.x/docs/en/no
 
 ## Citation 🌟
 
-<!--如果你在研究中使用了本项目的代码或者性能基准，请参考如下 bibtex 引用 ai4rs-->
 
 If you use this toolbox or benchmark in your research, please cite this project ai4rs
 
