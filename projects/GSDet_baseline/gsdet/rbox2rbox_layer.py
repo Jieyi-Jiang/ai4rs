@@ -1,6 +1,6 @@
-# Copyright (c) ai4rs. All rights reserved.
+# Copyright (c) mmrotate. All rights reserved.
 from mmdet.utils import OptConfigType, ConfigType
-from ai4rs.registry import MODELS
+from mmrotate.registry import MODELS
 from .hbox2rbox_layer import Hbox2RboxLayer
 
 @MODELS.register_module()

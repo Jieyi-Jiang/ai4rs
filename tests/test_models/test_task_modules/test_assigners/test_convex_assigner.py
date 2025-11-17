@@ -5,7 +5,7 @@ import torch
 from mmengine.structures import InstanceData
 from mmengine.testing import assert_allclose
 
-from ai4rs.models.task_modules.assigners import ConvexAssigner
+from mmrotate.models.task_modules.assigners import ConvexAssigner
 
 
 class TestConvexAssigner(unittest.TestCase):
@@ -42,3 +42,4 @@ class TestConvexAssigner(unittest.TestCase):
 
         expected_gt_inds = torch.LongTensor([1, 0, 0, 0]).cuda()
         assert_allclose(assign_result.gt_inds, expected_gt_inds)
+

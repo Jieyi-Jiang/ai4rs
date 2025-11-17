@@ -8,10 +8,10 @@ from mmdet.structures.bbox import BaseBoxes
 from mmdet.structures.mask import BitmapMasks, PolygonMasks
 from mmengine.testing import assert_allclose
 
-from ai4rs.datasets.transforms import (ConvertBoxType, ConvertMask2BoxType,
+from mmrotate.datasets.transforms import (ConvertBoxType, ConvertMask2BoxType,
                                           RandomChoiceRotate, RandomRotate,
                                           Rotate)
-from ai4rs.structures.bbox import QuadriBoxes, RotatedBoxes
+from mmrotate.structures.bbox import QuadriBoxes, RotatedBoxes
 
 
 def construct_toy_data(poly2mask, use_box_type=False):
@@ -243,3 +243,4 @@ class TestRandomChoiceRotate(unittest.TestCase):
                               'prob=0.5, '
                               'rect_obj_labels=None, '
                               "rotate_cfg={'type': 'Rotate'})"))
+

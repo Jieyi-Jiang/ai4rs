@@ -1,7 +1,7 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import unittest
 
-from ai4rs.datasets import HRSCDataset
+from mmrotate.datasets import HRSCDataset
 
 
 class TestHRSCDataset(unittest.TestCase):
@@ -53,3 +53,4 @@ class TestHRSCDataset(unittest.TestCase):
         self.assertEqual(len(data_list[0]['instances']), 1)
         self.assertEqual(dataset.get_cat_ids(0), [12])
         self.assertEqual(len(dataset._metainfo['classes']), 31)
+

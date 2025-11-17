@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 from torch import nn
-from ai4rs.models.utils.orconv import ORConv2d
+from mmrotate.models.utils.orconv import ORConv2d
 
 
 class ResidualORN(nn.Module):

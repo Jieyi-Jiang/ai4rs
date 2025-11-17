@@ -1,4 +1,4 @@
-# Copyright (c) ai4rs. All rights reserved.
+# Copyright (c) mmrotate. All rights reserved.
 from typing import Optional, Tuple, Union
 import torch
 import torch.nn as nn
@@ -6,7 +6,7 @@ from mmcv.cnn import ConvModule
 from mmengine.config import ConfigDict
 from torch import Tensor
 from mmdet.models.roi_heads.bbox_heads import BBoxHead
-from ai4rs.registry import MODELS
+from mmrotate.registry import MODELS
 from .reg_block import StripBlock
 
 @MODELS.register_module()

@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from ai4rs.registry import MODELS
+from mmrotate.registry import MODELS
 
 
 @MODELS.register_module()

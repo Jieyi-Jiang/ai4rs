@@ -4,8 +4,8 @@ from unittest import TestCase
 import torch
 from mmengine.structures import InstanceData
 
-from ai4rs.models.task_modules.assigners import RotatedATSSAssigner
-from ai4rs.structures.bbox import RotatedBoxes
+from mmrotate.models.task_modules.assigners import RotatedATSSAssigner
+from mmrotate.structures.bbox import RotatedBoxes
 
 
 class TestATSSAssigner(TestCase):
@@ -165,3 +165,4 @@ class TestATSSAssigner(TestCase):
         assign_result = atss_assigner.assign(pred_instances, num_level_bboxes,
                                              gt_instances)
         self.assertEqual(len(assign_result.gt_inds), 0)
+

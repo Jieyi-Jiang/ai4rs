@@ -1,10 +1,10 @@
-# Copyright (c) ai4rs. All rights reserved.
+# Copyright (c) mmrotate. All rights reserved.
 import torch
 from scipy.optimize import linear_sum_assignment
 from mmengine.structures import BaseDataElement
 from mmdet.models.task_modules import AssignResult, TaskAlignedAssigner
-from ai4rs.structures.bbox import rbox2hbox
-from ai4rs.registry import TASK_UTILS
+from mmrotate.structures.bbox import rbox2hbox
+from mmrotate.registry import TASK_UTILS
 
 @TASK_UTILS.register_module()
 class TopkHungarianAssigner(TaskAlignedAssigner):
@@ -174,3 +174,4 @@ class TopkHungarianAssigner(TaskAlignedAssigner):
             assigned_gt_inds[:] = 0
             return AssignResult(
                 0, assigned_gt_inds, max_overlaps=None, labels=assigned_labels)
+

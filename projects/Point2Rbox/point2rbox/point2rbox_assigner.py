@@ -1,4 +1,4 @@
-# Copyright (c) ai4rs. All rights reserved.
+# Copyright (c) mmrotate. All rights reserved.
 from typing import Optional
 import torch
 from mmdet.models.task_modules.assigners.assign_result import AssignResult
@@ -6,7 +6,7 @@ from mmdet.models.task_modules.assigners.base_assigner import BaseAssigner
 from mmdet.structures.bbox import bbox_xyxy_to_cxcywh
 from mmdet.utils import ConfigType
 from mmengine.structures import InstanceData
-from ai4rs.registry import TASK_UTILS
+from mmrotate.registry import TASK_UTILS
 
 @TASK_UTILS.register_module()
 class Point2RBoxAssigner(BaseAssigner):

@@ -8,7 +8,7 @@ from mmdet.structures.bbox import BaseBoxes
 from mmengine.config import Config, DictAction
 from mmengine.utils import ProgressBar
 
-from ai4rs.utils import register_all_modules
+from mmrotate.utils import register_all_modules
 
 
 def parse_args():
@@ -86,3 +86,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

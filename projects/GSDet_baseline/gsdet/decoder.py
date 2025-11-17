@@ -17,9 +17,9 @@ from mmdet.models.roi_heads import CascadeRoIHead
 from mmdet.utils import (ConfigType, InstanceList, OptConfigType, OptMultiConfig)
 from mmdet.models.test_time_augs import merge_aug_masks
 from mmdet.structures.bbox import bbox2roi
-# ai4rs
-from ai4rs.registry import MODELS
-from ai4rs.structures.bbox import rbox2hbox
+# mmrotate
+from mmrotate.registry import MODELS
+from mmrotate.structures.bbox import rbox2hbox
 
 @MODELS.register_module()
 class Decoder(CascadeRoIHead):
@@ -404,3 +404,4 @@ class Decoder(CascadeRoIHead):
             results = results + (bbox_results,)
 
         return results
+

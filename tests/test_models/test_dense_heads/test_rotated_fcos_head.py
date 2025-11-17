@@ -6,9 +6,9 @@ import torch
 from mmdet.models import L1Loss
 from mmengine.structures import InstanceData
 
-from ai4rs.models.dense_heads import RotatedFCOSHead
-from ai4rs.structures import RotatedBoxes
-from ai4rs.utils import register_all_modules
+from mmrotate.models.dense_heads import RotatedFCOSHead
+from mmrotate.structures import RotatedBoxes
+from mmrotate.utils import register_all_modules
 
 
 class TestFCOSHead(unittest.TestCase):
@@ -262,3 +262,4 @@ class TestFCOSHead(unittest.TestCase):
                            'centerness loss should be non-zero')
         self.assertGreater(normbox_ang_loss, 0,
                            'angle loss should be non-zero')
+

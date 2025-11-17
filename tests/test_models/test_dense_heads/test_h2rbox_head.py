@@ -6,9 +6,9 @@ import pytest
 import torch
 from mmengine.structures import InstanceData
 
-from ai4rs.models.dense_heads import H2RBoxHead
-from ai4rs.structures import RotatedBoxes
-from ai4rs.utils import register_all_modules
+from mmrotate.models.dense_heads import H2RBoxHead
+from mmrotate.structures import RotatedBoxes
+from mmrotate.utils import register_all_modules
 
 
 class TestH2RBoxHead(unittest.TestCase):
@@ -221,3 +221,4 @@ class TestH2RBoxHead(unittest.TestCase):
                            'centerness loss should be non-zero')
         self.assertGreater(without_ws_box_ss_loss, 0,
                            'consistency loss should be non-zero')
+

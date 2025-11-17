@@ -6,8 +6,8 @@ from mmdet.structures import DetDataSample
 from mmengine.config import ConfigDict
 from mmengine.structures import InstanceData
 
-from ai4rs.models.dense_heads import SAMRepPointsHead
-from ai4rs.utils import register_all_modules
+from mmrotate.models.dense_heads import SAMRepPointsHead
+from mmrotate.utils import register_all_modules
 
 
 class TestSAMRepPointsHead(unittest.TestCase):
@@ -108,3 +108,4 @@ class TestSAMRepPointsHead(unittest.TestCase):
         # test only predict
         reppoints_head.eval()
         reppoints_head.predict(x, [samples], rescale=True)
+

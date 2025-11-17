@@ -1,4 +1,4 @@
-# Copyright (c) ai4rs. All rights reserved.
+# Copyright (c) mmrotate. All rights reserved.
 import copy
 import math
 from typing import Tuple, Union
@@ -13,8 +13,8 @@ from torch import Tensor
 from torch.nn.functional import grid_sample
 from torchvision import transforms
 from .point2rbox_generator import load_basic_pattern, generate_sythesis, plot_one_rotated_box
-from ai4rs.registry import MODELS
-from ai4rs.structures.bbox import RotatedBoxes
+from mmrotate.registry import MODELS
+from mmrotate.structures.bbox import RotatedBoxes
 
 @MODELS.register_module()
 class Point2RBoxYOLOF(SingleStageDetector):

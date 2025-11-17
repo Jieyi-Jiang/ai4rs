@@ -7,8 +7,8 @@ import torch.nn as nn
 
 from mmcv.cnn import ConvModule, DepthwiseSeparableConvModule
 from mmdet.utils import ConfigType, OptConfigType, OptMultiConfig
-from ai4rs.models.necks.base_yolo_neck import BaseYOLONeck
-from ai4rs.registry import MODELS
+from mmrotate.models.necks.base_yolo_neck import BaseYOLONeck
+from mmrotate.registry import MODELS
 
 from .msblock import MSBlock
 

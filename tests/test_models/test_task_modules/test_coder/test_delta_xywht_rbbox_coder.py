@@ -4,8 +4,8 @@ from unittest import TestCase
 import torch
 from mmengine.testing import assert_allclose
 
-from ai4rs.models.task_modules.coders import DeltaXYWHTRBBoxCoder
-from ai4rs.structures.bbox import RotatedBoxes
+from mmrotate.models.task_modules.coders import DeltaXYWHTRBBoxCoder
+from mmrotate.structures.bbox import RotatedBoxes
 
 
 class TestDeltaBboxCoder(TestCase):
@@ -82,3 +82,4 @@ class TestDeltaBboxCoder(TestCase):
         out = coder.decode(
             RotatedBoxes(rois), deltas, max_shape=(32, 32)).tensor
         assert_allclose(expected_decode_bboxes, out)
+

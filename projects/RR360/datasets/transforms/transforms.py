@@ -4,8 +4,8 @@ from typing import Union
 # import cv2
 import mmcv
 
-from ai4rs.datasets.transforms import Rotate
-from ai4rs.registry import TRANSFORMS
+from mmrotate.datasets.transforms import Rotate
+from mmrotate.registry import TRANSFORMS
 
 # import numpy as np
 # from mmcv.transforms import BaseTransform
@@ -93,3 +93,4 @@ class RotateAutoBound(Rotate):
         results['gt_bboxes'].rotate_auto_bound_(center, self.rotate_angle,
                                                 results['img_shape_record'])
         results['gt_bboxes'].clip_(img_shape)
+

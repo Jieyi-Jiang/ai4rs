@@ -1,4 +1,4 @@
-# Copyright (c) ai4rs. All rights reserved.
+# Copyright (c) mmrotate. All rights reserved.
 import copy
 from typing import Dict, List
 
@@ -12,9 +12,9 @@ from mmdet.utils import (InstanceList, OptInstanceList, reduce_mean)
 from mmengine import ConfigDict
 from mmengine.structures import InstanceData
 
-from ai4rs.registry import MODELS
-from ai4rs.structures import RotatedBoxes, norm_angle
-from ai4rs.models import RotatedFCOSHead
+from mmrotate.registry import MODELS
+from mmrotate.structures import RotatedBoxes, norm_angle
+from mmrotate.models import RotatedFCOSHead
 
 def decode_gaucho_offset(points, deltas, angle_range, to_obb=False):
     ctr = deltas[..., :2] + points

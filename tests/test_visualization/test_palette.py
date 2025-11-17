@@ -1,6 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-from ai4rs.datasets import DOTADataset
-from ai4rs.visualization import get_palette
+from mmrotate.datasets import DOTADataset
+from mmrotate.visualization import get_palette
 
 
 def test_palette():
@@ -35,3 +35,4 @@ def test_palette():
         assert isinstance(color1, tuple)
         assert isinstance(color2, tuple)
         assert color1 == color2
+

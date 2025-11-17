@@ -1,4 +1,4 @@
-# Copyright (c) ai4rs. All rights reserved.
+# Copyright (c) mmrotate. All rights reserved.
 import torch
 import torch.nn as nn
 from torch import Tensor
@@ -10,7 +10,7 @@ from mmdet.models.roi_heads.bbox_heads import BBoxHead
 from mmdet.models.losses import accuracy
 from mmdet.models.task_modules import SamplingResult
 from mmdet.models.utils import multi_apply
-from ai4rs.registry import MODELS
+from mmrotate.registry import MODELS
 from typing import List, Tuple
 from .dynamic_cov import DynamicConv
 from .match_cost import normalize_angle

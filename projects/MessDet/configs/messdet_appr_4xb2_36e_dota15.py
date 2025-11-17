@@ -1,5 +1,5 @@
 from mmengine.config import read_base
-from ai4rs.datasets.yolov5_dota15 import YOLOv5DOTA15Dataset
+from mmrotate.datasets.yolov5_dota15 import YOLOv5DOTA15Dataset
 
 with read_base():
     from .messdet_appr_4xb2_36e_dota import *
@@ -17,3 +17,4 @@ model.update(
 train_dataloader.update(dataset=dict(type=dataset_type, data_root=data_root))
 val_dataloader.update(dataset=dict(type=dataset_type, data_root=data_root))
 test_dataloader.update(dataset=dict(type=dataset_type, data_root=data_root))
+

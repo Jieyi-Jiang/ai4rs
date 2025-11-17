@@ -9,7 +9,7 @@ from mmengine.structures import InstanceData
 from mmdet.utils import ConfigType
 from mmdet.models.task_modules.assigners.assign_result import AssignResult
 from mmdet.models.task_modules.assigners.base_assigner import BaseAssigner
-from ai4rs.registry import TASK_UTILS
+from mmrotate.registry import TASK_UTILS
 
 INF = 100000.0
 EPS = 1.0e-7
@@ -249,3 +249,4 @@ class RotatedSimOTAAssigner(BaseAssigner):
         matched_pred_ious = (matching_matrix *
                              pairwise_ious).sum(1)[fg_mask_inboxes]
         return matched_pred_ious, matched_gt_inds
+

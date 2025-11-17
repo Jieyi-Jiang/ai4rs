@@ -13,8 +13,8 @@ from mmengine.registry import init_default_scope
 from mmengine.runner import Runner
 from mmengine.utils import digit_version
 from mmdet.utils import register_all_modules as register_all_modules_mmdet
-from ai4rs.utils import register_all_modules
-from ai4rs.registry import MODELS
+from mmrotate.utils import register_all_modules
+from mmrotate.registry import MODELS
 
 try:
     from mmengine.analysis import get_model_complexity_info
@@ -64,11 +64,11 @@ def inference(args, logger):
     if args.cfg_options is not None:
         cfg.merge_from_dict(args.cfg_options)
 
-    init_default_scope(cfg.get('default_scope', 'ai4rs'))
+    init_default_scope(cfg.get('default_scope', 'mmrotate'))
 
     # TODO: The following usage is temporary and not safe
     # use hard code to convert mmSyncBN to SyncBN. This is a known
-    # bug in mmengine, mmSyncBN requires a distributed environment，
+    # bug in mmengine, mmSyncBN requires a distributed environment,
     # this question involves models like configs/strong_baselines
     if hasattr(cfg, 'head_norm_cfg'):
         cfg['head_norm_cfg'] = dict(type='SyncBN', requires_grad=True)

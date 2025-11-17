@@ -11,15 +11,15 @@ from mmdet.datasets.transforms import (Resize, Pad,
 from mmdet.models.task_modules.prior_generators import MlvlPointGenerator
 from mmdet.models.losses import QualityFocalLoss
 
-from ai4rs.models.losses import RotatedIoULoss
-from ai4rs.models.task_modules.coders import PseudoAngleCoder, MMYOLODistanceAnglePointCoder
-from ai4rs.models.task_modules.assigners import RBboxOverlaps2D, BatchDynamicSoftLabelAssigner
-from ai4rs.models.data_preprocessors import YOLOv5DetDataPreprocessor
-from ai4rs.models.detectors import YOLODetector
-from ai4rs.datasets.transforms import ConvertBoxType, RandomRotate, Rotate, RegularizeRotatedBox
-from ai4rs.datasets.utils import yolov5_collate
-from ai4rs.datasets.yolov5_dota import YOLOv5DOTADataset
-from ai4rs.evaluation.metrics import DOTAMetric
+from mmrotate.models.losses import RotatedIoULoss
+from mmrotate.models.task_modules.coders import PseudoAngleCoder, MMYOLODistanceAnglePointCoder
+from mmrotate.models.task_modules.assigners import RBboxOverlaps2D, BatchDynamicSoftLabelAssigner
+from mmrotate.models.data_preprocessors import YOLOv5DetDataPreprocessor
+from mmrotate.models.detectors import YOLODetector
+from mmrotate.datasets.transforms import ConvertBoxType, RandomRotate, Rotate, RegularizeRotatedBox
+from mmrotate.datasets.utils import yolov5_collate
+from mmrotate.datasets.yolov5_dota import YOLOv5DOTADataset
+from mmrotate.evaluation.metrics import DOTAMetric
 
 from projects.MessDet.messdet.re_cspnext import RECSPNeXt
 from projects.MessDet.messdet.re_cspnext_pafpn import RECSPNeXtPAFPN

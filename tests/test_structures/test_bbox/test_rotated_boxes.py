@@ -9,7 +9,7 @@ import torch
 from mmdet.structures.mask import BitmapMasks, PolygonMasks
 from mmengine.testing import assert_allclose
 
-from ai4rs.structures.bbox import RotatedBoxes
+from mmrotate.structures.bbox import RotatedBoxes
 
 
 class TestRotatedBoxes(TestCase):
@@ -191,3 +191,4 @@ class TestRotatedBoxes(TestCase):
         boxes = RotatedBoxes.from_instance_masks(polygon_masks)
         self.assertIsInstance(boxes, RotatedBoxes)
         self.assertEqual(len(boxes), 0)
+

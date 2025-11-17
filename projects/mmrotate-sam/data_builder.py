@@ -1,4 +1,4 @@
-# Copyright (c) ai4rs. All rights reserved.
+# Copyright (c) mmrotate. All rights reserved.
 import copy
 import logging
 from functools import partial
@@ -12,7 +12,7 @@ from mmengine.logging import print_log
 from mmengine.registry import DATA_SAMPLERS, EVALUATOR, FUNCTIONS
 from mmengine.utils import digit_version
 from mmengine.utils.dl_utils import TORCH_VERSION
-from ai4rs.registry import DATASETS, TRANSFORMS
+from mmrotate.registry import DATASETS, TRANSFORMS
 from torch.utils.data import DataLoader
 
 

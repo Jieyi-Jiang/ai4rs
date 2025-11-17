@@ -1,4 +1,4 @@
-# Copyright (c) ai4rs. All rights reserved.
+# Copyright (c) mmrotate. All rights reserved.
 import torch
 import torch.nn as nn
 from mmengine.model import (BaseModule, constant_init, normal_init, trunc_normal_init)
@@ -8,7 +8,7 @@ import math
 from functools import partial
 import warnings
 from mmcv.cnn import build_norm_layer
-from ai4rs.registry import MODELS
+from mmrotate.registry import MODELS
 
 class Mlp(nn.Module):
     def __init__(self, in_features, hidden_features=None, out_features=None, act_layer=nn.GELU, drop=0.):

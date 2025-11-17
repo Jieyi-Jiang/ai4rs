@@ -12,8 +12,8 @@ from mmdet.utils import InstanceList
 from mmdet.structures.bbox import get_box_tensor
 from mmdet.structures import SampleList
 from mmdet.structures.bbox import (bbox_xyxy_to_cxcywh, bbox_cxcywh_to_xyxy, bbox2roi)
-from ai4rs.structures.bbox import rbox2hbox
-from ai4rs.registry import MODELS, TASK_UTILS
+from mmrotate.structures.bbox import rbox2hbox
+from mmrotate.registry import MODELS, TASK_UTILS
 from .dynamic_cov import DynamicConv
 
 _DEFAULT_SCALE_CLAMP = math.log(100000.0 / 16)

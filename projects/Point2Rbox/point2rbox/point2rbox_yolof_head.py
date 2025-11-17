@@ -1,4 +1,4 @@
-# Copyright (c) ai4rs. All rights reserved.
+# Copyright (c) mmrotate. All rights reserved.
 import copy
 from typing import List, Optional, Tuple
 import torch
@@ -15,8 +15,8 @@ from mmengine.config import ConfigDict
 from mmengine.model import bias_init_with_prob, constant_init, normal_init
 from mmengine.structures import InstanceData
 from torch import Tensor
-from ai4rs.registry import MODELS, TASK_UTILS
-from ai4rs.structures import RotatedBoxes
+from mmrotate.registry import MODELS, TASK_UTILS
+from mmrotate.structures import RotatedBoxes
 
 INF = 1e8
 
@@ -555,10 +555,10 @@ class Point2RBoxYOLOFHead(YOLOFHead):
         multiple images.
 
         Args:
-            cls_scores_list (list[Tensor])： Classification scores of
+            cls_scores_list (list[Tensor])锛?Classification scores of
                 each image. each is a 4D-tensor, the shape is
                 (h * w, num_anchors * num_classes).
-            bbox_preds_list (list[Tensor])： Bbox preds of each image.
+            bbox_preds_list (list[Tensor])锛?Bbox preds of each image.
                 each is a 4D-tensor, the shape is (h * w, num_anchors * 4).
             anchor_list (list[Tensor]): Anchors of each image. Each element of
                 is a tensor of shape (h * w * num_anchors, 4).

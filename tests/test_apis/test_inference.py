@@ -9,8 +9,8 @@ from mmdet.apis import init_detector
 from mmdet.structures import DetDataSample
 from parameterized import parameterized
 
-from ai4rs.apis import inference_detector_by_patches
-from ai4rs.utils import register_all_modules
+from mmrotate.apis import inference_detector_by_patches
+from mmrotate.utils import register_all_modules
 
 
 class TestInferenceDetectorByPatches(TestCase):
@@ -43,3 +43,4 @@ class TestInferenceDetectorByPatches(TestCase):
             result = inference_detector_by_patches(model, img, [75], [50],
                                                    [1.0], nms_cfg)
             assert isinstance(result, DetDataSample)
+

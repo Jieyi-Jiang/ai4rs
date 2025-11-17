@@ -3,7 +3,7 @@ import unittest
 
 from parameterized import parameterized
 
-from ai4rs.datasets import DOTADataset, DOTAv2Dataset, DOTAv15Dataset
+from mmrotate.datasets import DOTADataset, DOTAv2Dataset, DOTAv15Dataset
 
 
 class TestDOTADataset(unittest.TestCase):
@@ -50,3 +50,4 @@ class TestDOTADataset(unittest.TestCase):
                          'tests/data/dota/images/P2805__1024__0___0.png')
         self.assertEqual(len(data_list[0]['instances']), 1)
         self.assertEqual(dataset.get_cat_ids(0), [[]])
+

@@ -1,5 +1,5 @@
 # Copyright (c) ai4rs. All rights reserved.
-from ai4rs.registry import MODELS
+from mmrotate.registry import MODELS
 from mmdet.utils import ConfigType, OptConfigType, OptMultiConfig
 from mmdet.models.detectors.two_stage import TwoStageDetector
 from torch import Tensor

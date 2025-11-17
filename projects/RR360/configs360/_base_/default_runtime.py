@@ -1,4 +1,4 @@
-default_scope = 'ai4rs'
+default_scope = 'mmrotate'
 
 default_hooks = dict(
     timer=dict(type='IterTimerHook'),
@@ -44,3 +44,4 @@ custom_imports = dict(
         # 'projects.RR360.models'
     ],
     allow_failed_imports=False)
+

@@ -13,7 +13,7 @@ from mmengine.model import constant_init, kaiming_init
 from mmengine.utils.dl_utils.parrots_wrapper import _BatchNorm, _InstanceNorm
 from mmengine.model import BaseModule
 from mmdet.utils import ConfigType, OptConfigType, OptMultiConfig
-from ai4rs.models.utils.enn import (ennConv, ennTrivialConv, build_enn_norm_layer,
+from mmrotate.models.utils.enn import (ennConv, ennTrivialConv, build_enn_norm_layer,
                                        ennReLU, ennMaxPool, build_enn_divide_feature, N)
 
 

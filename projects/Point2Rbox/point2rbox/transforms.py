@@ -1,6 +1,6 @@
-# Copyright (c) ai4rs. All rights reserved.
+# Copyright (c) mmrotate. All rights reserved.
 from mmcv.transforms import BaseTransform
-from ai4rs.registry import TRANSFORMS
+from mmrotate.registry import TRANSFORMS
 
 @TRANSFORMS.register_module()
 class RBox2Point(BaseTransform):

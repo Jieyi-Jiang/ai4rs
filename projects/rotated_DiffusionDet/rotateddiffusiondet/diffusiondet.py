@@ -1,8 +1,8 @@
-# Copyright (c) ai4rs. All rights reserved.
+# Copyright (c) mmrotate. All rights reserved.
 import torch
 from torch import Tensor
 from mmdet.models import SingleStageDetector
-from ai4rs.registry import MODELS
+from mmrotate.registry import MODELS
 from mmdet.utils import ConfigType, OptConfigType, OptMultiConfig
 from mmdet.structures import OptSampleList
 from typing import List, Tuple
@@ -65,3 +65,4 @@ class DiffusionDet(SingleStageDetector):
         results = (pred_logits, pred_bboxes, angle_cls)
 
         return results
+

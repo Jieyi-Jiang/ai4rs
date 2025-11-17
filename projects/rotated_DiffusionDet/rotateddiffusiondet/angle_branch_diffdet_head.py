@@ -1,4 +1,4 @@
-# Copyright (c) ai4rs. All rights reserved.
+# Copyright (c) mmrotate. All rights reserved.
 # other
 import copy
 import math
@@ -20,8 +20,8 @@ from mmdet.structures import SampleList
 from mmdet.structures.bbox import (bbox2roi, bbox_cxcywh_to_xyxy,
                                    bbox_xyxy_to_cxcywh)
 from mmdet.utils import InstanceList
-# ai4rs
-from ai4rs.registry import MODELS, TASK_UTILS
+# mmrotate
+from mmrotate.registry import MODELS, TASK_UTILS
 # local
 from .transforms import scale_rboxes, get_rbox_wh
 
@@ -1016,3 +1016,4 @@ class DynamicConv(nn.Module):
         features = self.activation(features)
 
         return features
+

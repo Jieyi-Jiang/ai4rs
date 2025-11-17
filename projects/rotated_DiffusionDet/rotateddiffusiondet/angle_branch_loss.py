@@ -1,4 +1,4 @@
-# Copyright (c) ai4rs. All rights reserved.
+# Copyright (c) mmrotate. All rights reserved.
 from typing import List, Tuple, Union
 import torch
 import torch.nn as nn
@@ -7,7 +7,7 @@ from mmengine.config import ConfigDict
 from mmengine.structures import InstanceData
 from mmdet.structures.bbox import bbox_cxcywh_to_xyxy, bbox_xyxy_to_cxcywh
 from mmdet.utils import ConfigType
-from ai4rs.registry import MODELS, TASK_UTILS
+from mmrotate.registry import MODELS, TASK_UTILS
 
 
 @TASK_UTILS.register_module()
@@ -373,3 +373,4 @@ class AngleBranchDiffusionDetMatcher(nn.Module):
         matched_gt_inds = matching_matrix[fg_mask_inboxes, :].argmax(1)
 
         return fg_mask_inboxes, matched_gt_inds
+

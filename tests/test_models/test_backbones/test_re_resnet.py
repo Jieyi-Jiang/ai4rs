@@ -6,9 +6,9 @@ import torch
 from torch.nn.modules import GroupNorm
 from torch.nn.modules.batchnorm import _BatchNorm
 
-from ai4rs.models.backbones.re_resnet import (BasicBlock, Bottleneck,
+from mmrotate.models.backbones.re_resnet import (BasicBlock, Bottleneck,
                                                  ReResNet, ResLayer)
-from ai4rs.models.utils.enn import build_enn_divide_feature
+from mmrotate.models.utils.enn import build_enn_divide_feature
 
 
 def is_block(modules):
@@ -138,3 +138,4 @@ class TestReFPN(TestCase):
         self.assertEqual(feat[1].shape, torch.Size([1, 128, 4, 4]))
         self.assertEqual(feat[2].shape, torch.Size([1, 256, 2, 2]))
         self.assertEqual(feat[3].shape, torch.Size([1, 512, 1, 1]))
+

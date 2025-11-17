@@ -1,6 +1,6 @@
 import torch
 from torch import Tensor
-from ai4rs.registry import MODELS
+from mmrotate.registry import MODELS
 from mmdet.models.utils import levels_to_images
 from .oriented_ddq_fcn import OrientedDDQFCN, align_tensor
 

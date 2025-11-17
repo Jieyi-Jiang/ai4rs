@@ -5,9 +5,9 @@ import torch
 from mmengine import Config
 from mmengine.structures import InstanceData
 
-from ai4rs.models.dense_heads import R3Head, R3RefineHead
-from ai4rs.structures.bbox import RotatedBoxes
-from ai4rs.utils import register_all_modules
+from mmrotate.models.dense_heads import R3Head, R3RefineHead
+from mmrotate.structures.bbox import RotatedBoxes
+from mmrotate.utils import register_all_modules
 
 
 class TestR3Head(TestCase):
@@ -152,3 +152,4 @@ class TestR3Head(TestCase):
                            'cls loss should be non-zero')
         self.assertGreater(onegt_box_loss.item(), 0,
                            'box loss should be non-zero')
+

@@ -6,9 +6,9 @@ import torch
 from mmengine.config import Config
 from parameterized import parameterized
 
-from ai4rs.registry import MODELS
-from ai4rs.testing import demo_mm_inputs, demo_mm_proposals
-from ai4rs.utils import register_all_modules
+from mmrotate.registry import MODELS
+from mmrotate.testing import demo_mm_inputs, demo_mm_proposals
+from mmrotate.utils import register_all_modules
 
 
 def _fake_roi_head():
@@ -201,3 +201,4 @@ class TestGVRatioRoIHead(TestCase):
         proposals_list = demo_mm_proposals(
             image_shapes=image_shapes, num_proposals=100, device=device)
         roi_head.forward(feats, proposals_list)
+

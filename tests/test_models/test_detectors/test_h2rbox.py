@@ -8,8 +8,8 @@ from mmdet.structures import DetDataSample
 from mmengine.logging import MessageHub
 from parameterized import parameterized
 
-from ai4rs.testing import demo_mm_inputs, get_detector_cfg
-from ai4rs.utils import register_all_modules
+from mmrotate.testing import demo_mm_inputs, get_detector_cfg
+from mmrotate.utils import register_all_modules
 
 
 class TestSingleStageDetector(TestCase):
@@ -24,7 +24,7 @@ class TestSingleStageDetector(TestCase):
         model = get_detector_cfg(cfg_file)
         model.backbone.init_cfg = None
 
-        from ai4rs.registry import MODELS
+        from mmrotate.registry import MODELS
         detector = MODELS.build(model)
         self.assertTrue(detector.backbone)
         self.assertTrue(detector.neck)
@@ -41,7 +41,7 @@ class TestSingleStageDetector(TestCase):
         model = get_detector_cfg(cfg_file)
         model.backbone.init_cfg = None
 
-        from ai4rs.registry import MODELS
+        from mmrotate.registry import MODELS
         assert all([device in ['cpu', 'cuda'] for device in devices])
 
         for device in devices:
@@ -65,7 +65,7 @@ class TestSingleStageDetector(TestCase):
         model = get_detector_cfg(cfg_file)
         model.backbone.init_cfg = None
 
-        from ai4rs.registry import MODELS
+        from mmrotate.registry import MODELS
         assert all([device in ['cpu', 'cuda'] for device in devices])
 
         for device in devices:
@@ -93,7 +93,7 @@ class TestSingleStageDetector(TestCase):
         model = get_detector_cfg(cfg_file)
         model.backbone.init_cfg = None
 
-        from ai4rs.registry import MODELS
+        from mmrotate.registry import MODELS
         assert all([device in ['cpu', 'cuda'] for device in devices])
 
         for device in devices:
@@ -109,3 +109,4 @@ class TestSingleStageDetector(TestCase):
             data = detector.data_preprocessor(packed_inputs, False)
             batch_results = detector.forward(**data, mode='tensor')
             self.assertIsInstance(batch_results, tuple)
+

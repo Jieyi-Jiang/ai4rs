@@ -1,11 +1,11 @@
-# Copyright (c) ai4rs. All rights reserved.
+# Copyright (c) mmrotate. All rights reserved.
 from copy import deepcopy
 
 import torch
 from torch import nn
 
-from ai4rs.registry import MODELS
-from ai4rs.models.losses.gaussian_dist_loss_v1 import kld_loss, bcd_loss, gwd_loss, xy_wh_r_2_xy_sigma
+from mmrotate.registry import MODELS
+from mmrotate.models.losses.gaussian_dist_loss_v1 import kld_loss, bcd_loss, gwd_loss, xy_wh_r_2_xy_sigma
 
 def probiou_loss(pred, target, fun='log1p', tau=1.0):
     """ProbIoU loss.
@@ -147,3 +147,4 @@ class GDLoss_GauCho(nn.Module):
         return self.loss(
             pred, target, fun=self.fun, tau=self.tau, **
             _kwargs) * self.loss_weight
+

@@ -8,7 +8,7 @@ from mmcv.cnn.bricks.drop import build_dropout
 from mmcv.cnn import ConvModule
 
 from mmdet.utils import OptConfigType
-from ai4rs.registry import MODELS
+from mmrotate.registry import MODELS
 
 from .msblock_layers import (
     MSBlock_1x1_kxk_Layer,

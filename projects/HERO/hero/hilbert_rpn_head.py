@@ -13,8 +13,8 @@ from mmdet.models.utils import multi_apply
 from mmdet.structures.bbox import (BaseBoxes, get_box_tensor, get_box_wh,
                                    scale_boxes)
 from mmdet.utils import MultiConfig
-from ai4rs.registry import MODELS
-from ai4rs.structures.bbox import rbox2hbox
+from mmrotate.registry import MODELS
+from mmrotate.structures.bbox import rbox2hbox
 from projects.HERO.hero.hilbert_cross_attention import HilbertCrossScaleAttention
 from projects.HERO.hero.HPFormer import FastHilbertTransform, FastRowMajorTransform, FastSnakeTransform, \
     FastMortonTransform, FastPeanoTransform
@@ -135,7 +135,7 @@ class HilbertRPNHead(RPNHead):
         B, C, L = x.shape
         H = int(math.sqrt(L))
         W = H
-        if self.use_hpformer_unflatten:  # todo: hilbert填数
+        if self.use_hpformer_unflatten:  # todo: hilbert濉暟
             x_rec = self.HPFormer[self._layer_idx].unflatten(x)
             self._layer_idx += 1
         else:

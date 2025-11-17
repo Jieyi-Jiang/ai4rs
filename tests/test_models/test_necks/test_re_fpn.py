@@ -5,8 +5,8 @@ import e2cnn.nn as enn
 import torch
 from torch.nn.modules.batchnorm import _BatchNorm
 
-from ai4rs.models.necks import ReFPN
-from ai4rs.models.utils.enn import build_enn_divide_feature
+from mmrotate.models.necks import ReFPN
+from mmrotate.models.utils.enn import build_enn_divide_feature
 
 
 class TestReFPN(TestCase):
@@ -120,3 +120,4 @@ class TestReFPN(TestCase):
             if isinstance(m, _BatchNorm):
                 bn_exist = True
         self.assertTrue(bn_exist)
+

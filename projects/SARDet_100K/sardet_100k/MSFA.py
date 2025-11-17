@@ -1,4 +1,4 @@
-# Copyright (c) ai4rs. All rights reserved.
+# Copyright (c) mmrotate. All rights reserved.
 import importlib.util
 import subprocess
 import sys
@@ -9,7 +9,7 @@ import torch.nn.functional as F
 import numpy as np
 from scipy.signal.windows import gaussian
 from mmengine.model import BaseModule
-from ai4rs.registry import MODELS
+from mmrotate.registry import MODELS
 
 class Canny_layer(BaseModule):
     def __init__(self, threshold=3, init_cfg=None):
@@ -377,5 +377,6 @@ class MSFA(BaseModule):
 
     def init_weights(self):
         super(MSFA, self).init_weights()
+
 
 

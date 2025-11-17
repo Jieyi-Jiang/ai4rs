@@ -1,4 +1,4 @@
-# Copyright (c) ai4rs Corporation.
+# Copyright (c) mmrotate Corporation.
 import torch
 import torch.nn as nn
 from mmcv.cnn.bricks import DropPath
@@ -10,7 +10,7 @@ import os
 import copy
 import torch.nn.functional as F
 from mmcv.cnn import build_norm_layer
-from ai4rs.registry import MODELS
+from mmrotate.registry import MODELS
 from .blurpool import BlurPool
 
 

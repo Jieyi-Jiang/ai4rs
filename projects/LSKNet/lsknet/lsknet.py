@@ -10,7 +10,7 @@ from mmengine.model import (BaseModule, constant_init, normal_init,
                             trunc_normal_init)
 from torch.nn.modules.utils import _pair as to_2tuple
 
-from ai4rs.registry import MODELS
+from mmrotate.registry import MODELS
 
 
 class Mlp(BaseModule):
@@ -374,3 +374,4 @@ class DWConv(nn.Module):
     def forward(self, x):
         x = self.dwconv(x)
         return x
+

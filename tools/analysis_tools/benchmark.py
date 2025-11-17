@@ -9,7 +9,7 @@ from mmengine.config import Config, DictAction
 from mmengine.dist import init_dist
 from mmengine.utils import mkdir_or_exist
 
-from ai4rs.utils import register_all_modules
+from mmrotate.utils import register_all_modules
 
 
 def parse_args():
@@ -132,3 +132,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

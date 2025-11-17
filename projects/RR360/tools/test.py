@@ -10,11 +10,11 @@ from mmengine.registry import RUNNERS
 from mmengine.runner import Runner
 from projects.RR360.structures.bbox import RotatedBoxes
 
-import ai4rs.structures
-from ai4rs.utils import register_all_modules
+import mmrotate.structures
+from mmrotate.utils import register_all_modules
 
 # TODO : Refactoring with registry build
-ai4rs.structures.bbox.RotatedBoxes = RotatedBoxes
+mmrotate.structures.bbox.RotatedBoxes = RotatedBoxes
 
 
 # TODO: support fuse_conv_bn and format_only
@@ -131,3 +131,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

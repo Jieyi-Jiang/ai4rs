@@ -3,7 +3,7 @@ import torch
 import e2cnn.nn as enn
 from e2cnn import gspaces
 
-from ai4rs.models.utils.enn import build_enn_trivial_feature, build_enn_divide_feature
+from mmrotate.models.utils.enn import build_enn_trivial_feature, build_enn_divide_feature
 from projects.MessDet.messdet.re_cspnext import RECSPNeXt
 from projects.MessDet.messdet.re_cspnext_pafpn import RECSPNeXtPAFPN
 
@@ -39,4 +39,5 @@ if __name__ == "__main__":
         y_transformed_from_x = y.transform(g)
         print(f'For {g*45} angle rotation, model\'s equivariance:','YES' if torch.allclose(y_from_x_transformed.tensor, y_transformed_from_x.tensor, atol=1e-7) else 'NO')
         print(f'Equivariance Errors: {equivariance_error(y_from_x_transformed.tensor, y_transformed_from_x.tensor)}')
+
 

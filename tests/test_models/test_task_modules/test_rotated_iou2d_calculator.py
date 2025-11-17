@@ -6,10 +6,10 @@ import torch
 from mmdet.structures.bbox import HorizontalBoxes
 from mmengine.testing import assert_allclose
 
-from ai4rs.models.task_modules import (FakeRBboxOverlaps2D,
+from mmrotate.models.task_modules import (FakeRBboxOverlaps2D,
                                           QBbox2HBboxOverlaps2D,
                                           RBboxOverlaps2D)
-from ai4rs.structures.bbox import (QuadriBoxes, RotatedBoxes,
+from mmrotate.structures.bbox import (QuadriBoxes, RotatedBoxes,
                                       rbbox_overlaps, rbox2qbox)
 
 
@@ -184,3 +184,4 @@ class TestRBoxOverlaps2D(TestCase):
         ious = overlap(bboxes1, bboxes2, 'iou')
         self.assertTrue(torch.all(ious >= -1) and torch.all(ious <= 1))
         self.assertEqual(ious.size(), (num_bbox1, num_bbox2))
+

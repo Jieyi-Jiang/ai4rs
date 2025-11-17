@@ -9,8 +9,8 @@ from mmdet.structures import DetDataSample
 from mmdet.structures.mask import BitmapMasks
 from mmengine.structures import InstanceData
 
-from ai4rs.structures.bbox import RotatedBoxes
-from ai4rs.visualization import RotLocalVisualizer
+from mmrotate.structures.bbox import RotatedBoxes
+from mmrotate.visualization import RotLocalVisualizer
 
 
 def _rand_rbboxes(num_boxes, h, w):
@@ -87,3 +87,4 @@ class TestRotLocalVisualizer(TestCase):
         drawn_img = cv2.imread(out_file)
         assert drawn_img.shape == out_shape
         os.remove(out_file)
+

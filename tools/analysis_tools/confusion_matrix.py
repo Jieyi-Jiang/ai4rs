@@ -12,8 +12,8 @@ from mmengine import Config, DictAction
 from mmengine.fileio import load
 from mmengine.utils import ProgressBar
 
-from ai4rs.structures.bbox import qbox2rbox, rbbox_overlaps
-from ai4rs.utils import register_all_modules
+from mmrotate.structures.bbox import qbox2rbox, rbbox_overlaps
+from mmrotate.utils import register_all_modules
 
 
 def parse_args():
@@ -274,3 +274,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

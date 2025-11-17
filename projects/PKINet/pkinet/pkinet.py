@@ -1,4 +1,4 @@
-# Copyright (c) ai4rs. All rights reserved.
+# Copyright (c) mmrotate. All rights reserved.
 import math
 from typing import Optional, Union, Sequence
 
@@ -11,7 +11,7 @@ from mmengine.model import BaseModule, constant_init
 from mmengine.model.weight_init import trunc_normal_init, normal_init
 from mmengine.logging import MMLogger
 
-from ai4rs.registry import MODELS
+from mmrotate.registry import MODELS
 
 def autopad(kernel_size: int, padding: int = None, dilation: int = 1):
     assert kernel_size % 2 == 1, 'if use autopad, kernel size must be odd'

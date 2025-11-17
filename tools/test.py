@@ -9,7 +9,7 @@ from mmengine.evaluator import DumpResults
 from mmengine.registry import RUNNERS
 from mmengine.runner import Runner
 
-from ai4rs.utils import register_all_modules
+from mmrotate.utils import register_all_modules
 
 
 # TODO: support fuse_conv_bn and format_only
@@ -128,3 +128,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

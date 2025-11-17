@@ -1,4 +1,4 @@
-# Copyright (c) ai4rs. All rights reserved.
+# Copyright (c) mmrotate. All rights reserved.
 import copy
 import math
 import cv2
@@ -18,8 +18,8 @@ from mmdet.structures import DetDataSample, SampleList
 from mmdet.structures.bbox import get_box_tensor
 from mmdet.utils import ConfigType, InstanceList, OptConfigType, OptMultiConfig
 from mmengine.structures import InstanceData
-from ai4rs.registry import MODELS
-from ai4rs.structures.bbox import RotatedBoxes, rbox2hbox, hbox2rbox
+from mmrotate.registry import MODELS
+from mmrotate.structures.bbox import RotatedBoxes, rbox2hbox, hbox2rbox
 
 from .ted import TED
 
@@ -143,7 +143,7 @@ class Point2RBoxV2(SingleStageDetector):
         self.ted_model = TED()
         for param in self.ted_model.parameters():
             param.requires_grad = False
-        ted_model_url = 'https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/' \
+        ted_model_url = 'https://www.modelscope.cn/models/wokaikaixinxin/mmrotate/' \
                         'resolve/master/Point2Rbox_v2/ted.pth'
         state_dict = load_state_dict_from_url(ted_model_url, progress=True)
         self.ted_model.load_state_dict(state_dict)

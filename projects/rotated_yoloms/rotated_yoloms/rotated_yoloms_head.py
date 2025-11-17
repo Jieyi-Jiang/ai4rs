@@ -1,7 +1,7 @@
 from torch import nn
 from mmcv.cnn import ConvModule
-from ai4rs.registry import MODELS
-from ai4rs.models.dense_heads.rotated_rtmdet_head import RotatedRTMDetSepBNHead
+from mmrotate.registry import MODELS
+from mmrotate.models.dense_heads.rotated_rtmdet_head import RotatedRTMDetSepBNHead
 
 def autopad(k, p=None):  # kernel, padding
     # Pad to 'same'

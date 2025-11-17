@@ -1,4 +1,4 @@
-# Copyright (c) ai4rs. All rights reserved.
+# Copyright (c) mmrotate. All rights reserved.
 import os, copy, math
 from typing import Dict, List, Optional, Tuple
 
@@ -16,9 +16,9 @@ from mmengine import ConfigDict
 from mmengine.structures import InstanceData
 from torch import Tensor
 
-from ai4rs.registry import MODELS, TASK_UTILS
-from ai4rs.structures import RotatedBoxes, rbox2qbox, hbox2rbox, rbox2hbox
-from ai4rs.models.losses.gaussian_dist_loss import xy_wh_r_2_xy_sigma, gwd_loss
+from mmrotate.registry import MODELS, TASK_UTILS
+from mmrotate.structures import RotatedBoxes, rbox2qbox, hbox2rbox, rbox2hbox
+from mmrotate.models.losses.gaussian_dist_loss import xy_wh_r_2_xy_sigma, gwd_loss
 
 INF = 1e8
 

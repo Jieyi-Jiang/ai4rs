@@ -3,8 +3,8 @@ import torch.nn as nn
 from mmcv import ops
 from mmcv.ops import roi_align
 from mmengine.utils import to_2tuple
-from ai4rs.registry import MODELS
-from ai4rs.models.roi_heads.roi_extractors import RotatedSingleRoIExtractor
+from mmrotate.registry import MODELS
+from mmrotate.models.roi_heads.roi_extractors import RotatedSingleRoIExtractor
 
 
 @MODELS.register_module()

@@ -5,8 +5,8 @@ import torch
 from mmdet.structures.bbox import HorizontalBoxes
 from mmengine.testing import assert_allclose
 
-from ai4rs.models.task_modules.coders import MidpointOffsetCoder
-from ai4rs.structures.bbox import RotatedBoxes
+from mmrotate.models.task_modules.coders import MidpointOffsetCoder
+from mmrotate.structures.bbox import RotatedBoxes
 
 
 class TestDeltaBboxCoder(TestCase):
@@ -63,3 +63,4 @@ class TestDeltaBboxCoder(TestCase):
         deltas = torch.zeros((0, 6))
         out = coder.decode(HorizontalBoxes(rois), deltas, max_shape=(32, 32))
         self.assertEqual((0, 5), out.shape)
+

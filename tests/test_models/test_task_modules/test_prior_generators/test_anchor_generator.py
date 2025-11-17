@@ -4,9 +4,9 @@ from unittest import TestCase
 import torch
 from mmengine.testing import assert_allclose
 
-from ai4rs.registry import TASK_UTILS
-from ai4rs.structures.bbox import RotatedBoxes
-from ai4rs.utils import register_all_modules
+from mmrotate.registry import TASK_UTILS
+from mmrotate.structures.bbox import RotatedBoxes
+from mmrotate.utils import register_all_modules
 
 
 class TestFakeRotatedAnchorGenerator(TestCase):
@@ -30,7 +30,7 @@ class TestFakeRotatedAnchorGenerator(TestCase):
         self.assertIsNotNone(anchor_generator)
 
     def test_strides(self):
-        from ai4rs.models.task_modules.prior_generators import \
+        from mmrotate.models.task_modules.prior_generators import \
             FakeRotatedAnchorGenerator
 
         # Square strides
@@ -68,3 +68,4 @@ class TestPseudoRotatedAnchorGenerator(TestCase):
                          anchor_generator.num_base_anchors)
         self.assertEqual(anchor_generator.num_base_priors, [1, 1, 1, 1, 1])
         self.assertIsNotNone(anchor_generator)
+

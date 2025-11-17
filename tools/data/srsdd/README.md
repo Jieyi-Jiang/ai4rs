@@ -24,7 +24,7 @@ The data structure is as follows:
 
 ```none
 ai4rs
-├── ai4rs
+├── mmrotate
 ├── tools
 ├── configs
 ├── data
@@ -36,3 +36,4 @@ ai4rs
 ## Change base config
 
 Please change `data_root` in `configs/_base_/datasets/srsdd.py` to `data/srsdd/`.
+

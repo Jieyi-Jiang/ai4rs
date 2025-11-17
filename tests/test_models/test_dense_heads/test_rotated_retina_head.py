@@ -5,9 +5,9 @@ import torch
 from mmengine import Config
 from mmengine.structures import InstanceData
 
-from ai4rs.models.dense_heads import RotatedRetinaHead
-from ai4rs.structures.bbox import RotatedBoxes
-from ai4rs.utils import register_all_modules
+from mmrotate.models.dense_heads import RotatedRetinaHead
+from mmrotate.structures.bbox import RotatedBoxes
+from mmrotate.utils import register_all_modules
 
 
 class TestRotatedRetinaHead(TestCase):
@@ -199,3 +199,4 @@ class TestRotatedRetinaHead(TestCase):
         onegt_box_loss = sum(one_gt_losses['loss_bbox'])
         assert onegt_cls_loss.item() > 0, 'cls loss should be non-zero'
         assert onegt_box_loss.item() > 0, 'box loss should be non-zero'
+

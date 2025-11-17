@@ -9,7 +9,7 @@ import torch
 from mmdet.structures.mask import BitmapMasks, PolygonMasks
 from mmengine.testing import assert_allclose
 
-from ai4rs.structures.bbox import QuadriBoxes
+from mmrotate.structures.bbox import QuadriBoxes
 
 
 class TestQuadriBoxes(TestCase):
@@ -174,3 +174,4 @@ class TestQuadriBoxes(TestCase):
         boxes = QuadriBoxes.from_instance_masks(polygon_masks)
         self.assertIsInstance(boxes, QuadriBoxes)
         self.assertEqual(len(boxes), 0)
+

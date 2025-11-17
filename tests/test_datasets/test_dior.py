@@ -1,7 +1,7 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import unittest
 
-from ai4rs.datasets import DIORDataset
+from mmrotate.datasets import DIORDataset
 
 
 class TestDIORDataset(unittest.TestCase):
@@ -28,3 +28,4 @@ class TestDIORDataset(unittest.TestCase):
         self.assertEqual(len(data_list[0]['instances']), 1)
         self.assertEqual(dataset.get_cat_ids(0), [9])
         self.assertEqual(len(dataset._metainfo['classes']), 20)
+

@@ -1,4 +1,4 @@
-# Copyright (c) ai4rs. All rights reserved.
+# Copyright (c) mmrotate. All rights reserved.
 # Refer from https://github.com/Li-Qingyun/sam-mmrotate
 import argparse
 import os 
@@ -11,9 +11,9 @@ from mmdet.apis import init_detector
 from mmengine import Config
 from mmengine.registry import TRANSFORMS
 from mmengine.structures import InstanceData
-from ai4rs.structures import RotatedBoxes
-from ai4rs.utils import register_all_modules
-from ai4rs.visualization import RotLocalVisualizer
+from mmrotate.structures import RotatedBoxes
+from mmrotate.utils import register_all_modules
+from mmrotate.visualization import RotLocalVisualizer
 from segment_anything import SamPredictor, sam_model_registry
 
 

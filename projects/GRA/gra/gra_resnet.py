@@ -4,7 +4,7 @@ import torch.utils.checkpoint as cp
 from torch.nn.modules.batchnorm import _BatchNorm
 from mmengine.model import constant_init, kaiming_init, BaseModule
 from mmcv.cnn import build_conv_layer, build_norm_layer, build_plugin_layer
-from ai4rs.registry import MODELS
+from mmrotate.registry import MODELS
 from .gra_conv import GRA_conv
 from .routing_function import RountingFunction
 

@@ -7,9 +7,9 @@ from mmengine.structures import InstanceData
 from mmcv.ops.diff_iou_rotated import box2corners
 from mmdet.models.task_modules.assigners.match_cost import BaseMatchCost, BBoxL1Cost
 from mmdet.structures.bbox import BaseBoxes
-from ai4rs.models.losses.gaussian_dist_loss import (
+from mmrotate.models.losses.gaussian_dist_loss import (
     postprocess, xy_stddev_pearson_2_xy_sigma, xy_wh_r_2_xy_sigma)
-from ai4rs.structures.bbox import rbbox_overlaps
+from mmrotate.structures.bbox import rbbox_overlaps
 
 
 def box2multiple_corners(box, num_points):

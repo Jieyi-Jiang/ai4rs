@@ -5,8 +5,8 @@ from unittest import TestCase
 import torch
 from parameterized import parameterized
 
-from ai4rs.models.roi_heads.bbox_heads import RotatedShared2FCBBoxHead
-from ai4rs.utils import register_all_modules
+from mmrotate.models.roi_heads.bbox_heads import RotatedShared2FCBBoxHead
+from mmrotate.utils import register_all_modules
 
 
 class TestRotatedShared2FCBBoxHead(TestCase):
@@ -85,3 +85,4 @@ class TestRotatedShared2FCBBoxHead(TestCase):
         num_samples = 4
         feats = torch.rand((num_samples, 1, 7, 7)).to(device)
         bbox_head(x=feats)
+

@@ -1,4 +1,4 @@
-# Copyright (c) ai4rs. All rights reserved.
+# Copyright (c) mmrotate. All rights reserved.
 import math
 from typing import Optional, Union
 import torch
@@ -6,7 +6,7 @@ from torch import Tensor
 from mmengine.structures import InstanceData
 from mmcv.ops import box_iou_rotated
 from mmdet.models.task_modules.assigners.match_cost import BaseMatchCost
-from ai4rs.registry import TASK_UTILS
+from mmrotate.registry import TASK_UTILS
 
 @TASK_UTILS.register_module()
 class RBBoxL1Cost(BaseMatchCost):

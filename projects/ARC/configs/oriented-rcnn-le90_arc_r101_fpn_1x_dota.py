@@ -18,7 +18,7 @@ model = dict(
         ],
         kernel_number = 4,
         init_cfg=dict(type='Pretrained',
-                      checkpoint='https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/'
+                      checkpoint='https://www.modelscope.cn/models/wokaikaixinxin/mmrotate/resolve/master/'
                                  'ARC/ARC_ResNet101_xFFF_n4.pth')),
 )
 

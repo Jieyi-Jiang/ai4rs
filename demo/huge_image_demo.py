@@ -4,9 +4,9 @@ from argparse import ArgumentParser
 import mmcv
 from mmdet.apis import init_detector
 
-from ai4rs.apis import inference_detector_by_patches
-from ai4rs.registry import VISUALIZERS
-from ai4rs.utils import register_all_modules
+from mmrotate.apis import inference_detector_by_patches
+from mmrotate.registry import VISUALIZERS
+from mmrotate.utils import register_all_modules
 
 
 def parse_args():
@@ -57,7 +57,7 @@ def parse_args():
 
 
 def main(args):
-    # register all modules in ai4rs into the registries
+    # register all modules in mmrotate into the registries
     register_all_modules()
 
     # build the model from a config file and a checkpoint file
@@ -93,3 +93,4 @@ def main(args):
 if __name__ == '__main__':
     args = parse_args()
     main(args)
+

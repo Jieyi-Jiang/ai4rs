@@ -5,8 +5,8 @@ import torch.nn.functional as F
 from mmdet.models.losses import accuracy
 from mmdet.structures.bbox import get_box_tensor
 from mmdet.models.roi_heads.bbox_heads import Shared2FCBBoxHead
-from ai4rs.registry import MODELS
-from ai4rs.models.utils import ORConv2d
+from mmrotate.registry import MODELS
+from mmrotate.models.utils import ORConv2d
 from projects.HERO.hero.HPFormer import FastHilbertTransform
 from projects.HERO.hero.hilbert_cyclic_shift import CyclicShiftConv
 from projects.HERO.hero.cyclic_shift_direct import CyclicShiftConvDirect

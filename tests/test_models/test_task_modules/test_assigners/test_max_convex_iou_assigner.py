@@ -5,7 +5,7 @@ import torch
 from mmengine.structures import InstanceData
 from parameterized import parameterized
 
-from ai4rs.models.task_modules.assigners import MaxConvexIoUAssigner
+from mmrotate.models.task_modules.assigners import MaxConvexIoUAssigner
 
 
 class TestMaxConvexIoUAssigner(unittest.TestCase):
@@ -44,3 +44,4 @@ class TestMaxConvexIoUAssigner(unittest.TestCase):
         assign_result = assigner.assign(pred_instances, gt_instances)
         self.assertEqual(len(assign_result.gt_inds), 4)
         self.assertEqual(len(assign_result.labels), 4)
+

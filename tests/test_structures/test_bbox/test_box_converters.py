@@ -7,7 +7,7 @@ import torch
 from mmdet.structures.bbox import HorizontalBoxes
 from mmengine.testing import assert_allclose
 
-from ai4rs.structures.bbox import QuadriBoxes, RotatedBoxes
+from mmrotate.structures.bbox import QuadriBoxes, RotatedBoxes
 
 
 class TestboxModeConverters(TestCase):
@@ -76,3 +76,4 @@ class TestboxModeConverters(TestCase):
         rboxes.regularize_boxes(width_longer=False, start_angle=0)
         th_rboxes = torch.Tensor([10, 10, 4, 4, np.pi / 4]).reshape(1, 1, 5)
         assert_allclose(rboxes.tensor, th_rboxes)
+

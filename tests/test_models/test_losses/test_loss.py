@@ -4,7 +4,7 @@ import unittest
 import torch
 from parameterized import parameterized
 
-from ai4rs.models.losses import (BCConvexGIoULoss, ConvexGIoULoss, GDLoss,
+from mmrotate.models.losses import (BCConvexGIoULoss, ConvexGIoULoss, GDLoss,
                                     GDLoss_v1, H2RBoxConsistencyLoss, KFLoss,
                                     RotatedIoULoss, SpatialBorderLoss)
 
@@ -260,3 +260,4 @@ class TestH2RBoxConsistencyLoss(unittest.TestCase):
         # Test loss forward with avg_factor
         loss = loss_class()(pred, target, weight, avg_factor=10)
         assert isinstance(loss, torch.Tensor)
+

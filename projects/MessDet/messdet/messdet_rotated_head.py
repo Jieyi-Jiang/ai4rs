@@ -17,9 +17,9 @@ from mmdet.utils import (ConfigType, InstanceList, OptConfigType,
                          OptInstanceList, OptMultiConfig, reduce_mean)
 from mmdet.models.dense_heads.base_dense_head import BaseDenseHead
 from mmdet.models.task_modules.samplers import PseudoSampler
-from ai4rs.registry import MODELS, TASK_UTILS
-from ai4rs.models.utils.enn import N
-from ai4rs.structures.bbox import RotatedBoxes, distance2obb
+from mmrotate.registry import MODELS, TASK_UTILS
+from mmrotate.models.utils.enn import N
+from mmrotate.structures.bbox import RotatedBoxes, distance2obb
 from .utils import gt_instances_preprocess
 
 
@@ -316,7 +316,7 @@ class MessDetRotatedHead(BaseDenseHead):
                  obj_level_weights: List[float] = [4.0, 1.0, 0.4],
                  angle_version: str = 'le90',
                  use_hbbox_loss: bool = False,
-                 angle_coder: ConfigType = dict(type='ai4rs.PseudoAngleCoder'),
+                 angle_coder: ConfigType = dict(type='mmrotate.PseudoAngleCoder'),
                  loss_angle: OptConfigType = None,
                  train_cfg: OptConfigType = None,
                  test_cfg: OptConfigType = None,

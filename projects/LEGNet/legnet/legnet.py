@@ -1,4 +1,4 @@
-# Copyright (c) ai4rs Corporation.
+# Copyright (c) mmrotate Corporation.
 import math
 import torch
 import torch.nn as nn
@@ -13,7 +13,7 @@ from math import log
 import numpy
 import matplotlib.pyplot as plt
 from mmengine.model import BaseModule
-from ai4rs.registry import MODELS
+from mmrotate.registry import MODELS
 
 
 class DRFD(nn.Module):
@@ -48,7 +48,7 @@ class DRFD(nn.Module):
 def show_feature(out):
     out_cpu = out.cpu()
     feature_map = out_cpu.detach().numpy()
-    # [N， C, H, W] -> [H, W， C]
+    # [N锛?C, H, W] -> [H, W锛?C]
     im = numpy.squeeze(feature_map)
     im = numpy.transpose(im, [1, 2, 0])
     for c in range(24):

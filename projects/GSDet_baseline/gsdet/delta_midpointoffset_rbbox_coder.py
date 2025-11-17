@@ -5,8 +5,8 @@ import torch
 from torch import Tensor
 from mmdet.models.task_modules.coders.base_bbox_coder import BaseBBoxCoder
 from mmdet.structures.bbox import HorizontalBoxes, get_box_tensor
-from ai4rs.registry import TASK_UTILS
-from ai4rs.structures.bbox import (RotatedBoxes, rbox2hbox, rbox2qbox)
+from mmrotate.registry import TASK_UTILS
+from mmrotate.structures.bbox import (RotatedBoxes, rbox2hbox, rbox2qbox)
 from .box_converters import qbox2rbox
 
 
@@ -252,3 +252,4 @@ def delta2bbox(rois: Tensor,
     rbboxes = qbox2rbox(rectpolys).view(delta_shape[:-1] + (5, ))
 
     return rbboxes
+

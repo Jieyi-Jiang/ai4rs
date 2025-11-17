@@ -6,7 +6,7 @@ import unittest
 import numpy as np
 import torch
 
-from ai4rs.evaluation import DOTAMetric
+from mmrotate.evaluation import DOTAMetric
 
 
 class TestDOTAMetric(unittest.TestCase):
@@ -157,3 +157,4 @@ class TestDOTAMetric(unittest.TestCase):
         eval_results = metric.evaluate(size=1)
         self.assertDictEqual(eval_results, dict())
         self.assertTrue(osp.exists(f'{self.tmp_dir.name}/Task1/Task1.zip'))
+

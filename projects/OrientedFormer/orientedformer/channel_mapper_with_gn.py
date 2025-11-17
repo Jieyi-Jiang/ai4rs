@@ -3,7 +3,7 @@ from typing import List, Tuple
 import torch.nn as nn
 from torch import Tensor
 from mmdet.models.necks.channel_mapper import ChannelMapper
-from ai4rs.registry import MODELS
+from mmrotate.registry import MODELS
 
 @MODELS.register_module()
 class ChannelMapperWithGN(ChannelMapper):
@@ -18,3 +18,4 @@ class ChannelMapperWithGN(ChannelMapper):
         outs = super().forward(inputs)
         outs = [self.gn_out(out) for out in outs]
         return outs
+

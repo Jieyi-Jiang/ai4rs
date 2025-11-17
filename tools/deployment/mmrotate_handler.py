@@ -7,7 +7,7 @@ import torch
 from mmdet.apis import inference_detector, init_detector
 from ts.torch_handler.base_handler import BaseHandler
 
-import ai4rs  # noqa: F401
+import mmrotate  # noqa: F401
 
 
 class MMRotateHandler(BaseHandler):
@@ -105,3 +105,4 @@ class MMRotateHandler(BaseHandler):
                         })
 
         return output
+

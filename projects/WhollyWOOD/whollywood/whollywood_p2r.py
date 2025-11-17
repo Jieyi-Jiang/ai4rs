@@ -13,8 +13,8 @@ from mmengine.structures import InstanceData
 from torch import Tensor
 from torch.nn.functional import grid_sample
 from torchvision import transforms
-from ai4rs.registry import MODELS
-from ai4rs.structures.bbox import RotatedBoxes, rbox2hbox, hbox2rbox
+from mmrotate.registry import MODELS
+from mmrotate.structures.bbox import RotatedBoxes, rbox2hbox, hbox2rbox
 from ...Point2Rbox.point2rbox import point2rbox_generator
 
 @MODELS.register_module()

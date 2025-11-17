@@ -6,10 +6,10 @@ from mmdet.models import L1Loss
 from mmengine.structures import InstanceData
 from parameterized import parameterized
 
-from ai4rs.models.dense_heads import (RotatedRTMDetHead,
+from mmrotate.models.dense_heads import (RotatedRTMDetHead,
                                          RotatedRTMDetSepBNHead)
-from ai4rs.structures import RotatedBoxes
-from ai4rs.utils import register_all_modules
+from mmrotate.structures import RotatedBoxes
+from mmrotate.utils import register_all_modules
 
 
 class TestRotatedRTMDetHead(unittest.TestCase):
@@ -211,3 +211,4 @@ class TestRotatedRTMDetHead(unittest.TestCase):
         self.assertGreater(onegt_cls_loss, 0, 'cls loss should be non-zero')
         self.assertGreater(onegt_box_loss, 0, 'box loss should be non-zero')
         self.assertGreater(onegt_ang_loss, 0, 'angle loss should be non-zero')
+

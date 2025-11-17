@@ -5,8 +5,8 @@ import torch
 from mmdet.structures.bbox import HorizontalBoxes
 from mmengine.testing import assert_allclose
 
-from ai4rs.models.task_modules.coders import DeltaXYWHHBBoxCoder
-from ai4rs.structures.bbox import RotatedBoxes
+from mmrotate.models.task_modules.coders import DeltaXYWHHBBoxCoder
+from mmrotate.structures.bbox import RotatedBoxes
 
 
 class TestDeltaBboxCoder(TestCase):
@@ -27,3 +27,4 @@ class TestDeltaBboxCoder(TestCase):
 
         out = coder.encode(HorizontalBoxes(proposals), RotatedBoxes(gt))
         assert_allclose(expected_encode_bboxes, out)
+

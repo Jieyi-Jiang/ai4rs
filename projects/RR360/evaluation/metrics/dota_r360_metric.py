@@ -16,8 +16,8 @@ from mmengine.fileio import dump
 from mmengine.logging import MMLogger
 from projects.RR360.evaluation import eval_rbbox_head_map
 
-from ai4rs.registry import METRICS
-from ai4rs.structures.bbox import rbox2qbox
+from mmrotate.registry import METRICS
+from mmrotate.structures.bbox import rbox2qbox
 
 
 @METRICS.register_module()
@@ -359,3 +359,4 @@ class DOTAR360Metric(BaseMetric):
         else:
             raise NotImplementedError
         return eval_results
+

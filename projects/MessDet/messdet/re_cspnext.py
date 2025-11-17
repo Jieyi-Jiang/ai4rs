@@ -4,8 +4,8 @@ import torch
 import torch.nn as nn
 import e2cnn.nn as enn
 from mmdet.utils import ConfigType, OptConfigType, OptMultiConfig
-from ai4rs.models.utils.enn import build_enn_trivial_feature
-from ai4rs.models.backbones import YoloBaseBackbone
+from mmrotate.models.utils.enn import build_enn_trivial_feature
+from mmrotate.models.backbones import YoloBaseBackbone
 from .enn_bricks import ennConvModule, RECSPLayer, RESPPFBottleneck
 
 

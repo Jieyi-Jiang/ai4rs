@@ -5,9 +5,9 @@ import torch
 from mmengine import Config
 from mmengine.structures import InstanceData
 
-from ai4rs.models.dense_heads import RotatedATSSHead
-from ai4rs.structures import RotatedBoxes
-from ai4rs.utils import register_all_modules
+from mmrotate.models.dense_heads import RotatedATSSHead
+from mmrotate.structures import RotatedBoxes
+from mmrotate.utils import register_all_modules
 
 
 class TestRotatedATSSHead(unittest.TestCase):
@@ -116,3 +116,4 @@ class TestRotatedATSSHead(unittest.TestCase):
                            'box loss should be non-zero')
         self.assertGreater(onegt_centerness_loss.item(), 0,
                            'centerness loss should be non-zero')
+

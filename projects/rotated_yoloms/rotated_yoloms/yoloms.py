@@ -5,8 +5,8 @@ import torch
 import torch.nn as nn
 from mmcv.cnn import ConvModule
 from mmdet.utils import ConfigType, OptConfigType, OptMultiConfig
-from ai4rs.models.backbones.yolo_base_backbone import YoloBaseBackbone
-from ai4rs.registry import MODELS
+from mmrotate.models.backbones.yolo_base_backbone import YoloBaseBackbone
+from mmrotate.registry import MODELS
 from .msblock import MSBlock
 
 

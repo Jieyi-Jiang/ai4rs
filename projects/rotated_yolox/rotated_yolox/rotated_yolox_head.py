@@ -11,8 +11,8 @@ from mmdet.utils import (ConfigType, OptInstanceList, reduce_mean)
 from mmdet.models.dense_heads.yolox_head import YOLOXHead
 from mmdet.models.utils import multi_apply
 from mmdet.structures.bbox import bbox_cxcywh_to_xyxy
-from ai4rs.structures.bbox.transforms import norm_angle
-from ai4rs.registry import MODELS, TASK_UTILS
+from mmrotate.structures.bbox.transforms import norm_angle
+from mmrotate.registry import MODELS, TASK_UTILS
 
 @MODELS.register_module()
 class RotatedYOLOXHead(YOLOXHead):

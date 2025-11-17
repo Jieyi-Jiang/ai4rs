@@ -4,8 +4,8 @@ import torch.nn as nn
 import torch
 from e2cnn.nn import IdentityModule
 from mmdet.utils import ConfigType, OptMultiConfig
-from ai4rs.models.necks import BaseYOLONeck
-from ai4rs.models.utils.enn import ennInterpolate, build_enn_divide_feature
+from mmrotate.models.necks import BaseYOLONeck
+from mmrotate.models.utils.enn import ennInterpolate, build_enn_divide_feature
 from .enn_bricks import ennConvModule, RECSPLayer, ennConcat
 
 

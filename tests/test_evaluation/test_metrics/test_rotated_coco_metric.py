@@ -8,7 +8,7 @@ import pycocotools.mask as mask_util
 import torch
 from mmengine.fileio import dump
 
-from ai4rs.evaluation import RotatedCocoMetric
+from mmrotate.evaluation import RotatedCocoMetric
 
 
 class TestRotatedCocoMetric(TestCase):
@@ -347,3 +347,4 @@ class TestRotatedCocoMetric(TestCase):
         eval_results = coco_metric.evaluate(size=1)
         self.assertDictEqual(eval_results, dict())
         self.assertTrue(osp.exists(f'{self.tmp_dir.name}/test.bbox.json'))
+

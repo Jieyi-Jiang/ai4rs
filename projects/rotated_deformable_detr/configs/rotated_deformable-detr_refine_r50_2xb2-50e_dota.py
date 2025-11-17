@@ -8,7 +8,7 @@ from mmdet.models.backbones import ResNet
 from mmdet.models.necks import ChannelMapper
 from mmdet.models.losses import FocalLoss, L1Loss
 from mmdet.models.task_modules import FocalLossCost, HungarianAssigner
-from ai4rs.models.losses import GDLoss
+from mmrotate.models.losses import GDLoss
 from projects.rotated_deformable_detr.rotated_deformable_detr import (RotatedDeformableDETR,
     RotatedDeformableDETRHead, GDCost, RBoxL1Cost,)
 

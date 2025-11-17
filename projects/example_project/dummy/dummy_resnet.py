@@ -1,6 +1,6 @@
 from mmdet.models.backbones import ResNet
 
-from ai4rs.registry import MODELS
+from mmrotate.registry import MODELS
 
 
 @MODELS.register_module()
@@ -13,3 +13,4 @@ class DummyResNet(ResNet):
     def __init__(self, **kwargs) -> None:
         print('Hello world!')
         super().__init__(**kwargs)
+
