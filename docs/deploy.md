@@ -1,5 +1,5 @@
 # AI4RS Deployment
-______________________________________________________________________
+
 
 ## TensorRT
 
@@ -7,7 +7,7 @@ ______________________________________________________________________
 
 #### Install ai4rs
 
-Please follow the [installation guide](../README.md) to install ai4rs.
+Please follow the [installation guide](../README.md#installation-%EF%B8%8F) to install ai4rs.
 
 #### Install mmdeploy
 
@@ -46,17 +46,16 @@ export LD_LIBRARY_PATH=${TENSORRT_DIR}/lib:$LD_LIBRARY_PATH
 ```
 cd mmdeploy
 
-# download rotated-faster-rcnn model from mmrotate model zoo
-mim download mmrotate --config rotated-faster-rcnn-le90_r50_fpn_1x_dota --dest .
+# for example, download rotated-faster-rcnn model from mmrotate model zoo
 wget https://github.com/open-mmlab/mmrotate/raw/main/demo/dota_demo.jpg
 
 # convert model
 python tools/deploy.py \
 configs/mmrotate/rotated-detection_tensorrt-fp16_static-1024x1024.py \
-rotated-faster-rcnn-le90_r50_fpn_1x_dota.py \
+/root/ai4rs/configs/rotated_faster_rcnn/rotated-faster-rcnn-le90_r50_fpn_1x_dota.py \
 rotated_faster_rcnn_r50_fpn_1x_dota_le90-0393aa5c.pth \
 dota_demo.jpg \
---work-dir mmdeploy_models/mmrotate/ort \
+--work-dir mmdeploy_models/ai4rs/fasterrcnn \
 --device cuda \
 --dump-info
 ```
@@ -70,7 +69,7 @@ from mmdeploy_runtime import RotatedDetector
 import cv2
 import numpy as np
 img = cv2.imread('./dota_demo.jpg')
-detector = RotatedDetector(model_path='./mmdeploy_models/ai4rs/ort', device_name='cuda', device_id=0)
+detector = RotatedDetector(model_path='./mmdeploy_models/ai4rs/fasterrcnn', device_name='cuda', device_id=0)
 det = detector(img)
 
 boxes = det[0][:,:-1]
