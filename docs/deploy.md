@@ -52,7 +52,10 @@ echo $TENSORRT_DIR
 
 
 ### Convert tensorrt model
-```
+
+|       |       |
+| :---: | :---: | 
+|   rotated_rtmdet_s-3x-dota.py    |   ```
 cd mmdeploy
 
 # for example, download rtmdet-s model from mmrotate model zoo
@@ -68,7 +71,10 @@ dota_demo.jpg \
 --work-dir mmdeploy_models/ai4rs/rtmdet_s \
 --device cuda:0 \
 --dump-info
-```
+```    |
+|       |       |
+|       |       |
+
 
 ### Model inference
 
