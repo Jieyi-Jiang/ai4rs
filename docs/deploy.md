@@ -30,6 +30,7 @@ check CUDA  version
 ```
 python -c "import torch; print(torch.version.cuda)"
 ```
+check python version
 
 download TensorRT CUDA x.x tar package from [NVIDIA](https://developer.nvidia.com/tensorrt), and extract it to the current directory
 
@@ -41,27 +42,35 @@ pip install TensorRT-8.6.1.6/python/tensorrt-8.6.1-cp310-none-linux_x86_64.whl
 export TENSORRT_DIR=$(pwd)/TensorRT-8.6.1.6
 export LD_LIBRARY_PATH=${TENSORRT_DIR}/lib:$LD_LIBRARY_PATH
 ```
+check
+```
+echo $LD_LIBRARY_PATH
+echo $TENSORRT_DIR
+# /root/TensorRT-8.6.1.6/lib:/usr/local/cuda-10.2/lib64:
+# /root/TensorRT-8.6.1.6
+```
+
 
 ### Convert tensorrt model
 ```
 cd mmdeploy
 
-# for example, download rotated-faster-rcnn model from mmrotate model zoo
+# for example, download rtmdet-s model from mmrotate model zoo
+wget https://download.openmmlab.com/mmrotate/v1.0/rotated_rtmdet/rotated_rtmdet_s-3x-dota/rotated_rtmdet_s-3x-dota-11f6ccf5.pth
 wget https://github.com/open-mmlab/mmrotate/raw/main/demo/dota_demo.jpg
 
 # convert model
 python tools/deploy.py \
 configs/mmrotate/rotated-detection_tensorrt-fp16_static-1024x1024.py \
-/root/ai4rs/configs/rotated_faster_rcnn/rotated-faster-rcnn-le90_r50_fpn_1x_dota.py \
-rotated_faster_rcnn_r50_fpn_1x_dota_le90-0393aa5c.pth \
+/root/ai4rs/configs/rotated_rtmdet/rotated_rtmdet_s-3x-dota.py \
+rotated_rtmdet_s-3x-dota-11f6ccf5.pth \
 dota_demo.jpg \
---work-dir mmdeploy_models/ai4rs/fasterrcnn \
---device cuda \
+--work-dir mmdeploy_models/ai4rs/rtmdet_s \
+--device cuda:0 \
 --dump-info
 ```
 
 ### Model inference
-
 
 #### SDK model inference
 ```
@@ -127,8 +136,97 @@ For example
 ```
 python tools/test.py \
     configs/mmrotate/rotated-detection_tensorrt-fp16_static-1024x1024.py \
-    rotated-faster-rcnn-le90_r50_fpn_1x_dota.py \
-    --model ./mmdeploy_models/ai4rs/ort/end2end.engine \
-    --device cuda \
+    /root/ai4rs/configs/rotated_rtmdet/rotated_rtmdet_s-3x-dota.py \
+    --model  mmdeploy_models/ai4rs/rtmdet_s/end2end.engine \
+    --device cuda:0 \
     --speed-test
+```
+Out
+```
+mmengine - INFO - Epoch(test) [   50/10833]    eta: 0:28:13  time: 0.1191  data_time: 0.0456  memory: 39  
+mmengine - INFO - Epoch(test) [  100/10833]    eta: 0:23:52  time: 0.1192  data_time: 0.0125  memory: 39  
+mmengine - INFO - [tensorrt]-110 times per count: 21.84 ms, 45.79 FPS
+mmengine - INFO - Epoch(test) [  150/10833]    eta: 0:22:14  time: 0.1098  data_time: 0.0207  memory: 39  
+mmengine - INFO - Epoch(test) [  200/10833]    eta: 0:21:29  time: 0.1204  data_time: 0.0457  memory: 39  
+mmengine - INFO - [tensorrt]-210 times per count: 23.65 ms, 42.29 FPS
+mmengine - INFO - Epoch(test) [  250/10833]    eta: 0:21:07  time: 0.1095  data_time: 0.0199  memory: 39  
+mmengine - INFO - Epoch(test) [  300/10833]    eta: 0:20:44  time: 0.1005  data_time: 0.0197  memory: 39  
+mmengine - INFO - [tensorrt]-310 times per count: 27.82 ms, 35.94 FPS
+mmengine - INFO - Epoch(test) [  350/10833]    eta: 0:20:23  time: 0.1106  data_time: 0.0113  memory: 39  
+mmengine - INFO - Epoch(test) [  400/10833]    eta: 0:20:03  time: 0.1086  data_time: 0.0121  memory: 39  
+mmengine - INFO - [tensorrt]-410 times per count: 26.91 ms, 37.15 FPS
+mmengine - INFO - Epoch(test) [  450/10833]    eta: 0:19:51  time: 0.1189  data_time: 0.0286  memory: 39  
+mmengine - INFO - Epoch(test) [  500/10833]    eta: 0:19:34  time: 0.1106  data_time: 0.0370  memory: 39  
+```
+
+### Model profile
+```
+python tools/profiler.py \
+${DEPLOY_CFG} \
+${MODEL_CFG} \
+${IMAGE_DIR} \
+--model ${BACKEND_MODEL_FILES} \
+--device ${DEVICE} \
+--shape ${SHAPE} \
+--warmup ${WARM_UP} \
+--num-iter ${NUM_ITER} \
+--batch-size ${BATCH_SIZE} \
+--img-ext ${IMG_EXT}
+```
+For example
+```
+python tools/profiler.py \
+    configs/mmrotate/rotated-detection_tensorrt-fp16_static-1024x1024.py \
+    /root/ai4rs/configs/rotated_rtmdet/rotated_rtmdet_s-3x-dota.py \
+    /root/split_ss_dota/test/images/ \
+    --model mmdeploy_models/ai4rs/rtmdet_s/end2end.engine \
+    --device cuda:0 \
+    --shape 1024x1024 \
+    --warmup 100  \
+    --num-iter 800
+```
+Out
+```
+
+- mmengine - WARNING - Failed to search registry with scope "mmrotate" in the "Codebases" registry tree. As a workaround, the current "Codebases" registry in "mmdeploy" is used to build instance. This may cause unexpected failure when running the built modules. Please check whether "mmrotate" is a correct scope, or whether the registry is initialized.
+- mmengine - WARNING - Failed to search registry with scope "mmrotate" in the "mmrotate_tasks" registry tree. As a workaround, the current "mmrotate_tasks" registry in "mmdeploy" is used to build instance. This may cause unexpected failure when running the built modules. Please check whether "mmrotate" is a correct scope, or whether the registry is initialized.
+- mmengine - WARNING - Failed to search registry with scope "mmrotate" in the "backend_detectors" registry tree. As a workaround, the current "backend_detectors" registry in "mmdeploy" is used to build instance. This may cause unexpected failure when running the built modules. Please check whether "mmrotate" is a correct scope, or whether the registry is initialized.
+- mmengine - INFO - Successfully loaded tensorrt plugins from /root/anaconda3/envs/ai4rs/lib/python3.10/site-packages/mmdeploy/lib/libmmdeploy_tensorrt_ops.so
+- mmengine - INFO - Successfully loaded tensorrt plugins from /root/anaconda3/envs/ai4rs/lib/python3.10/site-packages/mmdeploy/lib/libmmdeploy_tensorrt_ops.so
+[TRT] [W] CUDA lazy loading is not enabled. Enabling it can significantly reduce device memory usage and speed up TensorRT initialization. See "Lazy Loading" section of CUDA documentation https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#lazy-loading
+11/18 19:39:04 - mmengine - INFO - Found totally 10833 image files in /root/split_ss_dota/test/images/
+11/18 19:39:28 - mmengine - INFO - [tensorrt]-120 times per count: 4.83 ms, 207.25 FPS
+11/18 19:39:31 - mmengine - INFO - [tensorrt]-140 times per count: 4.89 ms, 204.47 FPS
+...
+11/18 19:41:57 - mmengine - INFO - [tensorrt]-880 times per count: 7.03 ms, 142.15 FPS
+11/18 19:42:01 - mmengine - INFO - [tensorrt]-900 times per count: 7.14 ms, 140.06 FPS
+----- Settings:
++------------+-----------+
+| batch size |     1     |
+|   shape    | 1024x1024 |
+| iterations |    800    |
+|   warmup   |    100    |
++------------+-----------+
+----- Results:
++--------+------------+---------+
+| Stats  | Latency/ms |   FPS   |
++--------+------------+---------+
+|  Mean  |   7.140    | 140.062 |
+| Median |   4.735    | 211.192 |
+|  Min   |   4.136    | 241.755 |
+|  Max   |   85.282   |  11.726 |
++--------+------------+---------+
+```
+
+
+### BUG
+
+BUG 1:
+```
+raise TypeError(f'engine should be str or trt.ICudaEngine, \ TypeError: engine should be str or trt.ICudaEngine, but given: <class 'NoneType'>
+```
+Solution 1:
+```
+export TENSORRT_DIR=$(pwd)/TensorRT-8.6.1.6
+export LD_LIBRARY_PATH=${TENSORRT_DIR}/lib:$LD_LIBRARY_PATH
 ```
