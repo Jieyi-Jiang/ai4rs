@@ -55,7 +55,8 @@ echo $TENSORRT_DIR
 
 |       |       |
 | :---: | :---: | 
-|   rotated_rtmdet_s-3x-dota.py    |   ```
+|   rotated_rtmdet_s-3x-dota.py    |  
+ ```
 cd mmdeploy
 
 # for example, download rtmdet-s model from mmrotate model zoo
