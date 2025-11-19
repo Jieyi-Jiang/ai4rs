@@ -11,7 +11,7 @@ Please follow the [installation guide](../README.md#installation-%EF%B8%8F) to i
 
 #### Install mmdeploy
 
-**Method I**: Install precompiled package
+Install precompiled package
 
 1.install MMDeploy model converter
 ```
