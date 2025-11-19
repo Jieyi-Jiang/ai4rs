@@ -53,24 +53,11 @@ echo $TENSORRT_DIR
 
 ### Convert tensorrt model
 
-`rotated_rtmdet_s-3x-dota.py`
- ```
-cd mmdeploy
+|  Method  |  Pth     |  Command |
+| :-----:  | :-----:  | :-----:  |
+|`rotated_rtmdet_s-3x-dota.py` | [pth](https://download.openmmlab.com/mmrotate/v1.0/rotated_rtmdet/rotated_rtmdet_s-3x-dota/rotated_rtmdet_s-3x-dota-11f6ccf5.pth) | python /root/mmdeploy/tools/deploy.py /root/mmdeploy/configs/mmrotate/rotated-detection_tensorrt-fp16_static-1024x1024.py configs/rotated_rtmdet/rotated_rtmdet_s-3x-dota.py rotated_rtmdet_s-3x-dota-11f6ccf5.pth demo/demo.jpg --work-dir mmdeploy_models/ai4rs/rtmdet_s --device cuda:0 --dump-info|
 
-# for example, download rtmdet-s model from mmrotate model zoo
-wget https://download.openmmlab.com/mmrotate/v1.0/rotated_rtmdet/rotated_rtmdet_s-3x-dota/rotated_rtmdet_s-3x-dota-11f6ccf5.pth
-wget https://github.com/open-mmlab/mmrotate/raw/main/demo/dota_demo.jpg
 
-# convert model
-python tools/deploy.py \
-configs/mmrotate/rotated-detection_tensorrt-fp16_static-1024x1024.py \
-/root/ai4rs/configs/rotated_rtmdet/rotated_rtmdet_s-3x-dota.py \
-rotated_rtmdet_s-3x-dota-11f6ccf5.pth \
-dota_demo.jpg \
---work-dir mmdeploy_models/ai4rs/rtmdet_s \
---device cuda:0 \
---dump-info
-``` 
 
 
 
