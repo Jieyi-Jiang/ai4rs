@@ -244,9 +244,6 @@ For example:
 bash tools/dist_test.sh configs/h2rbox_v2/h2rbox_v2-le90_r50_fpn-1x_dota.py work_dirs/h2rbox_v2-le90_r50_fpn-1x_dota-fa5ad1d2.pth 2
 ```
 
-## Deploy ⚡
-
-[Deploy](./docs/deploy.md)
 
 ## Getting Started 🚀
 
