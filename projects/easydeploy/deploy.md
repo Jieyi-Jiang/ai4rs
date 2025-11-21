@@ -16,8 +16,8 @@ pip install onnx-simplifier -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
 Install tensorrt  
-NOTE: Ensure TensorRT version (e.g., -cu12 suffix) matches the CUDA version in the current conda environment.  
-NOTE: Ensure TensorRT version (e.g., -cu12 suffix) matches the CUDA version in the current conda environment.  
+NOTE: Ensure TensorRT version (e.g., -cu12 suffix) matches the CUDA version in the current conda environment!!  
+NOTE: Ensure TensorRT version (e.g., -cu12 suffix) matches the CUDA version in the current conda environment!!   
 ```
 pip install tensorrt-cu12  -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
@@ -33,11 +33,16 @@ tensorrt-cu12-libs        10.14.1.48.post1          pypi_0    pypi
 #### Onnx
 
 ```
-python projects\easydeploy\tools\export_onnx_rtdetr.py
+python projects/easydeploy/tools/export_onnx_rtdetr.py
 ```
 
 #### Onnx -> Tensorrt
 
 ```
-python projects\easydeploy\tools\build_engine_rtdetr.py
+python projects/easydeploy/tools/build_engine_rtdetr.py
+```
+
+#### Visual
+```
+python projects/easydeploy/tools/image_demo_rtdetr.py
 ```
