@@ -66,7 +66,7 @@ Note: use your own path! Note: use your own path!
 python projects/easydeploy/tools/image_demo_rtdetr.py
 ```
 
-### Lantency, use trtexec
+#### Lantency, use trtexec
 ```
 /root/TensorRT-10.10.0.31/bin/trtexec --avgRuns=1000 --useSpinWait --loadEngine=/root/ai4rs/work_dirs/easydeploy/rtdetr/rtdetr_r50vd_8xb2-72e_coco_ad2bdcfe.engine
 ```
