@@ -12,12 +12,13 @@ from mmdet.models.task_modules import FocalLossCost, BBoxL1Cost, IoUCost, Hungar
 from mmdet.models.layers.ema import ExpMomentumEMA
 from mmdet.datasets.transforms import (FilterAnnotations, Resize,
                                        RandomFlip, PackDetInputs, LoadAnnotations)
-from projects.rtdetr.rtdetr import (BatchSyncRandomResize, PhotoMetricDistortion, MinIoURandomCrop, Expand,
+# from projects.rtdetr.rtdetr import (BatchSyncRandomResize, PhotoMetricDistortion, MinIoURandomCrop, Expand,
+#                                     RTDETR, RTDETRFPN, RTDETRHead, RTDETRVarifocalLoss, ResNetV1dPaddle)
+from projects.rtdetr_o.rtdetr import (BatchSyncRandomResize, PhotoMetricDistortion, MinIoURandomCrop, Expand,
                                     RTDETR, RTDETRFPN, RTDETRHead, RTDETRVarifocalLoss, ResNetV1dPaddle)
 
-
 with read_base():
-    from .coco_detection import *
+    from .dior_detection import *
     from .default_runtime import *
 
 pretrained = ('https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/'
