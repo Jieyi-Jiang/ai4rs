@@ -1,6 +1,6 @@
 from mmengine.config import read_base
 with read_base():
-    from .rtdetr_r50vd_8xb2_72e_coco import *
+    from .rtdetr_o_r50vd_8xb2_72e_coco import *
 
 pretrained = ('https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/'
               'master/rtdetr/resnet18vd_pretrained_55f5a0d6.pth')  # noqa
