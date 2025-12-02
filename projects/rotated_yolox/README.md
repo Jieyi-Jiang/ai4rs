@@ -40,6 +40,20 @@ AP50: 0.749433522358599
 AP75: 0.4948977689064668  
 mAP: 0.46267007542788247
 
+
+|         Backbone         |  mAP  | AP50 | AP75 | Angle | lr schd |  Scale | Batch Size |                                                    Configs                                                     |                                                                                                                                                                              Download                                                                                                                                                                              |
+| :----------------------: | :---: | :---: | :-----: | :------: | :------------: | :-: | :--------: | :------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|  YOLOX-m <br> (1024,1024,200) | 49.51 | 76.70 | 54.95 |   `le90`   |      `300e`      |  single <br> scale  | 8=2gpu*<br>4img/gpu   | [rotated_yolox_m_300e_dota_le90.py](./configs/rotated_yolox_m_300e_dota_le90.py) | [all ckpt](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/files) \| [log](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_yolox/rotated_yolox_m_300e_dota_le90/20251128_095408/20251128_095408.log) \| [result](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_yolox/rotated_yolox_m_300e_dota_le90/Task1.zip) \| [last ckpt](https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/rotated_yolox/rotated_yolox_m_300e_dota_le90/epoch_300.pth) |
+
+
+This is your evaluation result for task 1 (VOC metrics):  
+mAP: 0.7669546721225817  
+ap of each class: plane:0.8684170849180731, baseball-diamond:0.8639517728968095, bridge:0.5427458156752936, ground-track-field:0.7003597644813377, small-vehicle:0.8103007833301753, large-vehicle:0.8567521184687866, ship:0.8927121951978374, tennis-court:0.907139950954836, basketball-court:0.8632436842044986, storage-tank:0.8617119349667725, soccer-ball-field:0.603056391874901, roundabout:0.6552074291399157, harbor:0.7566053782569716, swimming-pool:0.7267901299600665, helicopter:0.5953256475124526  
+COCO style result:  
+AP50: 0.7669546721225817  
+AP75: 0.5494557409860242  
+mAP: 0.4951261405231623
+
 **Note**: Since we configured `auto_scale_lr = dict(base_batch_size=64, enable=True)` in `rotated_yolox_s_300e_dota_le90.py`, the learning rate will be automatically scaled. Specifically, with our actual batch size of `8=2gpu*4img/gpu`, the learning rate is automatically reduced to 1/8 of the original value.
 
 **DIOR**
