@@ -8,7 +8,7 @@ from mmengine.model import BaseModule
 from mmcv.cnn import ConvModule, build_norm_layer
 from mmdet.models.layers.transformer.detr_layers import DetrTransformerEncoder
 from mmdet.models.layers.transformer.dino_layers import DinoTransformerDecoder
-from mmdet.registry import MODELS
+from mmrotate.registry import MODELS
 from mmdet.utils import ConfigType, OptConfigType, OptMultiConfig
 from .utils import MLP
 
@@ -313,7 +313,7 @@ class CSPLayer(BaseModule):
         x_main = self.blocks(x_main)
         return self.final_conv(x_main + x_short)
 
-
+@MODELS.register_module()
 class RTDETRFPN(BaseModule):
     """FPN of RTDETR.
 

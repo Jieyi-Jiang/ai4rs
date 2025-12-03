@@ -7,7 +7,9 @@ from mmdet.structures.bbox import bbox_cxcywh_to_xyxy, bbox_overlaps
 from mmdet.utils import InstanceList, reduce_mean
 from mmdet.models.dense_heads import DINOHead
 from .varifocal_loss import VarifocalLoss
+from mmrotate.registry import MODELS
 
+@MODELS.register_module()
 class RTDETRHead(DINOHead):
     r"""Head of the DETRs Beat YOLOs on Real-time Object Detection
 

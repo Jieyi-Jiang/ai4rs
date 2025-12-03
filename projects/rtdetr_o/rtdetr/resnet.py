@@ -1,7 +1,8 @@
 from mmdet.models.backbones import ResNetV1d
 from .res_layer import ResLayer
+from mmrotate.registry import MODELS
 
-
+@MODELS.register_module()
 class ResNetV1dPaddle(ResNetV1d):
     '''
         The downsampling in the 1st layer is different between mmdet and Paddle.

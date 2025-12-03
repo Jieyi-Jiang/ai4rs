@@ -7,8 +7,9 @@ from mmcv.cnn import Linear
 from mmdet.models.dense_heads import DeformableDETRHead
 from mmdet.models.layers import inverse_sigmoid
 from .rotated_detr_head import RotatedDETRHead
+from mmrotate.registry import MODELS
 
-
+@MODELS.register_module()
 class RotatedDeformableDETRHead(DeformableDETRHead, RotatedDETRHead):
     r"""Head of Rotated DeformableDETR
 

@@ -175,9 +175,13 @@ test_pipeline = [
         meta_keys=('img_id', 'img_path', 'ori_shape', 'img_shape',
                    'scale_factor'))
 ]
+
+my_batch_size   = 24
+my_num_workers  = 16
+
 train_dataloader = dict(
-    batch_size=4,
-    num_workers=4,
+    batch_size=my_batch_size,
+    num_workers=my_num_workers,
     persistent_workers=True,
     sampler=dict(type='DefaultSampler', shuffle=True),
     dataset=dict(
@@ -202,8 +206,8 @@ train_dataloader = dict(
         ]))
 
 val_dataloader = dict(
-    batch_size=4,
-    num_workers=4,
+    batch_size=my_batch_size,
+    num_workers=my_num_workers,
     persistent_workers=True,
     drop_last=False,
     sampler=dict(type='DefaultSampler', shuffle=False),
@@ -294,4 +298,4 @@ custom_hooks = [
 # NOTE: `auto_scale_lr` is for automatically scaling LR,
 # USER SHOULD NOT CHANGE ITS VALUES.
 # base_batch_size = (8 GPUs) x (8 samples per GPU)
-auto_scale_lr = dict(base_batch_size=64, enable=True)
+auto_scale_lr = dict(base_batch_size=my_batch_size*1, enable=True)

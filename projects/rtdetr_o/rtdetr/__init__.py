@@ -6,7 +6,7 @@ from .rtdetr_layers import RTDETRFPN
 from .varifocal_loss import RTDETRVarifocalLoss
 from .resnet import ResNetV1dPaddle
 
-__al__ = [
+__all__ = [
     'BatchSyncRandomResize',
     'MinIoURandomCrop',
     'Expand',

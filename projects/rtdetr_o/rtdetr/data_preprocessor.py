@@ -7,8 +7,9 @@ from torch import Tensor
 from mmengine.dist import barrier, broadcast, get_dist_info
 from mmengine.logging import MessageHub
 from mmdet.structures import DetDataSample
+from mmrotate.registry import MODELS
 
-
+@MODELS.register_module()
 class BatchSyncRandomResize(nn.Module):
     """Batch random resize which synchronizes the random size across ranks.
 

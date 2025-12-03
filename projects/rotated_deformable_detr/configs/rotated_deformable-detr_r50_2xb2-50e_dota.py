@@ -1,20 +1,30 @@
-from torch.optim.adamw import AdamW
-from mmengine.config import read_base
-from mmengine.runner.loops import EpochBasedTrainLoop, TestLoop, ValLoop
-from mmengine.optim.scheduler import MultiStepLR
-from mmengine.optim.optimizer import OptimWrapper
-from mmdet.models.detectors import DeformableDETR
-from mmdet.models.data_preprocessors import DetDataPreprocessor
-from mmdet.models.backbones import ResNet
-from mmdet.models.necks import ChannelMapper
-from mmdet.models.losses import FocalLoss, L1Loss
-from mmdet.models.task_modules import FocalLossCost, HungarianAssigner
-from mmrotate.models.losses import GDLoss
-from projects.rotated_deformable_detr.rotated_deformable_detr import RotatedDeformableDETRHead, GDCost, RBoxL1Cost
+# from torch.optim.adamw import AdamW
+# from mmengine.config import read_base
+# from mmengine.runner.loops import EpochBasedTrainLoop, TestLoop, ValLoop
+# from mmengine.optim.scheduler import MultiStepLR
+# from mmengine.optim.optimizer import OptimWrapper
+# from mmdet.models.detectors import DeformableDETR
+# from mmdet.models.data_preprocessors import DetDataPreprocessor
+# from mmdet.models.backbones import ResNet
+# from mmdet.models.necks import ChannelMapper
+# from mmdet.models.losses import FocalLoss, L1Loss
+# from mmdet.models.task_modules import FocalLossCost, HungarianAssigner
+# from mmrotate.models.losses import GDLoss
+# from projects.rotated_deformable_detr.rotated_deformable_detr import RotatedDeformableDETRHead, GDCost, RBoxL1Cost
 
-with read_base():
-    from configs._base_.datasets.dota import *
-    from configs._base_.default_runtime import *
+# with read_base():
+#     from configs._base_.datasets.dota import *
+#     from configs._base_.default_runtime import *
+
+_base_ = [
+    '../../../configs/_base_/datasets/dota.py',
+    '../../../configs/_base_/default_runtime.py'
+]
+
+
+custom_imports = dict(
+    imports=['projects.rotated_deformable_detr.rotated_deformable_detr'], allow_failed_imports=False)
+
 
 angle_cfg = dict(
     width_longer=True,
@@ -23,20 +33,20 @@ angle_cfg = dict(
 angle_factor=3.1415926535897932384626433832795
 
 model = dict(
-    type=DeformableDETR,
+    type='mmdet.DeformableDETR',
     num_queries=900,
     num_feature_levels=4,
     with_box_refine=False,
     as_two_stage=False,
     data_preprocessor=dict(
-        type=DetDataPreprocessor,
+        type='mmdet.DetDataPreprocessor',
         mean=[123.675, 116.28, 103.53],
         std=[58.395, 57.12, 57.375],
         bgr_to_rgb=True,
         pad_size_divisor=1,
         boxtype2tensor=False),
     backbone=dict(
-        type=ResNet,
+        type='mmdet.ResNet',
         depth=50,
         num_stages=4,
         out_indices=(1, 2, 3),
@@ -46,7 +56,7 @@ model = dict(
         style='pytorch',
         init_cfg=dict(type='Pretrained', checkpoint='torchvision://resnet50')),
     neck=dict(
-        type=ChannelMapper,
+        type='mmdet.ChannelMapper',
         in_channels=[512, 1024, 2048],
         kernel_size=1,
         out_channels=256,
@@ -78,20 +88,20 @@ model = dict(
         post_norm_cfg=None),
     positional_encoding=dict(num_feats=128, normalize=True, offset=-0.5),
     bbox_head=dict(
-        type=RotatedDeformableDETRHead,
+        type='RotatedDeformableDETRHead',
         num_classes=15,
         angle_cfg=angle_cfg,
         angle_factor=angle_factor,
         sync_cls_avg_factor=True,
         loss_cls=dict(
-            type=FocalLoss,
+            type='mmdet.FocalLoss',
             use_sigmoid=True,
             gamma=2.0,
             alpha=0.25,
             loss_weight=2.0),
-        loss_bbox=dict(type=L1Loss, loss_weight=5.0),
+        loss_bbox=dict(type='mmdet.L1Loss', loss_weight=5.0),
         loss_iou=dict(
-            type=GDLoss,
+            type='GDLoss',
             loss_type='kld',
             fun='log1p',
             tau=1,
@@ -100,12 +110,12 @@ model = dict(
     # training and testing settings
     train_cfg=dict(
         assigner=dict(
-            type=HungarianAssigner,
+            type='mmdet.HungarianAssigner',
             match_costs=[
-                dict(type=FocalLossCost, weight=2.0),
-                dict(type=RBoxL1Cost, weight=5.0, box_format='xywha', angle_factor=angle_factor),
+                dict(type='mmdet.FocalLossCost', weight=2.0),
+                dict(type='RBoxL1Cost', weight=5.0, box_format='xywha', angle_factor=angle_factor),
                 dict(
-                    type=GDCost,
+                    type='GDCost',
                     loss_type='kld',
                     fun='log1p',
                     tau=1,
@@ -114,27 +124,10 @@ model = dict(
             ])),
     test_cfg=dict(max_per_img=500))
 
-# learning policy
-max_epochs = 50
-train_cfg = dict(
-    type=EpochBasedTrainLoop, max_epochs=max_epochs, val_interval=5)
-val_cfg = dict(type=ValLoop)
-test_cfg = dict(type=TestLoop)
-
-param_scheduler = [
-    dict(
-        type=MultiStepLR,
-        begin=0,
-        end=max_epochs,
-        by_epoch=True,
-        milestones=[40],
-        gamma=0.1)
-]
-
 # optimizer
 optim_wrapper = dict(
-    type=OptimWrapper,
-    optimizer=dict(type=AdamW, lr=0.0001, weight_decay=0.0001),
+    type='OptimWrapper',
+    optimizer=dict(type='AdamW', lr=0.0001, weight_decay=0.0001),
     clip_grad=dict(max_norm=0.1, norm_type=2),
     paramwise_cfg=dict(
         custom_keys={
@@ -142,6 +135,23 @@ optim_wrapper = dict(
             'sampling_offsets': dict(lr_mult=0.1),
             'reference_points': dict(lr_mult=0.1)
         }))
+
+# learning policy
+max_epochs = 50
+train_cfg = dict(
+    type='EpochBasedTrainLoop', max_epochs=max_epochs, val_interval=5)
+val_cfg = dict(type='ValLoop')
+test_cfg = dict(type='TestLoop')
+
+param_scheduler = [
+    dict(
+        type='MultiStepLR',
+        begin=0,
+        end=max_epochs,
+        by_epoch=True,
+        milestones=[40],
+        gamma=0.1)
+]
 
 # NOTE: `auto_scale_lr` is for automatically scaling LR,
 # USER SHOULD NOT CHANGE ITS VALUES.

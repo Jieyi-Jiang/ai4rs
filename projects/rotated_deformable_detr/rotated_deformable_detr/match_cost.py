@@ -10,7 +10,7 @@ from mmdet.structures.bbox import BaseBoxes
 from mmrotate.models.losses.gaussian_dist_loss import (
     postprocess, xy_stddev_pearson_2_xy_sigma, xy_wh_r_2_xy_sigma)
 from mmrotate.structures.bbox import rbbox_overlaps
-
+from mmrotate.registry import TASK_UTILS
 
 def box2multiple_corners(box, num_points):
     B = box.size()[0]
@@ -100,7 +100,7 @@ def kld_loss(pred, target, fun='log1p', tau=1.0, alpha=1., sqrt=True):
     return postprocess(distance, fun=fun, tau=tau)
 
 
-
+@TASK_UTILS.register_module()
 class RBoxL1Cost(BBoxL1Cost):
     """BBoxL1Cost.
 
@@ -227,7 +227,7 @@ class CenterL1Cost(RBoxL1Cost):
         return bbox_cost * self.weight
 
 
-
+@TASK_UTILS.register_module()
 class GDCost(BaseMatchCost):
     """IoUCost.
 
@@ -413,7 +413,7 @@ class HausdorffCost(RBoxL1Cost):
         return bbox_cost * self.weight
 
 
-
+@TASK_UTILS.register_module()
 class RotatedIoUCost(BaseMatchCost):
     """IoUCost.
 

@@ -10,8 +10,9 @@ from mmcv.cnn import Linear
 from mmcv.cnn.bricks.transformer import FFN
 from mmdet.models.dense_heads import DETRHead
 from mmdet.utils import InstanceList, reduce_mean
+from mmrotate.registry import MODELS
 
-
+@MODELS.register_module()
 class RotatedDETRHead(DETRHead):
     r"""Head of Rotated-DETR.
 

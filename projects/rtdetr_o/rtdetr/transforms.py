@@ -5,9 +5,11 @@ from mmcv.transforms import BaseTransform
 from mmcv.transforms.utils import cache_randomness
 from numpy import random
 from mmdet.structures.bbox import HorizontalBoxes, autocast_box_type
+from mmrotate.registry import TRANSFORMS
 
 Number = Union[int, float]
 
+@TRANSFORMS.register_module()
 class PhotoMetricDistortion(BaseTransform):
     """Apply photometric distortion to image sequentially, every transformation
     is applied with a probability of 0.5. The position of random contrast is in
@@ -150,6 +152,7 @@ class PhotoMetricDistortion(BaseTransform):
         repr_str += f'hue_delta={self.hue_delta})'
         return repr_str
 
+@TRANSFORMS.register_module()
 class MinIoURandomCrop(BaseTransform):
     """Random crop the image & bboxes & masks & segmentation map, the cropped
     patches have minimum IoU requirement with original image & bboxes & masks.
@@ -315,7 +318,7 @@ class MinIoURandomCrop(BaseTransform):
         repr_str += f'bbox_clip_border={self.bbox_clip_border})'
         return repr_str
 
-
+@TRANSFORMS.register_module()
 class Expand(BaseTransform):
     """Random expand the image & bboxes & masks & segmentation map.
 

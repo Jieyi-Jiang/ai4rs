@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
 from mmdet.models.losses import weight_reduce_loss
-
+from mmrotate.registry import MODELS
 
 def varifocal_loss(pred: Tensor,
                    target: Tensor,
@@ -55,7 +55,7 @@ def varifocal_loss(pred: Tensor,
     loss = weight_reduce_loss(loss, weight, reduction, avg_factor)
     return loss
 
-
+@MODELS.register_module()
 class VarifocalLoss(nn.Module):
 
     loss_func = staticmethod(varifocal_loss)
@@ -186,7 +186,7 @@ def rtdetr_varifocal_loss(pred: Tensor,
     loss = weight_reduce_loss(loss, weight, reduction, avg_factor)
     return loss
 
-
+@MODELS.register_module()
 class RTDETRVarifocalLoss(VarifocalLoss):
     """`Varifocal Loss from RTDETR <https://arxiv.org/abs/2304.08069>`_"""
 
@@ -242,7 +242,7 @@ def deim_mal_loss(pred: Tensor,
     loss = weight_reduce_loss(loss, weight, reduction, avg_factor)
     return loss
 
-
+@MODELS.register_module()
 class DEIMMalLoss(VarifocalLoss):
     """`Mal Loss from DEIM <https://arxiv.org/abs/2412.04234>`_"""
 

@@ -6,8 +6,9 @@ from mmdet.models.detectors import DeformableDETR
 from mmdet.models.layers import (DeformableDetrTransformerEncoder,
                                  SinePositionalEncoding)
 from .rotated_deformable_detr_layers import RotatedDeformableDetrTransformerDecoder
+from mmrotate.registry import MODELS
 
-
+@MODELS.register_module()
 class RotatedDeformableDETR(DeformableDETR):
     """Rotated Deformable-DETR.
 

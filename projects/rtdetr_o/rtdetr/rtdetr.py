@@ -10,8 +10,9 @@ from mmdet.models.detectors import DINO
 from mmdet.models.detectors.deformable_detr import DeformableDETR, MultiScaleDeformableAttention
 from mmdet.structures import OptSampleList
 from projects.rtdetr.rtdetr.rtdetr_layers import RTDETRHybridEncoder, RTDETRTransformerDecoder
+from mmrotate.registry import MODELS
 
-
+@MODELS.register_module()
 class RTDETR(DINO):
     r"""Implementation of `DETRs Beat YOLOs on Real-time Object Detection
     <https://arxiv.org/abs/2304.08069>`_
