@@ -1,0 +1,109 @@
+{
+	"files": [
+		{
+			"path": "projects/rtdetr_o/rtdetr/rtdetr.py",
+			"bookmarks": [
+				{
+					"line": 198,
+					"column": 0,
+					"label": "这里output_proposals的输出维度可能不对"
+				},
+				{
+					"line": 229,
+					"column": 0,
+					"label": "CdnQueryGenerator维度有问题"
+				},
+				{
+					"line": 238,
+					"column": 76,
+					"label": "维度不对，"
+				},
+				{
+					"line": 262,
+					"column": 8,
+					"label": "gen_encoder_output_proposals定义的位置"
+				},
+				{
+					"line": 287,
+					"column": 22,
+					"label": "这里的维度要改，输出维度是4，要改成5"
+				},
+				{
+					"line": 307,
+					"column": 73,
+					"label": "这里决定维度是4还是5"
+				}
+			]
+		},
+		{
+			"path": "../../miniconda3/envs/ai4rs/lib/python3.10/site-packages/mmdet/models/layers/transformer/dino_layers.py",
+			"bookmarks": [
+				{
+					"line": 237,
+					"column": 37,
+					"label": "修改归一化维度"
+				},
+				{
+					"line": 260,
+					"column": 35,
+					"label": "现在不报错了，之前内部维度不对"
+				},
+				{
+					"line": 267,
+					"column": 0,
+					"label": "打包成统一的batch，内部维度有问题"
+				},
+				{
+					"line": 452,
+					"column": 11,
+					"label": "对旋转框做处理"
+				},
+				{
+					"line": 468,
+					"column": 32,
+					"label": "角度不处理"
+				},
+				{
+					"line": 551,
+					"column": 21,
+					"label": "维度不匹配"
+				}
+			]
+		},
+		{
+			"path": "../../miniconda3/envs/ai4rs/lib/python3.10/site-packages/mmdet/models/detectors/dino.py",
+			"bookmarks": [
+				{
+					"line": 117,
+					"column": 0,
+					"label": "在rtdetr.py中重构pre_decoder然后调用"
+				}
+			]
+		},
+		{
+			"path": "projects/rtdetr_o/rtdetr/rotated_rtdetr.py",
+			"bookmarks": [
+				{
+					"line": 221,
+					"column": 55,
+					"label": "强制截断了，从4修改成5"
+				},
+				{
+					"line": 303,
+					"column": 22,
+					"label": "生成参考点，AI生成代码修改，修改之后输出为 cx cy w h r"
+				}
+			]
+		},
+		{
+			"path": "projects/rtdetr_o/rtdetr/rotated_rtdetr_layers.py",
+			"bookmarks": [
+				{
+					"line": 599,
+					"column": 0,
+					"label": "解码器，在里面做deformable，deformable只要4维"
+				}
+			]
+		}
+	]
+}

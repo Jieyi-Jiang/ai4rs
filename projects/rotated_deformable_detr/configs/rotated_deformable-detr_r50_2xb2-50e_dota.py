@@ -17,10 +17,12 @@
 #     from configs._base_.default_runtime import *
 
 _base_ = [
-    '../../../configs/_base_/datasets/dota.py',
+    # '../../../configs/_base_/datasets/dota.py',
+    '../../../configs/_base_/datasets/dior.py',
     '../../../configs/_base_/default_runtime.py'
 ]
 
+num_classes = 20
 
 custom_imports = dict(
     imports=['projects.rotated_deformable_detr.rotated_deformable_detr'], allow_failed_imports=False)
@@ -33,7 +35,8 @@ angle_cfg = dict(
 angle_factor=3.1415926535897932384626433832795
 
 model = dict(
-    type='mmdet.DeformableDETR',
+    # type='mmdet.DeformableDETR',
+    type='RotatedDeformableDETR',
     num_queries=900,
     num_feature_levels=4,
     with_box_refine=False,
@@ -89,7 +92,7 @@ model = dict(
     positional_encoding=dict(num_feats=128, normalize=True, offset=-0.5),
     bbox_head=dict(
         type='RotatedDeformableDETRHead',
-        num_classes=15,
+        num_classes=num_classes,
         angle_cfg=angle_cfg,
         angle_factor=angle_factor,
         sync_cls_avg_factor=True,
@@ -122,7 +125,8 @@ model = dict(
                     sqrt=False,
                     weight=2.0)
             ])),
-    test_cfg=dict(max_per_img=500))
+    test_cfg=dict(max_per_img=500)
+)
 
 # optimizer
 optim_wrapper = dict(

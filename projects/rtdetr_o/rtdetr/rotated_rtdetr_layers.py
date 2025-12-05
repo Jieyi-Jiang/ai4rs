@@ -7,12 +7,13 @@ import numpy as np
 from mmengine.model import BaseModule
 from mmcv.cnn import ConvModule, build_norm_layer
 from mmdet.models.layers.transformer.detr_layers import DetrTransformerEncoder
-# from mmdet.models.layers.transformer.dino_layers import DinoTransformerDecoder
 # from mmdet.models.layers.transformer.rotated_dino_layers import RotatedDinoTransformerDecoder
 from .rotated_dino_layers import RotatedDinoTransformerDecoder
 from mmrotate.registry import MODELS
 from mmdet.utils import ConfigType, OptConfigType, OptMultiConfig
 from .utils import MLP
+from mmdet.models.layers.transformer import inverse_sigmoid
+from .utils import assert_no_nan_inf
 
 
 class RepVGGBlock(nn.Module):
@@ -132,6 +133,7 @@ class RepVGGBlock(nn.Module):
         Returns:
             Tensor: The output tensor.
         """
+        assert_no_nan_inf(inputs)
         if hasattr(self, 'rbr_reparam'):
             return self.nonlinearity(self.se(self.rbr_reparam(inputs)))
 
@@ -316,7 +318,7 @@ class CSPLayer(BaseModule):
         return self.final_conv(x_main + x_short)
 
 @MODELS.register_module()
-class RTDETRFPN(BaseModule):
+class RotatedRTDETRFPN(BaseModule):
     """FPN of RTDETR.
 
     Args:
@@ -435,7 +437,7 @@ class RTDETRFPN(BaseModule):
             tuple[Tensor]: FPN features.
         """
         assert len(inputs) == len(self.in_channels)
-
+        assert_no_nan_inf(inputs)
         # top-down path
         inner_outs = [inputs[-1]]
         for idx in range(len(self.in_channels) - 1, 0, -1):
@@ -464,7 +466,7 @@ class RTDETRFPN(BaseModule):
         # out convs
         for idx, conv in enumerate(self.out_convs):
             outs[idx] = conv(outs[idx])
-
+        assert_no_nan_inf(outs)
         return tuple(outs)
 
 
@@ -595,13 +597,13 @@ class RTDETRHybridEncoder(BaseModule):
             return self.encode_forward(self.fpn(inputs))
 
 
-class RTDETRTransformerDecoder(RotatedDinoTransformerDecoder):
+class RotatedRTDETRTransformerDecoder(RotatedDinoTransformerDecoder):
     """Transformer decoder of RT-DETR."""
 
     def _init_layers(self) -> None:
         """Initialize decoder layers."""
         super()._init_layers()
-        self.ref_point_head = MLP(4, self.embed_dims * 2, self.embed_dims, 2)
+        self.ref_point_head = MLP(5, self.embed_dims * 2, self.embed_dims, 2)
         self.norm = nn.Identity()  # without norm
 
     def forward(self, query: Tensor, value: Tensor, key_padding_mask: Tensor,
@@ -652,17 +654,22 @@ class RTDETRTransformerDecoder(RotatedDinoTransformerDecoder):
               coordinates are arranged as (cx, cy, w, h)
         """
         # print(f"DEBUG >> reference_points.shape:    {reference_points.shape}")
-        # print(f"DEBUG >> reference_points[1,1,:]:   {reference_points[1,1,:]}")
         # print(f"DEBUG >> query.shape:               {query.shape}")
+        # print(f"DEBUG >> reference_points[0,:5,:]:\n {reference_points[0,:5,:]}")
+        assert_no_nan_inf(reference_points)
         assert self.return_intermediate
         assert reg_branches is not None
-        assert reference_points.shape[-1] == 4
+        assert reference_points.shape[-1] == 5
         # To avoid inverse_sigmoid, remove .sigmoid() in pre_decoder
         # So reference_points is unactivated reference_points
-        unact_reference_points = reference_points
-        reference_points = unact_reference_points.sigmoid()
-        # print(f"DEBUG >> reference_points.shape:    {reference_points.shape}")
-        # print(f"DEBUG >> reference_points[1,1,:]:   {reference_points[1,1,:]}")
+        unact_reference_points  = reference_points
+        reference_points_xyhw   = unact_reference_points[..., :4].sigmoid()
+        reference_points_angle  = unact_reference_points[..., 4:]
+        # print(f"DEBUG >> reference_points_xyhw.shape:   {reference_points_xyhw.shape}")
+        # print(f"DEBUG >> reference_points_angle.shape:  {reference_points_angle.shape}")
+        reference_points_all    = torch.cat([reference_points_xyhw, reference_points_angle], dim=-1)
+        # print(f"DEBUG >> reference_points_all.shape:    {reference_points_all.shape}")
+        # print(f"DEBUG >> reference_points_all[1,:5,:]:\n {reference_points_all[1,:5,:]}")
 
         eval_idx = kwargs.pop('eval_idx', -1)
         if eval_idx < 0:
@@ -671,9 +678,11 @@ class RTDETRTransformerDecoder(RotatedDinoTransformerDecoder):
 
         all_layers_outputs_classes = []
         all_layers_outputs_coords = []
+        ### 只能将 4D reference_points_input 传给 layers，不能将 5D reference_points_input 传给layer
         for lid, layer in enumerate(self.layers):
-            reference_points_input = reference_points[:, :, None]
-            query_pos = self.ref_point_head(reference_points)
+            reference_points_input_xyhw = reference_points_xyhw[:, :, None]
+            # MLP 的输入是5维的
+            query_pos = self.ref_point_head(reference_points_all)
 
             query = layer(
                 query,
@@ -684,20 +693,31 @@ class RTDETRTransformerDecoder(RotatedDinoTransformerDecoder):
                 spatial_shapes=spatial_shapes,
                 level_start_index=level_start_index,
                 valid_ratios=valid_ratios,
-                reference_points=reference_points_input,
+                reference_points=reference_points_input_xyhw,
                 **kwargs)
-
-            tmp = reg_branches[lid](query)
+            
+            # print(f"DEBUG >> query_4d.shape: {query.shape}")
+            # print(f"DEBUG >> query_4d.shape: {query_4d}")
+            tmp_reg_preds = reg_branches[lid](query)
+            # print(f"DEBUG >> tmp_reg_preds.shape: {tmp_reg_preds.shape}")
+            # tmp_reg_preds_xywh = tmp_reg_preds[..., :4]
+            # assert 1 == 2
 
             if self.training or lid == eval_idx:
+                # 分类不用改
                 all_layers_outputs_classes.append(cls_branches[lid](query))
+                # 回归要改
                 all_layers_outputs_coords.append(
-                    (tmp + unact_reference_points).sigmoid())
+                    (tmp_reg_preds + unact_reference_points).sigmoid())
 
                 if not self.training or lid == self.num_layers - 1:
                     break
-
-            unact_reference_points = tmp + unact_reference_points.detach()
+            
+            unact_reference_points = tmp_reg_preds + unact_reference_points.detach()
             reference_points = unact_reference_points.sigmoid().detach()
 
+        # all_layers_outputs_classes = None
+        # all_layers_outputs_coords = None
+        assert_no_nan_inf(all_layers_outputs_classes)
+        assert_no_nan_inf(all_layers_outputs_coords)
         return all_layers_outputs_classes, all_layers_outputs_coords

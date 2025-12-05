@@ -4,6 +4,7 @@ import torch.nn.functional as F
 from torch import Tensor
 from mmdet.models.losses import weight_reduce_loss
 from mmrotate.registry import MODELS
+from .utils import assert_no_nan_inf
 
 def varifocal_loss(pred: Tensor,
                    target: Tensor,
@@ -53,6 +54,7 @@ def varifocal_loss(pred: Tensor,
     loss = F.binary_cross_entropy_with_logits(
         pred, target, reduction='none') * focal_weight
     loss = weight_reduce_loss(loss, weight, reduction, avg_factor)
+    assert_no_nan_inf(loss)
     return loss
 
 @MODELS.register_module()
@@ -120,6 +122,9 @@ class VarifocalLoss(nn.Module):
         Returns:
             Tensor: The calculated loss
         """
+        assert_no_nan_inf(pred)
+        assert_no_nan_inf(target)
+        # assert_no_nan_inf(weight)
         assert reduction_override in (None, 'none', 'mean', 'sum')
         reduction = (
             reduction_override if reduction_override else self.reduction)
@@ -135,6 +140,7 @@ class VarifocalLoss(nn.Module):
                 avg_factor=avg_factor)
         else:
             raise NotImplementedError
+        assert_no_nan_inf(loss_cls)
         return loss_cls
 
 
@@ -171,6 +177,8 @@ def rtdetr_varifocal_loss(pred: Tensor,
     Returns:
         Tensor: Loss tensor.
     """
+    assert_no_nan_inf(pred)
+    assert_no_nan_inf(target)
     # pred and target should be of the same size
     assert pred.size() == target.size()
     pred_sigmoid = pred.sigmoid().detach()  # detach?
@@ -226,6 +234,8 @@ def deim_mal_loss(pred: Tensor,
     Returns:
         Tensor: Loss tensor.
     """
+    assert_no_nan_inf(pred)
+    assert_no_nan_inf(target)
     # pred and target should be of the same size
     assert pred.size() == target.size()
     pred_sigmoid = pred.sigmoid().detach()

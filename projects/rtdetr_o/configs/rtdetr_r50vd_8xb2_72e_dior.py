@@ -21,7 +21,7 @@
 #     from .default_runtime import *
 
 _base_ = [
-    '../../../configs/_base_/datasets/coco_detection.py',
+    '../../../configs/_base_/datasets/dior.py',
     '../../../configs/_base_/schedules/schedule_1x.py',
     '../../../configs/_base_/default_runtime.py'
 ]
@@ -34,8 +34,19 @@ pretrained = ('https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/'
 
 base_size_repeat = 3
 
+angle_cfg = dict(
+    width_longer=True,
+    start_angle=0,
+)
+angle_factor=3.1415926535897932384626433832795
+angle_version = 'le90'
+
+batch_size = 8
+num_workers = 4
+max_epochs = 96
+
 model = dict(
-    type='RTDETR',
+    type='RotatedRTDETR',
     num_queries=300,  # num_matching_queries, 900 for DINO
     # spatial_shapes=((80, 80), (40, 40), (
     #     20, 20)),  # for strdies (8, 16, 32) with image_size 640x640. # noqa
@@ -45,7 +56,7 @@ model = dict(
         type='mmdet.DetDataPreprocessor',
         batch_augments=[
             dict(
-                type='BatchSyncRandomResize',
+                type='RotatedBatchSyncRandomResize',
                 interval=1,
                 interpolations='nearest',
                 random_sizes=[480, 512, 544, 576, 608] +
@@ -54,7 +65,8 @@ model = dict(
         mean=[0, 0, 0],  # [123.675, 116.28, 103.53] for DINO
         std=[255, 255, 255],  # [58.395, 57.12, 57.375] for DINO
         bgr_to_rgb=True,
-        pad_size_divisor=1),
+        pad_size_divisor=1,
+        boxtype2tensor=False),
     backbone=dict(
         type='ResNetV1dPaddle',  # ResNet for DINO
         depth=50,
@@ -113,19 +125,32 @@ model = dict(
         post_norm_cfg=None),
     bbox_head=dict(
         ######################## 这里要改 ###################################################################
-        type='RTDETRHead',
-        num_classes=80,
+        type='RotatedRTDETRHead',
+        num_classes=20,
+        angle_cfg=angle_cfg,
+        angle_factor=angle_factor,
         sync_cls_avg_factor=True,
         loss_cls=dict(
-            type='RTDETRVarifocalLoss',  # FocalLoss in DINO
+            # type='RTDETRVarifocalLoss',  # FocalLoss in DINO
+            # use_sigmoid=True,
+            # alpha=0.75,
+            # gamma=2.0,
+            # iou_weighted=True,
+            # loss_weight=1.0),
+            type='mmdet.FocalLoss',  # FocalLoss in DINO
             use_sigmoid=True,
-            alpha=0.75,
             gamma=2.0,
-            iou_weighted=True,
-            loss_weight=1.0),
+            alpha=0.25,
+            loss_weight=2.0),
         loss_bbox=dict(type='mmdet.L1Loss', loss_weight=5.0),
         ######################## 这里要改 ####################################################################
-        loss_iou=dict(type='mmdet.GIoULoss', loss_weight=2.0)),
+        loss_iou=dict(
+            type='GDLoss',
+            loss_type='kld',
+            fun='log1p',
+            tau=1,
+            sqrt=False,
+            loss_weight=2.0)),
     dn_cfg=dict(  # TODO: Move to model.train_cfg ?
         label_noise_scale=0.5,
         box_noise_scale=1.0,
@@ -138,8 +163,16 @@ model = dict(
             type='mmdet.HungarianAssigner',
             match_costs=[
                 dict(type='mmdet.FocalLossCost', weight=2.0),
-                dict(type='mmdet.BBoxL1Cost', weight=5.0, box_format='xywh'),
-                dict(type='mmdet.IoUCost', iou_mode='giou', weight=2.0)
+                # dict(type='RBoxL1Cost', weight=5.0, box_format='xywh'),
+                dict(type='RBoxL1Cost', weight=5.0, box_format='xywha', angle_factor = angle_factor),
+                # dict(type='mmdet.IoUCost', iou_mode='giou', weight=2.0)
+                dict(
+                    type='GDCost', 
+                    loss_type='kld', 
+                    fun='log1p', 
+                    tau=1, 
+                    sqrt=False,
+                    weight=2.0)
             ])),
     test_cfg=dict(max_per_img=300))
 
@@ -150,7 +183,8 @@ _base_.train_pipeline = None
 train_pipeline = [
     dict(type='mmdet.LoadImageFromFile', backend_args=backend_args),
     ######################## 这里要改 ####################################################################
-    dict(type='mmdet.LoadAnnotations', with_bbox=True),
+    dict(type='mmdet.LoadAnnotations', with_bbox=True, box_type='qbox'),
+    dict(type='ConvertBoxType', box_type_mapping=dict(gt_bboxes='rbox')),
     dict(
         type='PhotoMetricDistortion',
         hue_delta=12.75,
@@ -165,51 +199,46 @@ train_pipeline = [
     dict(type='mmdet.FilterAnnotations', min_gt_bbox_wh=(1, 1), keep_empty=False),
     dict(type='mmdet.Resize', scale=(640, 640), keep_ratio=False),
     dict(type='mmdet.FilterAnnotations', min_gt_bbox_wh=(1, 1), keep_empty=False),
-    dict(type='mmdet.RandomFlip', prob=0.5),
+    dict(
+        type='mmdet.RandomFlip',
+        prob=0.75,
+        direction=['horizontal', 'vertical', 'diagonal']),
     dict(type='mmdet.PackDetInputs')
 ]
 
-_base_.test_pipeline = None
-test_pipeline = [
+_base_.val_pipeline = None
+val_pipeline = [
     dict(type='mmdet.LoadImageFromFile', backend_args=backend_args),
     dict(type='mmdet.Resize', scale=(640, 640), keep_ratio=False),
-    dict(type='mmdet.LoadAnnotations', with_bbox=True),
+    # avoid bboxes being resized
+    dict(type='mmdet.LoadAnnotations', with_bbox=True, box_type='qbox'),
+    dict(type='ConvertBoxType', box_type_mapping=dict(gt_bboxes='rbox')),
     dict(
         type='mmdet.PackDetInputs',
         meta_keys=('img_id', 'img_path', 'ori_shape', 'img_shape',
                    'scale_factor'))
 ]
 
-batch_size = 8
-num_workers = 8
+test_pipeline = [
+    # dict(type='mmdet.LoadImageFromFile', backend_args=backend_args),
+    dict(type='mmdet.Resize', scale=(640, 640), keep_ratio=True),
+    # dict(
+    #     type='mmdet.PackDetInputs',
+    #     meta_keys=('img_id', 'img_path', 'ori_shape', 'img_shape',
+    #                'scale_factor'))
+]
+
+
 train_dataloader = dict(
-    batch_sampler=None,
     drop_last=True,
     pin_memory=True,
     batch_size=batch_size,
     num_workers=num_workers,
-    dataset=dict(
-        _delete_=True,
-        type=_base_.dataset_type,
-        data_root=_base_.data_root,
-        ann_file='annotations/instances_train2017.json',
-        data_prefix=dict(img='train2017/'),
-        filter_cfg=None,
-        pipeline=train_pipeline,
-        backend_args=backend_args)
 )
+
 val_dataloader = dict(
     batch_size=batch_size,
-    num_workers=num_workers,
-    dataset=dict(
-        _delete_=True,
-        type=_base_.dataset_type,
-        data_root=_base_.data_root,
-        ann_file='annotations/instances_val2017.json',
-        data_prefix=dict(img='val2017/'),
-        test_mode=True,
-        pipeline=test_pipeline,
-        backend_args=backend_args))
+    num_workers=num_workers,)
 
 test_dataloader = val_dataloader
 
@@ -229,9 +258,8 @@ optim_wrapper = dict(
         bypass_duplicate=True))
 
 # learning policy
-max_epochs = 72
 train_cfg = dict(
-    type='EpochBasedTrainLoop', max_epochs=max_epochs, val_interval=1)
+    type='EpochBasedTrainLoop', max_epochs = max_epochs, val_interval = 5)
 
 param_scheduler = [
     dict(
@@ -241,7 +269,7 @@ param_scheduler = [
 # NOTE: `auto_scale_lr` is for automatically scaling LR,
 # USER SHOULD NOT CHANGE ITS VALUES.
 # base_batch_size = (8 GPUs) x (2 samples per GPU)
-auto_scale_lr = dict(enable=False, base_batch_size=8)
+auto_scale_lr = dict(enable=False, base_batch_size=batch_size)
 
 custom_hooks = [
     dict(
@@ -252,4 +280,4 @@ custom_hooks = [
         priority=49)
 ]
 
-load_from = 'models/rtdetr_r50vd_8xb2-72e_coco_ad2bdcfe.pth'
+# load_from = 'models/rtdetr_r50vd_8xb2-72e_coco_ad2bdcfe.pth'

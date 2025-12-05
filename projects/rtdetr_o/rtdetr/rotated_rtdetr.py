@@ -6,14 +6,18 @@ import torch
 from mmengine.dist import get_world_size
 from mmengine.logging import print_log
 from torch import Tensor, nn
-from mmdet.models.detectors import DINO
+# from mmdet.models.detectors import DINO
+# from mmdet.models.detectors import RotatedDINO
+from .rotated_dino import RotatedDINO
 from mmdet.models.detectors.deformable_detr import DeformableDETR, MultiScaleDeformableAttention
 from mmdet.structures import OptSampleList
-from projects.rtdetr_o.rtdetr.rtdetr_layers import RTDETRHybridEncoder, RTDETRTransformerDecoder
+# from projects.rtdetr_o.rtdetr.rtdetr_layers import RTDETRHybridEncoder
+from projects.rtdetr_o.rtdetr.rotated_rtdetr_layers import RTDETRHybridEncoder, RotatedRTDETRTransformerDecoder
 from mmrotate.registry import MODELS
+from .utils import assert_no_nan_inf
 
 @MODELS.register_module()
-class RTDETR(DINO):
+class RotatedRTDETR(RotatedDINO):
     r"""Implementation of `DETRs Beat YOLOs on Real-time Object Detection
     <https://arxiv.org/abs/2304.08069>`_
 
@@ -51,7 +55,7 @@ class RTDETR(DINO):
     def _init_layers(self) -> None:
         """Initialize layers except for backbone, neck and bbox_head."""
         self.encoder = RTDETRHybridEncoder(**self.encoder)
-        self.decoder = RTDETRTransformerDecoder(**self.decoder)
+        self.decoder = RotatedRTDETRTransformerDecoder(**self.decoder)
         self.embed_dims = self.decoder.embed_dims
         self.memory_trans_fc = nn.Linear(self.embed_dims, self.embed_dims)
         self.memory_trans_norm = nn.LayerNorm(self.embed_dims)
@@ -201,6 +205,7 @@ class RTDETR(DINO):
         enc_outputs_class = self.bbox_head.cls_branches[
             self.decoder.num_layers](
                 output_memory)
+        assert_no_nan_inf(enc_outputs_class)
 
         # NOTE The DINO selects top-k proposals according to scores of
         # multi-class classification, while DeformDETR, where the input
@@ -211,13 +216,18 @@ class RTDETR(DINO):
 
         query = torch.gather(output_memory, 1,
                              topk_indices.unsqueeze(-1).repeat(1, 1, c))
-        # print(output_proposals)
+        # print(f'output_proposals: {output_proposals}')
         topk_output_proposals = torch.gather(
             output_proposals, 1,
-            topk_indices.unsqueeze(-1).repeat(1, 1, 4))
-        topk_coords_unact = self.bbox_head.reg_branches[
-            self.decoder.num_layers](query) + topk_output_proposals
-        # print(f"topk_coords_unact: {topk_coords_unact}")
+            topk_indices.unsqueeze(-1).repeat(1, 1, 5))
+        assert_no_nan_inf(topk_output_proposals)
+        # print(f"topk_output_proposals: {topk_output_proposals}")
+        head_output = self.bbox_head.reg_branches[self.decoder.num_layers](query)
+        assert_no_nan_inf(head_output)
+        # print(f'DEBUG >> topk_output_proposals.shape: {topk_output_proposals.shape}')
+        # print(f'DEBUG >> head_output.shape: {head_output.shape}')
+        topk_coords_unact = head_output + topk_output_proposals
+
 
         if self.training:
             topk_score = torch.gather(
@@ -244,6 +254,7 @@ class RTDETR(DINO):
         # NOTE To avoid inverse_sigmoid in decoder
         # reference_points = reference_points.sigmoid()
 
+        assert_no_nan_inf(reference_points) 
         decoder_inputs_dict = dict(
             query=query,
             memory=memory,
@@ -254,6 +265,8 @@ class RTDETR(DINO):
         # NOTE DINO calculates encoder losses on scores and coordinates
         # of selected top-k encoder queries, while DeformDETR is of all
         # encoder queries.
+        assert_no_nan_inf(topk_score)
+        assert_no_nan_inf(topk_coords)
         head_inputs_dict = dict(
             enc_outputs_class=topk_score,
             enc_outputs_coord=topk_coords,
@@ -276,7 +289,10 @@ class RTDETR(DINO):
             # print(f"spatial_shapes: {spatial_shapes}")
             output_proposals, output_proposals_valid = self.gen_proposals(
                 spatial_shapes, batch_size, memory.device)
-
+        # assert_no_nan_inf(output_proposals)
+        # print(f'DEBUG >> spatial_shapes: {spatial_shapes}')
+        # print(f"DEBUG >> output_proposals.shape: {output_proposals.shape}")
+        # print(f"DEBUG >> memory.shape: {memory.shape}")
         output_memory = memory * output_proposals_valid.type_as(memory)
         output_memory = self.memory_trans_fc(output_memory)
         output_memory = self.memory_trans_norm(output_memory)
@@ -290,32 +306,68 @@ class RTDETR(DINO):
             batch_size: int = 1,
             device: Optional[str] = None,
             dtype: torch.dtype = torch.float32) -> Tuple[Tensor, Tensor]:
+            
         proposals = []
         for lvl, HW in enumerate(spatial_shapes):
+            # print(f'DEBUG >> lvl: {lvl}')
+            # print(f'DEBUG >> HW: {HW}')
             # print(f"lvl: {lvl}")
             H, W = HW
             HW = torch.tensor(HW, dtype=torch.float32, device=device)
             scale = HW.unsqueeze(0).flip(dims=[0, 1]).view(1, 1, 1, 2)
-            grid_y, grid_x = torch.meshgrid(
-                torch.linspace(
-                    0, H - 1, H, dtype=torch.float32, device=device),
-                torch.linspace(
-                    0, W - 1, W, dtype=torch.float32, device=device))
-            grid = torch.cat([grid_x.unsqueeze(-1), grid_y.unsqueeze(-1)], -1)
-            grid = (grid.unsqueeze(0).expand(batch_size, -1, -1, -1) +
-                    0.5) / scale
-            wh = torch.ones_like(grid) * 0.05 * (2.0**lvl)
-            proposal = torch.cat((grid, wh), -1).view(batch_size, -1, 4)
-            # print(f"proposal: {proposal}")
-            proposals.append(proposal)
-        output_proposals = torch.cat(proposals, 1)
-        # do not use `all` to make it exportable to onnx
-        output_proposals_valid = (
-            (output_proposals > 0.01) & (output_proposals < 0.99)).sum(
-                -1, keepdim=True) == output_proposals.shape[-1]
-        # inverse_sigmoid
-        output_proposals = torch.log(output_proposals / (1 - output_proposals))
-        output_proposals = output_proposals.masked_fill(
-            ~output_proposals_valid, float('inf'))
+            # grid_y, grid_x = torch.meshgrid(
+            #     torch.linspace(
+            #         0, H - 1, H, dtype=torch.float32, device=device),
+            #     torch.linspace(
+            #         0, W - 1, W, dtype=torch.float32, device=device))
 
+            # 1. 生成归一化中心点 (cx, cy) ∈ (0, 1)
+            grid_y, grid_x = torch.meshgrid(
+                torch.linspace(0.5 / H, (H - 0.5) / H, H, dtype=dtype, device=device),
+                torch.linspace(0.5 / W, (W - 0.5) / W, W, dtype=dtype, device=device),
+                indexing='ij'
+            )  # (H, W)
+            assert_no_nan_inf(grid_y)
+            # grid = torch.cat([grid_x.unsqueeze(-1), grid_y.unsqueeze(-1)], -1)
+            # 2. 默认宽高（可随层级缩放）
+            grid = torch.stack([grid_x, grid_y], dim=-1)  # (H, W, 2)
+            # grid = (grid.unsqueeze(0).expand(batch_size, -1, -1, -1) + 0.5) / scale
+            # wh = torch.ones_like(grid) * 0.05 * (2.0**lvl)
+            wh = torch.full_like(grid, 0.05 * (2.0 ** lvl))  # (H, W, 2)
+            # 3. 【关键】添加角度（旋转框必须有！）
+            angle = torch.zeros(H, W, 1, dtype=dtype, device=device)  # (H, W, 1)
+            # proposal = torch.cat((grid, wh), -1).view(batch_size, -1, 4)
+            # 4. 拼接成 5D: [cx, cy, w, h, angle]
+            proposal_lvl = torch.cat([grid, wh, angle], dim=-1)  # (H, W, 5)
+            # 5. 展平并扩展 batch
+            proposal_lvl = proposal_lvl.view(1, -1, 5).expand(batch_size, -1, -1)
+            assert_no_nan_inf(proposal_lvl)
+            proposals.append(proposal_lvl)
+            # print(f"proposal: {proposal}")
+            # proposals.append(proposal)
+        output_proposals = torch.cat(proposals, 1)  # (B, total_tokens, 5)
+        assert_no_nan_inf(output_proposals)
+        # do not use `all` to make it exportable to onnx
+        # output_proposals_valid = (
+        #     (output_proposals > 0.01) & (output_proposals < 0.99)).sum(
+        #         -1, keepdim=True) == output_proposals.shape[-1]
+        # 6. 有效区域 mask（只对 cxcywh 判断，angle 不参与）
+        valid_cxcywh = (output_proposals[..., :4] > 0.01) & (output_proposals[..., :4] < 0.99)
+        output_proposals_valid = valid_cxcywh.all(dim=-1, keepdim=True)  # (B, N, 1)
+        assert_no_nan_inf(output_proposals)
+        # # inverse_sigmoid
+        # output_proposals = torch.log(output_proposals / (1 - output_proposals))
+        # output_proposals = output_proposals.masked_fill(
+        #     ~output_proposals_valid, float('inf'))
+        # 7. 对前 4 维做 inverse_sigmoid，angle 保持原值
+        cxcywh = output_proposals[..., :4]
+        angle = output_proposals[..., 4:5]
+
+        cxcywh = torch.log(cxcywh / (1 - cxcywh))  # inverse sigmoid
+        output_proposals = torch.cat([cxcywh, angle], dim=-1)
+        assert_no_nan_inf(output_proposals)
+
+        # 8. 无效位置设为 inf
+        output_proposals = output_proposals.masked_fill(~output_proposals_valid, float('inf'))
+        # assert_no_nan_inf(output_proposals)
         return output_proposals.to(dtype), output_proposals_valid.to(dtype)

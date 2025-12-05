@@ -4,6 +4,7 @@ import torch
 from mmdet.models.layers.transformer import \
     DeformableDetrTransformerDecoder as _DeformDetrTransformerDecoder
 from mmdet.models.layers.transformer import inverse_sigmoid
+from .utils import assert_no_nan_inf
 
 
 class RotatedDeformableDetrTransformerDecoder(_DeformDetrTransformerDecoder):
@@ -118,5 +119,6 @@ class RotatedDeformableDetrTransformerDecoder(_DeformDetrTransformerDecoder):
         if self.return_intermediate:
             return torch.stack(intermediate), torch.stack(
                 intermediate_reference_points)
-
+        assert_no_nan_inf(output)
+        assert_no_nan_inf(reference_points)
         return output, reference_points

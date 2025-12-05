@@ -181,17 +181,15 @@ class RotatedDETRHead(DETRHead):
         bbox_pred = bbox_pred * factor
         # regularize GT boxes
         # print(f"DEBUG >> gt_instances.bboxes.shape: {gt_instances.bboxes.shape}")
-        # print(f"DEBUG >> gt_instances.bboxes:\n     {gt_instances.bboxes}")
-        # print(f"DEBUG >> gt_instances.bboxes.tensor:\n {gt_instances.bboxes.tensor}")
-        # print(f"DEBUG >> gt_instances.bboxes.regularize_boxes:\n {gt_instances.bboxes.regularize_boxes}")
+        # print(f"DEBUG >> gt_instances.bboxes:       {gt_instances.bboxes}")
         gt_instances.bboxes.regularize_boxes(**self.angle_cfg)
 
         pred_instances = InstanceData(scores=cls_score, bboxes=bbox_pred)
         # assigner and sampler
         assign_result = self.assigner.assign(
-            pred_instances=pred_instances,
-            gt_instances=gt_instances,
-            img_meta=img_meta)
+            pred_instances  =  pred_instances,
+            gt_instances    = gt_instances,
+            img_meta        = img_meta)
 
         gt_bboxes = gt_instances.bboxes.tensor
         gt_labels = gt_instances.labels

@@ -11,7 +11,7 @@ from mmrotate.registry import MODELS
 from .utils import assert_no_nan_inf
 
 @MODELS.register_module()
-class BatchSyncRandomResize(nn.Module):
+class RotatedBatchSyncRandomResize(nn.Module):
     """Batch random resize which synchronizes the random size across ranks.
 
     Args:
@@ -88,25 +88,32 @@ class BatchSyncRandomResize(nn.Module):
                     'pad_shape': pad_shape,
                     'batch_input_shape': self._input_size
                 })
-                data_sample.gt_instances.bboxes[
-                    ...,
-                    0::2] = data_sample.gt_instances.bboxes[...,
-                                                            0::2] * scale_x
-                data_sample.gt_instances.bboxes[
-                    ...,
-                    1::2] = data_sample.gt_instances.bboxes[...,
-                                                            1::2] * scale_y
+                # data_sample.gt_instances.bboxes.tensor[...,0::2] = \
+                #     data_sample.gt_instances.bboxes[...,0::2] * scale_x
+                # bboxes: x y w h theta
+                # 对 x 和 w 缩放
+                data_sample.gt_instances.bboxes.tensor[..., (0,2)] = \
+                    data_sample.gt_instances.bboxes.tensor[...,(0,2)] * scale_x
+                # data_sample.gt_instances.bboxes[...,1::2] = \
+                #     data_sample.gt_instances.bboxes[...,1::2] * scale_y
+                # 对 y 和 h 缩放
+                data_sample.gt_instances.bboxes.tensor[..., (1,3)] = \
+                    data_sample.gt_instances.bboxes.tensor[..., (1,3)] * scale_y
                 if 'ignored_instances' in data_sample:
-                    data_sample.ignored_instances.bboxes[
-                        ..., 0::2] = data_sample.ignored_instances.bboxes[
-                            ..., 0::2] * scale_x
-                    data_sample.ignored_instances.bboxes[
-                        ..., 1::2] = data_sample.ignored_instances.bboxes[
-                            ..., 1::2] * scale_y
+                    # data_sample.ignored_instances.bboxes[..., 0::2] = \
+                    #     data_sample.ignored_instances.bboxes[..., 0::2] * scale_x
+                    # data_sample.ignored_instances.bboxes[..., 1::2] = \
+                    #     data_sample.ignored_instances.bboxes[..., 1::2] * scale_y
+                    data_sample.ignored_instances.bboxes.tensor[..., (0,2)] = \
+                        data_sample.ignored_instances.bboxes.tensor[..., (0,2)] * scale_x
+                    data_sample.ignored_instances.bboxes.tensor[..., (1,3)] = \
+                        data_sample.ignored_instances.bboxes.tensor[..., (1,3)] * scale_y
         message_hub = MessageHub.get_current_instance()
         if (message_hub.get_info('iter') + 1) % self._interval == 0:
             self._input_size, self._interp = self._get_random_size_and_interp(
                 aspect_ratio=float(w / h), device=inputs.device)
+        assert_no_nan_inf(inputs)
+        # assert_no_nan_inf(data_samples)
         return inputs, data_samples
 
     def _get_random_size_and_interp(self, aspect_ratio: float,

@@ -153,6 +153,21 @@ model = dict(
         ]),
     test_cfg=dict(rpn=None, rcnn=dict(max_per_img=num_proposals)))
 
+batch_size = 8
+num_workers = 4
+train_dataloader = dict(
+    drop_last=True,
+    pin_memory=True,
+    batch_size=batch_size,
+    num_workers=num_workers,
+)
+
+val_dataloader = dict(
+    batch_size=batch_size,
+    num_workers=num_workers,)
+
+test_dataloader = val_dataloader
+
 # optimizer
 optim_wrapper = dict(
     optimizer=dict(
@@ -160,3 +175,4 @@ optim_wrapper = dict(
     clip_grad=dict(max_norm=1, norm_type=2))
 
 train_cfg=dict(val_interval=1)
+
