@@ -144,18 +144,20 @@ model = dict(
             loss_weight=2.0),
         loss_bbox=dict(type='mmdet.L1Loss', loss_weight=5.0),
         ######################## 这里要改 ####################################################################
-        loss_iou=dict(
-            type='GDLoss',
-            loss_type='kld',
-            fun='log1p',
-            tau=1,
-            sqrt=False,
-            loss_weight=2.0)),
+        loss_iou=dict(type='RotatedIoULoss', mode='linear', loss_weight=5.0),
+        # loss_iou=dict(
+        #     type='RotatedIoULoss',
+        #     loss_type='kld',
+        #     fun='log1p',
+        #     tau=1,
+        #     sqrt=False,
+        #     loss_weight=2.0)
+    ),
     dn_cfg=dict(  # TODO: Move to model.train_cfg ?
-        label_noise_scale=0.5,
-        box_noise_scale=1.0,
+        label_noise_scale=0.2,
+        box_noise_scale=0.4,
         group_cfg=dict(dynamic=True, num_groups=None,
-                       num_dn_queries=100)),  # TODO: half num_dn_queries
+                       num_dn_queries=20)),  # TODO: half num_dn_queries
     # training and testing settings
     train_cfg=dict(
         assigner=dict(
@@ -164,15 +166,18 @@ model = dict(
             match_costs=[
                 dict(type='mmdet.FocalLossCost', weight=2.0),
                 # dict(type='RBoxL1Cost', weight=5.0, box_format='xywh'),
-                dict(type='RBoxL1Cost', weight=5.0, box_format='xywha', angle_factor = angle_factor),
+                # dict(type='RBoxL1Cost', weight=5.0, box_format='xywha', angle_factor = angle_factor),
+                dict(type='RBoxL1Cost', weight=5.0, box_format='xywha', angle_factor=angle_factor),
+                # dict(type='RBBoxL1Cost', weight=2.0, box_format='xywht', angle_version=angle_version),
+                dict(type='RotatedIoUCost', iou_mode='iou', weight=2.0)
                 # dict(type='mmdet.IoUCost', iou_mode='giou', weight=2.0)
-                dict(
-                    type='GDCost', 
-                    loss_type='kld', 
-                    fun='log1p', 
-                    tau=1, 
-                    sqrt=False,
-                    weight=2.0)
+                # dict(
+                #     type='GDCost', 
+                #     loss_type='kld', 
+                #     fun='log1p', 
+                #     tau=1, 
+                #     sqrt=False,
+                #     weight=2.0)
             ])),
     test_cfg=dict(max_per_img=300))
 
@@ -246,8 +251,8 @@ test_dataloader = val_dataloader
 optim_wrapper = dict(
     _delete_=True,
     type='OptimWrapper',
-    optimizer=dict(type='AdamW', lr=0.0001, weight_decay=0.0001),
-    clip_grad=dict(max_norm=0.1, norm_type=2),
+    optimizer=dict(type='AdamW', lr=1e-5, weight_decay=1e-6),
+    clip_grad=dict(max_norm=10.0, norm_type=2),
     paramwise_cfg=dict(
         custom_keys={
             'backbone': dict(lr_mult=0.1),
@@ -259,7 +264,7 @@ optim_wrapper = dict(
 
 # learning policy
 train_cfg = dict(
-    type='EpochBasedTrainLoop', max_epochs = max_epochs, val_interval = 5)
+    type='EpochBasedTrainLoop', max_epochs = max_epochs, val_interval = 1)
 
 param_scheduler = [
     dict(

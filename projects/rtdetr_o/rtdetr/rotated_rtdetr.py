@@ -14,7 +14,7 @@ from mmdet.structures import OptSampleList
 # from projects.rtdetr_o.rtdetr.rtdetr_layers import RTDETRHybridEncoder
 from projects.rtdetr_o.rtdetr.rotated_rtdetr_layers import RTDETRHybridEncoder, RotatedRTDETRTransformerDecoder
 from mmrotate.registry import MODELS
-from .utils import assert_no_nan_inf
+from .utils import assert_no_nan_inf, assert_no_nan
 
 @MODELS.register_module()
 class RotatedRTDETR(RotatedDINO):
@@ -205,7 +205,7 @@ class RotatedRTDETR(RotatedDINO):
         enc_outputs_class = self.bbox_head.cls_branches[
             self.decoder.num_layers](
                 output_memory)
-        assert_no_nan_inf(enc_outputs_class)
+        assert_no_nan(enc_outputs_class)
 
         # NOTE The DINO selects top-k proposals according to scores of
         # multi-class classification, while DeformDETR, where the input
@@ -216,17 +216,14 @@ class RotatedRTDETR(RotatedDINO):
 
         query = torch.gather(output_memory, 1,
                              topk_indices.unsqueeze(-1).repeat(1, 1, c))
-        # print(f'output_proposals: {output_proposals}')
         topk_output_proposals = torch.gather(
             output_proposals, 1,
             topk_indices.unsqueeze(-1).repeat(1, 1, 5))
-        assert_no_nan_inf(topk_output_proposals)
-        # print(f"topk_output_proposals: {topk_output_proposals}")
+        assert_no_nan(topk_output_proposals)
         head_output = self.bbox_head.reg_branches[self.decoder.num_layers](query)
-        assert_no_nan_inf(head_output)
-        # print(f'DEBUG >> topk_output_proposals.shape: {topk_output_proposals.shape}')
-        # print(f'DEBUG >> head_output.shape: {head_output.shape}')
+        assert_no_nan(head_output)
         topk_coords_unact = head_output + topk_output_proposals
+        # assert_no_nan(topk_coords_unact)
 
 
         if self.training:
@@ -235,26 +232,21 @@ class RotatedRTDETR(RotatedDINO):
                 topk_indices.unsqueeze(-1).repeat(1, 1, cls_out_features))
             topk_coords = topk_coords_unact.sigmoid()
             topk_coords_unact = topk_coords_unact.detach()
-            # print(batch_data_samples)
             dn_label_query, dn_bbox_query, dn_mask, dn_meta = \
                 self.dn_query_generator(batch_data_samples)
             query = query.detach()  # detach() is not used in DINO
             query = torch.cat([dn_label_query, query], dim=1)
             dn_bbox_query = dn_bbox_query.type_as(topk_coords_unact)
-            # print(dn_bbox_query.shape)
-            # print(topk_coords_unact.shape)
-            # print("\n"*100)
-            # torch.Size([8, 200, 5])
-            # torch.Size([8, 300, 4])
             reference_points = torch.cat([dn_bbox_query, topk_coords_unact],
                                          dim=1)
         else:
+            topk_coords = topk_coords_unact.sigmoid()
             reference_points = topk_coords_unact
             dn_mask, dn_meta = None, None
         # NOTE To avoid inverse_sigmoid in decoder
         # reference_points = reference_points.sigmoid()
 
-        assert_no_nan_inf(reference_points) 
+        assert_no_nan(reference_points) 
         decoder_inputs_dict = dict(
             query=query,
             memory=memory,
@@ -265,8 +257,7 @@ class RotatedRTDETR(RotatedDINO):
         # NOTE DINO calculates encoder losses on scores and coordinates
         # of selected top-k encoder queries, while DeformDETR is of all
         # encoder queries.
-        assert_no_nan_inf(topk_score)
-        assert_no_nan_inf(topk_coords)
+        assert_no_nan(topk_coords)
         head_inputs_dict = dict(
             enc_outputs_class=topk_score,
             enc_outputs_coord=topk_coords,
@@ -327,7 +318,7 @@ class RotatedRTDETR(RotatedDINO):
                 torch.linspace(0.5 / W, (W - 0.5) / W, W, dtype=dtype, device=device),
                 indexing='ij'
             )  # (H, W)
-            assert_no_nan_inf(grid_y)
+            assert_no_nan(grid_y)
             # grid = torch.cat([grid_x.unsqueeze(-1), grid_y.unsqueeze(-1)], -1)
             # 2. 默认宽高（可随层级缩放）
             grid = torch.stack([grid_x, grid_y], dim=-1)  # (H, W, 2)
@@ -341,12 +332,12 @@ class RotatedRTDETR(RotatedDINO):
             proposal_lvl = torch.cat([grid, wh, angle], dim=-1)  # (H, W, 5)
             # 5. 展平并扩展 batch
             proposal_lvl = proposal_lvl.view(1, -1, 5).expand(batch_size, -1, -1)
-            assert_no_nan_inf(proposal_lvl)
+            assert_no_nan(proposal_lvl)
             proposals.append(proposal_lvl)
             # print(f"proposal: {proposal}")
             # proposals.append(proposal)
         output_proposals = torch.cat(proposals, 1)  # (B, total_tokens, 5)
-        assert_no_nan_inf(output_proposals)
+        assert_no_nan(output_proposals)
         # do not use `all` to make it exportable to onnx
         # output_proposals_valid = (
         #     (output_proposals > 0.01) & (output_proposals < 0.99)).sum(
@@ -354,7 +345,7 @@ class RotatedRTDETR(RotatedDINO):
         # 6. 有效区域 mask（只对 cxcywh 判断，angle 不参与）
         valid_cxcywh = (output_proposals[..., :4] > 0.01) & (output_proposals[..., :4] < 0.99)
         output_proposals_valid = valid_cxcywh.all(dim=-1, keepdim=True)  # (B, N, 1)
-        assert_no_nan_inf(output_proposals)
+        assert_no_nan(output_proposals)
         # # inverse_sigmoid
         # output_proposals = torch.log(output_proposals / (1 - output_proposals))
         # output_proposals = output_proposals.masked_fill(
@@ -365,9 +356,9 @@ class RotatedRTDETR(RotatedDINO):
 
         cxcywh = torch.log(cxcywh / (1 - cxcywh))  # inverse sigmoid
         output_proposals = torch.cat([cxcywh, angle], dim=-1)
-        assert_no_nan_inf(output_proposals)
+        assert_no_nan(output_proposals)
 
         # 8. 无效位置设为 inf
         output_proposals = output_proposals.masked_fill(~output_proposals_valid, float('inf'))
-        # assert_no_nan_inf(output_proposals)
+        assert_no_nan(output_proposals)
         return output_proposals.to(dtype), output_proposals_valid.to(dtype)

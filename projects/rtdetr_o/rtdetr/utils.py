@@ -48,37 +48,45 @@ class MLP(BaseModule):
         return x
 
 def assert_no_nan_inf(x, name="tensor"):
-    """Recursively check Tensor/list/tuple/dict for NaN and Inf separately."""
-
-    # Case 1: Tensor
+    """Fast check if tensor/list/tuple/dict contains any NaN or Inf."""
+    # Tensor
     if isinstance(x, torch.Tensor):
-        has_nan = torch.isnan(x)
-        has_inf = torch.isinf(x)
+        if torch.isnan(x).any():
+            raise ValueError(f"[ERROR] {name} contains NaN")
+        elif torch.isinf(x).any():
+            raise ValueError(f"[ERROR] {name} contains Inf")
+        return
 
-        if has_nan.any() or has_inf.any():
-            msg_parts = [f"[ERROR] {name} contains invalid values"]
-
-            if has_nan.any():
-                msg_parts.append(f"- NaN at indices: {has_nan.nonzero().tolist()}")
-            if has_inf.any():
-                msg_parts.append(f"- Inf at indices: {has_inf.nonzero().tolist()}")
-
-            raise ValueError("\n".join(msg_parts))
-
-        return  # tensor OK
-
-    # Case 2: list/tuple
+    # list / tuple
     if isinstance(x, (list, tuple)):
         for i, item in enumerate(x):
             assert_no_nan_inf(item, f"{name}[{i}]")
         return
 
-    # Case 3: dict
+    # dict
     if isinstance(x, dict):
         for k, v in x.items():
             assert_no_nan_inf(v, f"{name}.{k}")
         return
 
-    # Anything else is unsupported
+    raise TypeError(f"Unsupported type: {type(x)}")
+
+
+def assert_no_nan(x, name="tensor"):
+    if isinstance(x, torch.Tensor):
+        if torch.isnan(x).any():
+            raise ValueError(f"[ERROR] {name} contains NaN")
+        return
+
+    if isinstance(x, (list, tuple)):
+        for i, item in enumerate(x):
+            assert_no_nan(item, f"{name}[{i}]")
+        return
+
+    if isinstance(x, dict):
+        for k, v in x.items():
+            assert_no_nan(v, f"{name}.{k}")
+        return
+
     raise TypeError(f"Unsupported type for {name}: {type(x)}")
 

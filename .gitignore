@@ -125,3 +125,5 @@ tmp
 
 # custom
 mmrotate/.mim
+/models
+/output

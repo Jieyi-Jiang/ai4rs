@@ -9,7 +9,7 @@ from mmdet.utils import InstanceList, reduce_mean
 from .rotated_dino_head import RotatedDINOHead
 from .varifocal_loss import VarifocalLoss
 from mmrotate.registry import MODELS
-from .utils import assert_no_nan_inf
+from .utils import assert_no_nan_inf, assert_no_nan
 
 @MODELS.register_module()
 class RotatedRTDETRHead(RotatedDINOHead):
@@ -127,21 +127,14 @@ class RotatedRTDETRHead(RotatedDINOHead):
                     is_aligned=True)
                 loss_cls = self.loss_cls(
                     cls_scores, cls_iou_targets, avg_factor=cls_avg_factor)
-                # bg_class_ind = self.num_classes
-                # pos_inds = ((labels >= 0)
-                #             & (labels < bg_class_ind)).nonzero().squeeze(1)
-                # cls_iou_targets = label_weights.new_zeros(cls_scores.shape)
-                # pos_bbox_targets = bbox_targets[pos_inds]
-                # pos_decode_bbox_targets = bbox_cxcywh_to_xyxy(pos_bbox_targets)
-                # pos_bbox_pred = dn_bbox_preds.reshape(-1, 4)[pos_inds]
-                # pos_decode_bbox_pred = bbox_cxcywh_to_xyxy(pos_bbox_pred)
-                # pos_labels = labels[pos_inds]
-                # cls_iou_targets[pos_inds, pos_labels] = bbox_overlaps(
-                #     pos_decode_bbox_pred.detach(),
-                #     pos_decode_bbox_targets,
-                #     is_aligned=True)
-                # loss_cls = self.loss_cls(
-                #     cls_scores, cls_iou_targets, avg_factor=cls_avg_factor)
+                assert_no_nan(pos_labels)
+                assert_no_nan(pos_bbox_targets)
+                assert_no_nan(cls_scores)
+                assert_no_nan(cls_iou_targets)
+                # if torch.isnan(pos_bbox_targets).any():
+                #     print("===== DEBUG: loss_cls NAN detected =====")
+                #     print("pos_bbox_targets:", pos_bbox_targets)
+                    
             else:
                 loss_cls = self.loss_cls(
                     cls_scores,
@@ -182,16 +175,19 @@ class RotatedRTDETRHead(RotatedDINOHead):
         bboxes_gt_xywh = bbox_targets_xywh * factors
         bboxes_gt = torch.cat([bboxes_gt_xywh, bbox_targets_angle], dim=-1)
         # regression IoU loss, defaultly GIoU loss
+        assert_no_nan_inf(bboxes)
+        assert_no_nan_inf(bboxes_gt)
+        assert_no_nan_inf(bbox_weights)
         loss_iou = self.loss_iou(
             bboxes, bboxes_gt, bbox_weights, avg_factor=num_total_pos)
+        assert_no_nan_inf(loss_iou)
 
         # regression L1 loss
         loss_bbox = self.loss_bbox(
             bbox_preds, bbox_targets, bbox_weights, avg_factor=num_total_pos)
         assert_no_nan_inf(loss_cls)
         assert_no_nan_inf(loss_bbox)
-        if assert_no_nan_inf(loss_iou) == True:
-            print(loss_iou)
+        assert_no_nan_inf(loss_iou)
         return loss_cls, loss_bbox, loss_iou
 
     # def loss_by_feat_single(self, cls_scores: Tensor, bbox_preds: Tensor,
@@ -307,5 +303,5 @@ class RotatedRTDETRHead(RotatedDINOHead):
                 idxs=results.labels,
                 nms_cfg=nms_cfg)
             results = results[keeps]
-        assert_no_nan_inf(results)
+        # assert_no_nan_inf(results)
         return results

@@ -7,7 +7,8 @@
       "request": "launch",
       "program": "${workspaceFolder}/tools/train.py",
       "args": [
-        "projects/rtdetr_o/configs/rtdetr_r50vd_8xb2_72e_dior.py"
+        "projects/rtdetr_o/configs/rtdetr_r50vd_8xb2_72e_dior.py",
+        "--resume"
       ],
       "console": "integratedTerminal",
       "env": {
