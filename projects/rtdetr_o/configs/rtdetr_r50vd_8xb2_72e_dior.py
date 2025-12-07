@@ -43,7 +43,7 @@ angle_version = 'le90'
 
 batch_size = 8
 num_workers = 4
-max_epochs = 96
+max_epochs = 72
 
 model = dict(
     type='RotatedRTDETR',
@@ -264,7 +264,7 @@ optim_wrapper = dict(
 
 # learning policy
 train_cfg = dict(
-    type='EpochBasedTrainLoop', max_epochs = max_epochs, val_interval = 1)
+    type='EpochBasedTrainLoop', max_epochs = max_epochs, val_interval = 5)
 
 param_scheduler = [
     dict(

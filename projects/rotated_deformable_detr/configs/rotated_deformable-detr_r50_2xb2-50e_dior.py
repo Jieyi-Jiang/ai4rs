@@ -17,11 +17,13 @@
 #     from configs._base_.default_runtime import *
 
 _base_ = [
-    '../../../configs/_base_/datasets/dota.py',
+    '../../../configs/_base_/datasets/dior.py',
     '../../../configs/_base_/default_runtime.py'
 ]
 
-num_classes = 15
+num_classes =   20
+batch_size =    8
+num_workers =   4
 
 custom_imports = dict(
     imports=['projects.rotated_deformable_detr.rotated_deformable_detr'], allow_failed_imports=False)
@@ -127,10 +129,21 @@ model = dict(
     test_cfg=dict(max_per_img=500)
 )
 
+train_dataloader = dict(
+    batch_size=batch_size,
+    num_workers=num_workers,
+)
+
+val_dataloader = dict(
+    batch_size=batch_size,
+    num_workers=num_workers,)
+
+test_dataloader = val_dataloader
+
 # optimizer
 optim_wrapper = dict(
     type='OptimWrapper',
-    optimizer=dict(type='AdamW', lr=0.0001, weight_decay=0.0001),
+    optimizer=dict(type='AdamW', lr=4e-5, weight_decay=1e-4),
     clip_grad=dict(max_norm=0.1, norm_type=2),
     paramwise_cfg=dict(
         custom_keys={
@@ -140,9 +153,9 @@ optim_wrapper = dict(
         }))
 
 # learning policy
-max_epochs = 50
+max_epochs = 72
 train_cfg = dict(
-    type='EpochBasedTrainLoop', max_epochs=max_epochs, val_interval=2)
+    type='EpochBasedTrainLoop', max_epochs=max_epochs, val_interval=5)
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 
@@ -159,4 +172,4 @@ param_scheduler = [
 # NOTE: `auto_scale_lr` is for automatically scaling LR,
 # USER SHOULD NOT CHANGE ITS VALUES.
 # base_batch_size = (2 GPUs) x (2 samples per GPU)
-auto_scale_lr = dict(base_batch_size=4, enable=False)
+auto_scale_lr = dict(base_batch_size=batch_size, enable=False)

@@ -7,18 +7,20 @@ _base_ = [
 custom_imports = dict(
     imports=['projects.GSDet_baseline.gsdet'], allow_failed_imports=False)
 
-pretrain = 'https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/' \
-            'pretrain/diffusiondet_r50_fpn_500-proposals_1-step_crop-ms-480-800-450k_coco_new2.pth'
+# pretrain = 'https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/master/GSDet_baseline/' \
+#             'pretrain/diffusiondet_r50_fpn_500-proposals_1-step_crop-ms-480-800-450k_coco_new2.pth'
 
 num_classes = 20
 num_proposals = 900
 hbox2hbox = 4
 hbox2rbox = 1
 rbox2rbox = 1
+batch_size = 5
+num_workers = 2
 angle_version = 'le90'
 model = dict(
     type='GSDet',
-    init_cfg=dict(type='Pretrained', checkpoint=pretrain),
+    # init_cfg=dict(type='Pretrained', checkpoint=pretrain),
     data_preprocessor=dict(
         type='mmdet.DetDataPreprocessor',
         mean=[123.675, 116.28, 103.53],
@@ -223,6 +225,16 @@ model = dict(
             nms=dict(type='nms_rotated', iou_threshold=0.6),
             max_per_img=num_proposals)))
 
+train_dataloader = dict(
+    batch_size=batch_size,
+    num_workers=num_workers,
+)
+
+val_dataloader = dict(
+    batch_size=batch_size,
+    num_workers=num_workers,)
+test_dataloader = val_dataloader
+
 # optimizer
 optim_wrapper = dict(
     type='OptimWrapper',
@@ -231,7 +243,7 @@ optim_wrapper = dict(
     clip_grad=dict(max_norm=1.0, norm_type=2))
 
 train_cfg=dict(val_interval=2)
-default_hooks = dict(checkpoint=dict(interval=1))
+default_hooks = dict(checkpoint=dict(interval=4))
 
 # base_batch_size = (2 GPUs) x (2 samples per GPU)
 auto_scale_lr = dict(base_batch_size=4, enable=False)

@@ -11,6 +11,8 @@ num_stages = 2
 num_proposals = 300
 num_classes = 20
 angle_version = 'le90'
+batch_size = 8
+num_workers = 2
 
 model = dict(
     type='OrientedDDQRCNN',
@@ -153,8 +155,6 @@ model = dict(
         ]),
     test_cfg=dict(rpn=None, rcnn=dict(max_per_img=num_proposals)))
 
-batch_size = 8
-num_workers = 4
 train_dataloader = dict(
     drop_last=True,
     pin_memory=True,
