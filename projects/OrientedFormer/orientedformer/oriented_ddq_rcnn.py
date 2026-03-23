@@ -130,26 +130,34 @@ class OrientedDDQRCNN(TwoStageDetector):
         batch_gt_instances, batch_gt_instances_ignore, batch_img_metas \
             = outputs
 
-        x = self.extract_feat(batch_inputs)
+        # 特征维度转换调用 ChannelMapperWithGN(neck)，在 extract_feat 内部自动完成
+        # 每个尺度的特征都是默认 256 维
+        x = self.extract_feat(batch_inputs) # ResNet, LSKNet, SwinTransformer
         rpn_x = x
         roi_x = x
-
+        
+        # OrientedAdaMixerDDQ
         rpn_losses, imgs_whwht, distinc_query_dict = \
             self.rpn_head.predict(
                 rpn_x, batch_img_metas)
 
-        query_xyzrt = distinc_query_dict['query_xyzrt']
-        query_content = distinc_query_dict['query_content']
+        query_xyzrt = distinc_query_dict['query_xyzrt']     # 位置 queries
+        query_content = distinc_query_dict['query_content'] # 内容 queries
 
         rpn_results_list = []
         for idx in range(len(batch_img_metas)):
             rpn_results = InstanceData()
+            # 自动在 rpn_results 中创建 'query_xyzrt' 属性
             rpn_results.query_xyzrt = query_xyzrt[idx]
+            # 根据 query_xyzrt[idx] 的长度（queries）个数，复制 len(query_xyzrt[idx]) 次
+            # 对齐 queries 和 imgs_whwht 的维度，方便后面做诸如归一化的操作
+            # （也其实可以不复制，用 pytorch 的传播机制就行）
             rpn_results.imgs_whwht = imgs_whwht[idx].repeat(
                 len(query_xyzrt[idx]), 1)
             rpn_results.query_content = query_content[idx]
             rpn_results_list.append(rpn_results)
 
+        # OrientedAdaMixerDecoder
         roi_outs = self.roi_head.forward(roi_x, rpn_results_list,
                                          batch_data_samples)
         results = results + (roi_outs, )
