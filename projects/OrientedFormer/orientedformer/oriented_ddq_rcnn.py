@@ -21,23 +21,32 @@ class OrientedDDQRCNN(TwoStageDetector):
 
         Returns:
             dict: A dictionary of loss components
+        
+        OrientedFormer 训练损失计算主流程：
+            1. 提取图像特征 (Backbone + FPN)。
+            2. RPN 阶段：计算初步候选框损失，并生成供第二阶段使用的旋转 Query。
+            3. 结果组装：将 RPN 输出的位置 (xyzrt) 和内容 (content) 封装。
+            4. RoI 阶段：基于 RPN 的输出进行精细化的旋转框回归与分类，计算最终损失。
+            5. 返回包含两个阶段所有损失分量的字典。
         '''
         outputs = unpack_gt_instances(batch_data_samples)
         batch_gt_instances, batch_gt_instances_ignore, batch_img_metas \
             = outputs
 
+        # 处理 GT ，这个在 _forward 中不需要，因为 _forward 不需要监督信息
         gt_bboxes, gt_labels = [], []
         for i in range(len(batch_gt_instances)):
             gt_bboxes.append(batch_gt_instances[i].bboxes)
             gt_labels.append(batch_gt_instances[i].labels)
 
+        # 收集并记录模型各部分产生的损失分量，用于后面加权求和计算总损失以进行反向传播，同时供训练日志记录和监控。
         losses = dict()
         x = self.extract_feat(batch_inputs) # list(level), each level has shape (bs, c, h, w)
         rpn_x = x
         roi_x = x
 
         rpn_losses, imgs_whwht, distinc_query_dict = \
-            self.rpn_head.loss_and_predict(
+            self.rpn_head.loss_and_predict(  # 这里调用 loss_and_predict，_forward 和 predtic 中调用 predict
                 rpn_x,
                 batch_img_metas,
                 gt_bboxes,
@@ -45,6 +54,8 @@ class OrientedDDQRCNN(TwoStageDetector):
         query_xyzrt = distinc_query_dict['query_xyzrt']
         query_content = distinc_query_dict['query_content']
 
+        # 将 RPN 损失存入总字典，加上 rpn_ 前缀以示区分
+        # （在 _forward 和 predict 方法里面没用用到 rpn_losses）
         for k, v in rpn_losses.items():
             losses[f'rpn_{k}'] = v
 
@@ -63,6 +74,7 @@ class OrientedDDQRCNN(TwoStageDetector):
 
         return losses
 
+    # 除了打包 batch_data_samples，其他差不多
     def predict(self,
                 batch_inputs: Tensor,
                 batch_data_samples: list,
@@ -104,7 +116,7 @@ class OrientedDDQRCNN(TwoStageDetector):
         results_list = self.roi_head.predict(roi_x,
                                              rpn_results_list,
                                              batch_data_samples,
-                                             rescale=rescale)
+                                             rescale=rescale)  # 这里 resacle，为什么？
         batch_data_samples = self.add_pred_to_datasample(
             batch_data_samples, results_list)
         return batch_data_samples
