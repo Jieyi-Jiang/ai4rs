@@ -112,7 +112,9 @@ class OrientedDDQRCNN(TwoStageDetector):
                 len(query_xyzrt[idx]), 1)
             rpn_results.query_content = query_content[idx]
             rpn_results_list.append(rpn_results)
-
+        # 图片进网络前被 resize（比如 1024×768 → 800×800）
+        # 网络输出的 bbox 坐标是在 resize 后的尺寸空间里
+        # 用户拿到的结果要在原图上画框，所以必须 rescale 回去
         results_list = self.roi_head.predict(roi_x,
                                              rpn_results_list,
                                              batch_data_samples,
@@ -149,6 +151,9 @@ class OrientedDDQRCNN(TwoStageDetector):
         roi_x = x
         
         # OrientedAdaMixerDDQ
+        # imgs_whwht — 图像尺寸归一化基准
+        # distinc_query_dict — 筛选后的 distinct query 这是 DDQ 的核心输出，
+        # 包含 top-k 的 imgs_whwht 和 distinc_query_dict
         rpn_losses, imgs_whwht, distinc_query_dict = \
             self.rpn_head.predict(
                 rpn_x, batch_img_metas)
