@@ -47,6 +47,7 @@ class OrientedAdaMixerDDQ(OrientedDDQFCN):
 
             object_feats = self.compress(object_feats)
 
+            # 选出 top-k 个，num=300，所以是 top-300
             select_ids = torch.sort(singl_scores,
                                     descending=True).indices[:num]
             single_ids = single_ids[select_ids]

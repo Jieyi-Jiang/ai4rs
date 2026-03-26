@@ -151,16 +151,17 @@ class OrientedDDQRCNN(TwoStageDetector):
         roi_x = x
         
         # OrientedAdaMixerDDQ
-        # imgs_whwht — 图像尺寸归一化基准
-        # distinc_query_dict — 筛选后的 distinct query 这是 DDQ 的核心输出，
-        # 包含 top-k 的 imgs_whwht 和 distinc_query_dict
+        # imgs_whwht - 图像尺寸归一化基准
+        # distinc_query_dict - 筛选后的 distinct query 这是 DDQ 的核心输出，
+        #   包含 top-k 的 imgs_whwht 和 distinc_query_dict
         rpn_losses, imgs_whwht, distinc_query_dict = \
             self.rpn_head.predict(
                 rpn_x, batch_img_metas)
 
+        # query_xyzrt 和 query_content 在 oriented_adamixer_ddq 里面生成
         query_xyzrt = distinc_query_dict['query_xyzrt']     # 位置 queries
         query_content = distinc_query_dict['query_content'] # 内容 queries
-
+        
         rpn_results_list = []
         for idx in range(len(batch_img_metas)):
             rpn_results = InstanceData()
