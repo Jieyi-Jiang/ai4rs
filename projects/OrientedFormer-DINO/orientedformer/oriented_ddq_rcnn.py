@@ -4,10 +4,25 @@ from mmdet.models.utils.misc import unpack_gt_instances
 from mmdet.structures import SampleList
 from mmengine.structures import InstanceData
 from torch import Tensor
-
+from mmdet.utils import OptConfigType
+from .oriented_dino_layers import OrientedCdnQueryGenerator
 @MODELS.register_module()
 class OrientedDDQRCNN(TwoStageDetector):
 
+    def __init__(self, *args, dn_cfg: OptConfigType = None, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        if dn_cfg is not None:
+            assert 'num_classes' not in dn_cfg and \
+                   'num_queries' not in dn_cfg and \
+                   'hidden_dim' not in dn_cfg, \
+                'The three keyword args `num_classes`, `embed_dims`, and ' \
+                '`num_matching_queries` are set in `detector.__init__()`, ' \
+                'users should not set them in `dn_cfg` config.'
+            dn_cfg['num_classes'] = self.bbox_head.num_classes
+            dn_cfg['embed_dims'] = self.embed_dims
+            dn_cfg['num_matching_queries'] = self.num_queries
+        self.dn_query_generator = OrientedCdnQueryGenerator(**dn_cfg)
+    
     def loss(self,
              batch_inputs: Tensor,
              batch_data_samples: SampleList):
@@ -51,8 +66,11 @@ class OrientedDDQRCNN(TwoStageDetector):
                 batch_img_metas,
                 gt_bboxes,
                 gt_labels)
-        query_xyzrt = distinc_query_dict['query_xyzrt']
-        query_content = distinc_query_dict['query_content']
+        query_xyzrt = distinc_query_dict['query_xyzrt']     # (bs, 300, 256)
+        query_content = distinc_query_dict['query_content'] # (bs, 300, 5)
+        # 这里插入 dn_query 的构建
+        
+        # 这里插入 dn_query 的构建
 
         # 将 RPN 损失存入总字典，加上 rpn_ 前缀以示区分
         # （在 _forward 和 predict 方法里面没用用到 rpn_losses）
@@ -68,6 +86,7 @@ class OrientedDDQRCNN(TwoStageDetector):
             rpn_results.query_content = query_content[idx]
             rpn_results_list.append(rpn_results)
 
+        # 这里插入 dn_loss 计算
         roi_losses = self.roi_head.loss(
             roi_x, rpn_results_list, batch_data_samples)
         losses.update(roi_losses)

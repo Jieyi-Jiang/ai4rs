@@ -10,9 +10,12 @@ from mmdet.structures import SampleList
 from mmdet.structures.bbox import (bbox_cxcywh_to_xyxy, bbox_overlaps,
                                    bbox_xyxy_to_cxcywh)
 from mmdet.utils import InstanceList, OptInstanceList, reduce_mean
-from ..losses import QualityFocalLoss
-from ..utils import multi_apply
-from .deformable_detr_head import DeformableDETRHead
+from mmdet.models.losses import QualityFocalLoss
+from mmdet.models.utils import multi_apply
+from mmdet.models.dense_heads.deformable_detr_head import DeformableDETRHead
+# from ..losses import QualityFocalLoss
+# from ..utils import multi_apply
+# from .deformable_detr_head import DeformableDETRHead
 
 
 @MODELS.register_module()
@@ -69,9 +72,12 @@ class DINOHead(DeformableDETRHead):
             batch_gt_instances.append(data_sample.gt_instances)
 
         outs = self(hidden_states, references)
+        # 这里比 deformable 版本增加了 dn_meta
+        # “+” 是在 tuple 后面增加东西
         loss_inputs = outs + (enc_outputs_class, enc_outputs_coord,
                               batch_gt_instances, batch_img_metas, dn_meta)
-        losses = self.loss_by_feat(*loss_inputs)
+        # 由上面推测，真正改变的是 loss_by_feat 
+        losses = self.loss_by_feat(*loss_inputs) # “*”  是拆包操作
         return losses
 
     def loss_by_feat(
@@ -154,9 +160,11 @@ class DINOHead(DeformableDETRHead):
                 batch_img_metas=batch_img_metas,
                 dn_meta=dn_meta)
             # collate denoising loss
+            ## 最后一层的 loss，也是最重要的
             loss_dict['dn_loss_cls'] = dn_losses_cls[-1]
             loss_dict['dn_loss_bbox'] = dn_losses_bbox[-1]
             loss_dict['dn_loss_iou'] = dn_losses_iou[-1]
+            ## 其他层的 loss（不包括最后一层），作为辅助
             for num_dec_layer, (loss_cls_i, loss_bbox_i, loss_iou_i) in \
                     enumerate(zip(dn_losses_cls[:-1], dn_losses_bbox[:-1],
                                   dn_losses_iou[:-1])):
@@ -304,7 +312,7 @@ class DINOHead(DeformableDETRHead):
             bboxes, bboxes_gt, bbox_weights, avg_factor=num_total_pos)
 
         # regression L1 loss
-        loss_bbox = self.loss_bbox(
+        loss_bbox = self.loss_bbox(   
             bbox_preds, bbox_targets, bbox_weights, avg_factor=num_total_pos)
         return loss_cls, loss_bbox, loss_iou
 

@@ -46,6 +46,21 @@
       },
       "justMyCode": false,
       "cwd": "${workspaceFolder}"
-    }
+    },
+    {
+      "name": "OF-DINO",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/tools/train.py",
+      "args": [
+        "${workspaceFolder}/projects/OrientedFormer-DINO/configs/orientedformer_dino_r50_dior.py"
+      ],
+      "console": "integratedTerminal",
+      "env": {
+        "CUDA_LAUNCH_BLOCKING": "1"
+      },
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}"
+    },
   ]
 }

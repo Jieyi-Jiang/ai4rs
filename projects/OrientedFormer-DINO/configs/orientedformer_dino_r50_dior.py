@@ -5,13 +5,13 @@ _base_ = [
 ]
 
 custom_imports = dict(
-    imports=['projects.OrientedFormer.orientedformer'], allow_failed_imports=False)
+    imports=['projects.OrientedFormer-DINO.orientedformer'], allow_failed_imports=False)
 
 num_stages = 2
 num_proposals = 300
 num_classes = 20
 angle_version = 'le90'
-batch_size = 8
+batch_size = 1
 num_workers = 2
 
 model = dict(
@@ -24,7 +24,7 @@ model = dict(
         pad_size_divisor=32,
         boxtype2tensor=False),
     backbone=dict(
-        type='##',
+        type='mmdet.ResNet',
         depth=50,
         num_stages=4,
         out_indices=(0, 1, 2, 3),
