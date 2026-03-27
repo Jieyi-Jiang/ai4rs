@@ -3,6 +3,7 @@ from mmdet.models.detectors.two_stage import TwoStageDetector
 from mmdet.models.utils.misc import unpack_gt_instances
 from mmdet.structures import SampleList
 from mmengine.structures import InstanceData
+import torch
 from torch import Tensor
 from mmdet.utils import OptConfigType
 from .oriented_dino_layers import OrientedCdnQueryGenerator
@@ -18,9 +19,12 @@ class OrientedDDQRCNN(TwoStageDetector):
                 'The three keyword args `num_classes`, `embed_dims`, and ' \
                 '`num_matching_queries` are set in `detector.__init__()`, ' \
                 'users should not set them in `dn_cfg` config.'
-            dn_cfg['num_classes'] = self.bbox_head.num_classes
-            dn_cfg['embed_dims'] = self.embed_dims
-            dn_cfg['num_matching_queries'] = self.num_queries
+            # dn_cfg['num_classes'] = self.bbox_head.num_classes
+            # dn_cfg['embed_dims'] = self.embed_dims
+            # dn_cfg['num_matching_queries'] = self.num_queries
+            dn_cfg['num_classes'] = self.roi_head.bbox_head[0].num_classes
+            dn_cfg['embed_dims'] = self.roi_head.content_dim
+            dn_cfg['num_matching_queries'] = self.rpn_head.num_proposals
         self.dn_query_generator = OrientedCdnQueryGenerator(**dn_cfg)
     
     def loss(self,
@@ -54,14 +58,17 @@ class OrientedDDQRCNN(TwoStageDetector):
             gt_bboxes.append(batch_gt_instances[i].bboxes)
             gt_labels.append(batch_gt_instances[i].labels)
 
-        # 收集并记录模型各部分产生的损失分量，用于后面加权求和计算总损失以进行反向传播，同时供训练日志记录和监控。
+        # 收集并记录模型各部分产生的损失分量，用于后面加权求和计算总损失以进行反向传播，
+        # 同时供训练日志记录和监控。
         losses = dict()
-        x = self.extract_feat(batch_inputs) # list(level), each level has shape (bs, c, h, w)
+        # list(level), each level has shape (bs, c, h, w)
+        x = self.extract_feat(batch_inputs) 
         rpn_x = x
         roi_x = x
 
+         # 这里调用 loss_and_predict，_forward 和 predtic 中调用 predict
         rpn_losses, imgs_whwht, distinc_query_dict = \
-            self.rpn_head.loss_and_predict(  # 这里调用 loss_and_predict，_forward 和 predtic 中调用 predict
+            self.rpn_head.loss_and_predict( 
                 rpn_x,
                 batch_img_metas,
                 gt_bboxes,
@@ -69,8 +76,15 @@ class OrientedDDQRCNN(TwoStageDetector):
         query_xyzrt = distinc_query_dict['query_xyzrt']     # (bs, 300, 256)
         query_content = distinc_query_dict['query_content'] # (bs, 300, 5)
         # 这里插入 dn_query 的构建
-        
+        # if self.training: # 这个判断不太必要，loss 里面默认就是训练状态
+        #     pass
+        dn_query_content, dn_query_xyzrt, dn_mask, dn_meta = \
+                self.dn_query_generator(batch_data_samples)
         # 这里插入 dn_query 的构建
+
+        # dn_query 和前面生成的 query 拼接
+        query_xyzrt = torch.cat([dn_query_xyzrt, query_xyzrt], dim=1)
+        query_content = torch.cat([dn_query_content, query_content], dim=1)
 
         # 将 RPN 损失存入总字典，加上 rpn_ 前缀以示区分
         # （在 _forward 和 predict 方法里面没用用到 rpn_losses）
@@ -88,7 +102,9 @@ class OrientedDDQRCNN(TwoStageDetector):
 
         # 这里插入 dn_loss 计算
         roi_losses = self.roi_head.loss(
-            roi_x, rpn_results_list, batch_data_samples)
+            roi_x, rpn_results_list, batch_data_samples,
+            dn_mask=dn_mask,
+            dn_meta=dn_meta)
         losses.update(roi_losses)
 
         return losses

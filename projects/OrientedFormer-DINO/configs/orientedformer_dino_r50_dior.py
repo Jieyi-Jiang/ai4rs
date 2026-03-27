@@ -1,3 +1,5 @@
+import math
+
 _base_ = [
     '../../../configs/_base_/datasets/dior.py',
     '../../../configs/_base_/schedules/schedule_1x.py',
@@ -12,10 +14,16 @@ num_proposals = 300
 num_classes = 20
 angle_version = 'le90'
 batch_size = 1
-num_workers = 2
+num_workers = 1
 
 model = dict(
     type='OrientedDDQRCNN',
+    dn_cfg=dict(  # TODO: Move to model.train_cfg ?
+        label_noise_scale=0.5,
+        box_noise_scale=1.0,  # 0.4 for DN-DETR
+        theta_noise_scale=math.pi/36,
+        group_cfg=dict(dynamic=True, num_groups=None,
+                       num_dn_queries=100)),  # TODO: half num_dn_queries    
     data_preprocessor=dict(
         type='mmdet.DetDataPreprocessor',
         mean=[123.675, 116.28, 103.53],
@@ -43,7 +51,7 @@ model = dict(
         type='OrientedAdaMixerDDQ',
         angle_version=angle_version,
         ddq_num_classes=num_classes,
-        num_proposals=num_proposals,
+        num_proposals=num_proposals, # num_queries
         in_channels=256,
         feat_channels=256,
         strides=[4, 8, 16, 32, 64],
@@ -99,13 +107,13 @@ model = dict(
         bbox_head=[
             dict(
                 type='OrientedFormerDecoderLayer',
-                num_classes=num_classes,
+                num_classes=num_classes,  # num_classes
                 angle_version=angle_version,
                 reg_predictor_cfg=dict(type='mmdet.Linear'),
                 cls_predictor_cfg=dict(type='mmdet.Linear'),
                 num_cls_fcs=1,
                 num_reg_fcs=1,
-                content_dim=256,
+                content_dim=256, # embed_dims           
                 target_means=(.0, .0, .0, .0, .0),
                 target_stds=(1., 1., 1., 1., 1.),
                 self_attn_cfg=dict(

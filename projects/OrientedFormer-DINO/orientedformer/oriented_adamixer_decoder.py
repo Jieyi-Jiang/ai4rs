@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Optional, Dict
 
 import torch
 from mmengine.structures import InstanceData
@@ -12,6 +12,21 @@ from mmdet.utils import ConfigType, InstanceList, OptConfigType
 from mmdet.models.utils.misc import empty_instances, unpack_gt_instances
 from mmdet.models.roi_heads.cascade_roi_head import CascadeRoIHead
 
+def _check_tensor(name, x):
+    pass
+    # if x is None:
+    #     print(f"[CHECK] {name}: None")
+    #     return
+    # finite = torch.isfinite(x)
+    # print(
+    #     f"[CHECK] {name}: "
+    #     f"shape={tuple(x.shape)}, dtype={x.dtype}, "
+    #     f"all_finite={finite.all().item()}, "
+    #     f"nan={torch.isnan(x).any().item()}, "
+    #     f"inf={torch.isinf(x).any().item()}, "
+    #     f"min={x.min().item() if x.numel() > 0 else 'empty'}, "
+    #     f"max={x.max().item() if x.numel() > 0 else 'empty'}"
+    # )
 
 @MODELS.register_module()
 class OrientedAdaMixerDecoder(CascadeRoIHead):
@@ -118,6 +133,18 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
         query_xyzrt = torch.stack(xyzrt_list)             # bs, num_query, 5
         bbox_results = self._bbox_forward(stage, x, query_xyzrt, query_content,
                                           batch_img_metas)
+        ################################ CHECK #################################
+        _check_tensor(f"stage{stage}.input_query_xyzrt", query_xyzrt)
+        _check_tensor(f"stage{stage}.input_query_content", query_content)
+
+        _check_tensor(f"stage{stage}.cls_score", bbox_results['cls_score'])
+        _check_tensor(f"stage{stage}.decode_bbox_pred", bbox_results['decode_bbox_pred'])
+
+        for i, t in enumerate(bbox_results['detach_cls_score_list']):
+            _check_tensor(f"stage{stage}.detach_cls_score_list[{i}]", t)
+        for i, t in enumerate(bbox_results['detached_bboxes_list']):
+            _check_tensor(f"stage{stage}.detached_bboxes_list[{i}]", t)
+        ########################################################################
         imgs_whwht = torch.cat(
             [res.imgs_whwht[None, ...] for res in results_list])  # bs, num_query, 5
         cls_pred_list = bbox_results['detach_cls_score_list']     # bs*{num_query, 80}
@@ -130,7 +157,30 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
             pred_instances.bboxes = bboxes_list[i]  # for assinger
             pred_instances.scores = cls_pred_list[i]
             pred_instances.priors = bboxes_list[i]  # for sampler
+            
+            #############################  CHECK   #############################
+            _check_tensor(f"stage{stage}.pred_bboxes[{i}]", pred_instances.bboxes)
+            _check_tensor(f"stage{stage}.pred_scores[{i}]", pred_instances.scores)
 
+            gt_bboxes_i = batch_gt_instances[i].bboxes
+            gt_labels_i = batch_gt_instances[i].labels
+            if hasattr(gt_bboxes_i, 'tensor'):
+                _check_tensor(f"stage{stage}.gt_bboxes[{i}]", gt_bboxes_i.tensor)
+            else:
+                _check_tensor(f"stage{stage}.gt_bboxes[{i}]", gt_bboxes_i)
+            _check_tensor(f"stage{stage}.gt_labels[{i}]", gt_labels_i)
+
+            assert torch.isfinite(pred_instances.bboxes).all(), \
+                f"pred_bboxes[{i}] has NaN/Inf"
+            assert torch.isfinite(pred_instances.scores).all(), \
+                f"pred_scores[{i}] has NaN/Inf"
+            if hasattr(gt_bboxes_i, 'tensor'):
+                assert torch.isfinite(gt_bboxes_i.tensor).all(), \
+                    f"gt_bboxes[{i}] has NaN/Inf"
+            else:
+                assert torch.isfinite(gt_bboxes_i).all(), \
+                    f"gt_bboxes[{i}] has NaN/Inf"
+            ####################################################################
             assign_result = self.bbox_assigner[stage].assign(
                 pred_instances=pred_instances,
                 gt_instances=batch_gt_instances[i],
@@ -145,8 +195,20 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
 
         cls_score = bbox_results['cls_score']               # bs, num_query, num_class
         decoded_bboxes = bbox_results['decode_bbox_pred']   # bs, num_query, 5
+        ################################ CHECK #################################
+        _check_tensor(f"stage{stage}.cls_score_before_view", cls_score)
+        _check_tensor(f"stage{stage}.decoded_bboxes_before_view", decoded_bboxes)
+        assert torch.isfinite(cls_score).all(), "cls_score has NaN/Inf before view"
+        assert torch.isfinite(decoded_bboxes).all(), "decoded_bboxes has NaN/Inf before view"
+        ########################################################################
         cls_score = cls_score.view(-1, cls_score.size(-1))  # bs, num_query, num_class
         decoded_bboxes = decoded_bboxes.view(-1, 5)         # bs*num_query, 5
+        ################################ CHECK #################################
+        _check_tensor(f"stage{stage}.cls_score_after_view", cls_score)
+        _check_tensor(f"stage{stage}.decoded_bboxes_after_view", decoded_bboxes)
+        assert torch.isfinite(cls_score).all(), "cls_score has NaN/Inf after view"
+        assert torch.isfinite(decoded_bboxes).all(), "decoded_bboxes has NaN/Inf after view"
+        ########################################################################
         bbox_loss_and_target = bbox_head.loss_and_target(
             cls_score,
             decoded_bboxes,
@@ -231,7 +293,9 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
 
 
     def loss(self, x: Tuple[Tensor], rpn_results_list: InstanceList,
-             batch_data_samples: SampleList) -> dict:
+             batch_data_samples: SampleList, 
+             dn_mask: Optional[Tensor] = None,
+             dn_meta: Dict[str, int] = None) -> dict:
         """Perform forward propagation and loss calculation of the detection
         roi on the features of the upstream network.
 

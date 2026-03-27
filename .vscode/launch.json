@@ -62,5 +62,22 @@
       "justMyCode": false,
       "cwd": "${workspaceFolder}"
     },
+        {
+      "name": "OrientedFormer",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/tools/train.py",
+      "args": [
+        "${workspaceFolder}/projects/OrientedFormer/configs/orientedformer_le90_r50_q300_layer2_head64_point32_1x_dior.py",
+        // "--resume",
+        // "/home/jieyi/work_dirs/orientedformer_le90_r50_q300_layer2_head64_point32_1x_dior/epoch_12.pth"
+      ],
+      "console": "integratedTerminal",
+      "env": {
+        "CUDA_LAUNCH_BLOCKING": "1"
+      },
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}"
+    },
   ]
 }

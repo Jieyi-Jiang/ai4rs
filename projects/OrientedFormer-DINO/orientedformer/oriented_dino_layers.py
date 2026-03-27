@@ -1,6 +1,7 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import warnings
 from typing import Tuple, Union
+import math
 
 import torch
 from mmengine.model import BaseModule
@@ -152,6 +153,7 @@ class OrientedCdnQueryGenerator(BaseModule):
                  num_matching_queries: int,
                  label_noise_scale: float = 0.5,
                  box_noise_scale: float = 1.0,
+                 theta_noise_scale: float = math.pi/36,
                  group_cfg: OptConfigType = None) -> None:
         super().__init__()
         self.num_classes = num_classes
@@ -159,6 +161,7 @@ class OrientedCdnQueryGenerator(BaseModule):
         self.num_matching_queries = num_matching_queries
         self.label_noise_scale = label_noise_scale
         self.box_noise_scale = box_noise_scale
+        self.theta_noise_scale = theta_noise_scale
 
         # prepare grouping strategy
         group_cfg = {} if group_cfg is None else group_cfg
@@ -233,29 +236,45 @@ class OrientedCdnQueryGenerator(BaseModule):
         # normalize bbox and collate ground truth (gt)
         gt_labels_list = []
         gt_bboxes_list = []
+        gt_factors_list = []
+        # 对 bbox 的值根据 img_h, img_w 归一化
+        # dino 的框是   [x, y, x, y]        (num_target_total, 4)
+        # OF 的框是     [x, y, w, h, theta] (num_target_total, 5)
+        # 角度不进行归一化，所以 factor = [w, h, w, h, 1.0]
+        # 或许在 OF 里面，xywh不应该归一化
         for sample in batch_data_samples:
             img_h, img_w = sample.img_shape
-            bboxes = sample.gt_instances.bboxes
+            bboxes = sample.gt_instances.bboxes.tensor
+            # factor = bboxes.new_tensor([img_w, img_h, img_w,
+            #                             img_h, 1.0]).unsqueeze(0)
             factor = bboxes.new_tensor([img_w, img_h, img_w,
-                                        img_h]).unsqueeze(0)
+                                        img_h, 1.0]).unsqueeze(0)
             bboxes_normalized = bboxes / factor
             gt_bboxes_list.append(bboxes_normalized)
             gt_labels_list.append(sample.gt_instances.labels)
+            gt_factors_list.append(factor.repeat(len(bboxes), 1))
         gt_labels = torch.cat(gt_labels_list)  # (num_target_total, 4)
         gt_bboxes = torch.cat(gt_bboxes_list)
+        gt_factors = torch.cat(gt_factors_list)
 
+        # 在当前的 batch 里面，找 target 最多的图片，以这个为标准计算 group 数量
+        # 用 batch 里“GT 最多的那张图” -> 作为统一标准 -> 决定 DN query 数量
         num_target_list = [len(bboxes) for bboxes in gt_bboxes_list]
         max_num_target = max(num_target_list)
         num_groups = self.get_num_groups(max_num_target)
 
         dn_label_query = self.generate_dn_label_query(gt_labels, num_groups)
-        dn_bbox_query = self.generate_dn_bbox_query(gt_bboxes, num_groups)
-
+        # TODO: 生成 bbox 这里要改
+        # dn_bbox_query <-> query_xyzrt
+        # dn_bbox_query <-> query_xywht
+        dn_bbox_query = self.generate_dn_bbox_query(gt_bboxes, gt_factors, num_groups)
+        # 逆归一化
         # The `batch_idx` saves the batch index of the corresponding sample
         # for each target, has shape (num_target_total).
         batch_idx = torch.cat([
             torch.full_like(t.long(), i) for i, t in enumerate(gt_labels_list)
         ])
+        # TODO: 这里可能要改，检查一下
         dn_label_query, dn_bbox_query = self.collate_dn_queries(
             dn_label_query, dn_bbox_query, batch_idx, len(batch_data_samples),
             num_groups)
@@ -343,8 +362,6 @@ class OrientedCdnQueryGenerator(BaseModule):
         dn_label_query = self.label_embedding(noisy_labels_expand)
         return dn_label_query
 
-    def generate_dn_bbox_query(self, gt_bboxes: Tensor,
-                               num_groups: int) -> Tensor:
         """Generate noisy bboxes and their query embeddings.
 
         The strategy for generating noisy bboxes is as follow:
@@ -399,11 +416,18 @@ class OrientedCdnQueryGenerator(BaseModule):
             (cx, cy, w, h), where
             `num_noisy_targets = num_target_total * num_groups * 2`.
         """
+    def generate_dn_bbox_query(self, gt_bboxes: Tensor,
+                               gt_factors: Tensor,
+                               num_groups: int) -> Tensor:
         assert self.box_noise_scale > 0
+        assert self.theta_noise_scale >= 0
         device = gt_bboxes.device
 
         # expand gt_bboxes as groups
+        # num_groups 组去噪，每组都有正负样本，所以复制 2*num_groups 次
+        # rotated_bbox = (cx, cy, w, h, theta)
         gt_bboxes_expand = gt_bboxes.repeat(2 * num_groups, 1)  # xyxy
+        gt_factors_expand = gt_factors.repeat(2 * num_groups, 1)
 
         # obtain index of negative queries in gt_bboxes_expand
         positive_idx = torch.arange(
@@ -426,13 +450,52 @@ class OrientedCdnQueryGenerator(BaseModule):
         rand_part *= rand_sign  # pos: (-1, 1); neg: (-2, -1] U [1, 2)
 
         # add noise to the bboxes
-        bboxes_whwh = bbox_xyxy_to_cxcywh(gt_bboxes_expand)[:, 2:].repeat(1, 2)
-        noisy_bboxes_expand = gt_bboxes_expand + torch.mul(
-            rand_part, bboxes_whwh) * self.box_noise_scale / 2  # xyxy
-        noisy_bboxes_expand = noisy_bboxes_expand.clamp(min=0.0, max=1.0)
-        noisy_bboxes_expand = bbox_xyxy_to_cxcywh(noisy_bboxes_expand)
-
-        dn_bbox_query = inverse_sigmoid(noisy_bboxes_expand, eps=1e-3)
+        # dino 的 bboxes 的默认格式是 xyxy
+        # dino 是在 xyxy 上面加噪声，然后再转成 cxcywh 输出
+        # OF 的 bboxes 的默认格式是 (cx, cy, w, h, theta)
+        bbox_xywh = gt_bboxes_expand[:, :4]
+        bbox_theat = gt_bboxes_expand[:, 4:]
+        # 获取 gt_bboxes_expand 的 w h
+        bbox_wh = gt_bboxes_expand[:, 2:4]
+        # 计算 (x1, y1) 和 (x2, y2) 的变化（暂时当作水平框处理）
+        dx1 = rand_part[:, 0:1] * bbox_wh[:, 0:1] * self.box_noise_scale / 2
+        dy1 = rand_part[:, 1:2] * bbox_wh[:, 1:2] * self.box_noise_scale / 2
+        dx2 = rand_part[:, 2:3] * bbox_wh[:, 0:1] * self.box_noise_scale / 2
+        dy2 = rand_part[:, 3:4] * bbox_wh[:, 1:2] * self.box_noise_scale / 2
+        noisy_bboxes_expand = gt_bboxes_expand.clone()
+        # 计算新的 cx cy，等价顶点扰动
+        noisy_bboxes_expand[:, 0:1] += (dx1 + dx2) / 2 # cx
+        noisy_bboxes_expand[:, 1:2] += (dy1 + dy2) / 2 # cy 
+        # 计算新的 w h
+        noisy_bboxes_expand[:, 2:3] += (dx2 - dx1) # w
+        noisy_bboxes_expand[:, 3:4] += (dy2 - dy1) # h
+        # clamp（只 xywh）
+        eps = 1e-6
+        noisy_bboxes_expand[:, 0:2] = noisy_bboxes_expand[:, 0:2].clamp(0.0, 1.0)
+        noisy_bboxes_expand[:, 2:4] = noisy_bboxes_expand[:, 2:4].clamp(eps, 1.0)
+        # xywh 反归一化
+        noisy_bboxes_expand = noisy_bboxes_expand * gt_factors_expand
+        # 给角度 theta 加噪声
+        noisy_bboxes_expand[:, 4:5] += rand_part[:, 4:5] * self.theta_noise_scale
+        # wrap 到 le90
+        noisy_bboxes_expand[:, 4:5] = (noisy_bboxes_expand[:, 4:5] + math.pi / 2) \
+                                        % math.pi - math.pi / 2
+        xy      = noisy_bboxes_expand[..., 0:2]
+        wh      = noisy_bboxes_expand[..., 2:4]
+        radian  = noisy_bboxes_expand[..., 4:]
+        z = (wh).prod(-1, keepdim=True).sqrt().log2()           # bs, num_query, 1
+        r = (wh[..., 1:2]/wh[..., 0:1]).log2()                  # bs, num_query, 1
+        # NOTE: xyzr **not** learnable
+        # dn_bbox_query <-> query_xyzrt
+        dn_bbox_query = torch.cat([xy, z, r, radian], dim=-1)  # bs, num_query, 5
+        ########################################################################        
+        # bboxes_whwh = bbox_xyxy_to_cxcywh(gt_bboxes_expand)[:, 2:].repeat(1, 2)
+        # noisy_bboxes_expand = gt_bboxes_expand + torch.mul(
+        #     rand_part, bboxes_whwh) * self.box_noise_scale / 2  # xyxy
+        # noisy_bboxes_expand = noisy_bboxes_expand.clamp(min=0.0, max=1.0)
+        # noisy_bboxes_expand = bbox_xyxy_to_cxcywh(noisy_bboxes_expand)
+        # dn_bbox_query = inverse_sigmoid(noisy_bboxes_expand, eps=1e-3)
+        
         return dn_bbox_query
 
     def collate_dn_queries(self, input_label_query: Tensor,
@@ -453,8 +516,8 @@ class OrientedCdnQueryGenerator(BaseModule):
                       P_B1 P_B2 N_B1 N_B2 P'B1 P'B2 N'B1 N'B2
                        |____ group1 ____| |____ group2 ____|
              batched_queries (batch_size, max_num_target, query_dim)
-
-            where query_dim is 4 for bbox and self.embed_dims for label.
+        
+            where query_dim is 5 for bbox and self.embed_dims for label.
             Notation: _-group 1; '-group 2;
                       A-Sample1(has 1 target); B-sample2(has 2 targets)
 
@@ -463,8 +526,8 @@ class OrientedCdnQueryGenerator(BaseModule):
                 targets, has shape (num_target_total, embed_dims) where
                 `num_target_total = sum(num_target_list)`.
             input_bbox_query (Tensor): The generated bbox queries of all
-                targets, has shape (num_target_total, 4) with the last
-                dimension arranged as (cx, cy, w, h).
+                targets, has shape (num_target_total, 5) with the last
+                dimension arranged as (cx, cy, z, r, radian).
             batch_idx (Tensor): The batch index of the corresponding sample
                 for each target, has shape (num_target_total).
             batch_size (int): The size of the input batch.
@@ -497,8 +560,9 @@ class OrientedCdnQueryGenerator(BaseModule):
 
         batched_label_query = torch.zeros(
             batch_size, num_denoising_queries, self.embed_dims, device=device)
+        # 这里改成 5，和 x y z r t 对齐
         batched_bbox_query = torch.zeros(
-            batch_size, num_denoising_queries, 4, device=device)
+            batch_size, num_denoising_queries, 5, device=device)
 
         batched_label_query[mapper] = input_label_query
         batched_bbox_query[mapper] = input_bbox_query

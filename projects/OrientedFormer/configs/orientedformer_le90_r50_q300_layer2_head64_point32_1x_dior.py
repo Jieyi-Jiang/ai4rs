@@ -11,8 +11,8 @@ num_stages = 2
 num_proposals = 300
 num_classes = 20
 angle_version = 'le90'
-batch_size = 8
-num_workers = 2
+batch_size = 1
+num_workers = 1
 
 model = dict(
     type='OrientedDDQRCNN',
@@ -24,7 +24,7 @@ model = dict(
         pad_size_divisor=32,
         boxtype2tensor=False),
     backbone=dict(
-        type='##',
+        type='mmdet.ResNet',
         depth=50,
         num_stages=4,
         out_indices=(0, 1, 2, 3),
@@ -176,3 +176,5 @@ optim_wrapper = dict(
 
 train_cfg=dict(val_interval=1)
 
+resume = True
+load_from = "/home/jieyi/work_dirs/orientedformer_le90_r50_q300_layer2_head64_point32_1x_dior/epoch_12.pth"
