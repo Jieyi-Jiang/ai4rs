@@ -7,14 +7,16 @@ _base_ = [
 ]
 
 custom_imports = dict(
-    imports=['projects.OrientedFormer-DINO.orientedformer'], allow_failed_imports=False)
+    imports=['projects.OrientedFormer-DINO.orientedformer'], 
+    allow_failed_imports=False)
 
 num_stages = 2
-num_proposals = 300
+num_proposals = 200 # 200
 num_classes = 20
 angle_version = 'le90'
 batch_size = 1
 num_workers = 1
+num_dn_queries = 100 # 100
 
 model = dict(
     type='OrientedDDQRCNN',
@@ -23,7 +25,7 @@ model = dict(
         box_noise_scale=1.0,  # 0.4 for DN-DETR
         theta_noise_scale=math.pi/36,
         group_cfg=dict(dynamic=True, num_groups=None,
-                       num_dn_queries=100)),  # TODO: half num_dn_queries    
+                       num_dn_queries=num_dn_queries)),  # TODO: half num_dn_queries    
     data_preprocessor=dict(
         type='mmdet.DetDataPreprocessor',
         mean=[123.675, 116.28, 103.53],
@@ -134,16 +136,18 @@ model = dict(
                     ffn_drop=0.0,
                     act_cfg=dict(type='ReLU', inplace=True)),
                 loss_bbox=dict(type='mmdet.L1Loss', loss_weight=2.0),
-                loss_iou=dict(type='RotatedIoULoss', mode='linear', loss_weight=5.0),
+                loss_iou=dict(type='RotatedIoULoss', mode='linear', 
+                              loss_weight=5.0),
                 loss_cls=dict(
                     type='mmdet.FocalLoss',
                     use_sigmoid=True,
                     gamma=2.0,
                     alpha=0.25,
                     loss_weight=2.0),
-                # NOTE: The following argument is a placeholder to hack the code. No real effects for decoding or updating bounding boxes.
-                bbox_coder=dict(
-                    type='DeltaXYWHTRBBoxCoder')) for stage_idx in range(num_stages)
+                # NOTE: The following argument is a placeholder to hack the code. 
+                # No real effects for decoding or updating bounding boxes.
+                bbox_coder=dict(type='DeltaXYWHTRBBoxCoder')
+                ) for stage_idx in range(num_stages)
         ]),
     # training and testing settings
     train_cfg=dict(
@@ -179,7 +183,8 @@ test_dataloader = val_dataloader
 # optimizer
 optim_wrapper = dict(
     optimizer=dict(
-        _delete_=True, type='AdamW', lr=5e-5, weight_decay=1e-6),  # 2 RTX 2080ti
+        # 2 RTX 2080ti
+        _delete_=True, type='AdamW', lr=5e-5, weight_decay=1e-6),  
     clip_grad=dict(max_norm=1, norm_type=2))
 
 train_cfg=dict(val_interval=1)

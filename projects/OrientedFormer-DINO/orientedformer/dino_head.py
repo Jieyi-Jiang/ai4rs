@@ -151,6 +151,7 @@ class DINOHead(DeformableDETRHead):
             loss_dict['enc_loss_bbox'] = enc_losses_bbox
             loss_dict['enc_loss_iou'] = enc_losses_iou
 
+        # 计算 loss_dn 
         if all_layers_denoising_cls_scores is not None:
             # calculate denoising loss from all decoder layers
             dn_losses_cls, dn_losses_bbox, dn_losses_iou = self.loss_dn(

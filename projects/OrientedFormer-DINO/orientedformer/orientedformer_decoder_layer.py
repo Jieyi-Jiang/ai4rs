@@ -155,7 +155,8 @@ class OrientedFormerDecoderLayer(BBoxHead):
                 x: list,
                 query_xyzrt: Tensor,
                 query_content: Tensor,
-                featmap_strides: list):
+                featmap_strides: list,
+                dn_mask=None):
         '''
         Args:
             x (list): List of multi-level img features. Each level feature has shape (bs, c, h, w).
@@ -166,6 +167,7 @@ class OrientedFormerDecoderLayer(BBoxHead):
 
         '''
         # self-attention
+        # 要在这里加入 dn_mask
         N, n_query = query_content.shape[:2]
         with torch.no_grad():
             rboxes = self.decode_box(query_xyzrt)           # (bs, num_query, 5)
@@ -176,15 +178,27 @@ class OrientedFormerDecoderLayer(BBoxHead):
             gau_scores = torch.stack(gau_scores, dim=0)[:, None, :, :]    # (bs, 1, num_query, num_query)
             gau_scores = (gau_scores + 1e-7).log()
             pe = position_embedding(self.decode_box(query_xyzrt), query_content.size(-1) // 4)    # (bs, num_query, 256)
+            
+        # 生成 attn_mask
+        ## 原有的 attn_bias
         attn_bias = (gau_scores * self.tau.view(
             1, -1, 1, 1)).flatten(0, 1)                     # (bs*head, num_query, num_query)
+        ## 新增的 dn_mask，需要进行处理
+        dn_mask = dn_mask.to(attn_bias.device)
+        ### 从 bool 转到 float，True → -inf, False → 0
+        dn_mask = dn_mask.float()   
+        dn_mask = dn_mask.masked_fill(dn_mask > 0, -1e9)  
+        dn_mask = dn_mask.unsqueeze(0).expand(attn_bias.size(0), -1, -1)
+        ## 合并 attn_mask
+        attn_mask = attn_bias + dn_mask
+        
         query_content = query_content.permute(1, 0, 2)      # (num_query, bs, 256)
         pe = pe.permute(1, 0, 2)                            # (num_query, bs, 256)
         '''sinusoidal positional embedding'''
         query_content_attn = query_content + pe             # (num_query, bs, 256)
         query_content = self.self_attn(
             query_content_attn,                            # (num_query, bs, 256)
-            attn_mask=attn_bias)                            # (num_query, bs, 256)
+            attn_mask=attn_mask)                            # (num_query, bs, 256)
         query_content = self.self_attn_norm(query_content)  # (num_query, bs, 256)
         query_content = query_content.permute(1, 0, 2)      # (bs, num_query, 256)
 

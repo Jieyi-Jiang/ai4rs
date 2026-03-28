@@ -105,7 +105,9 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
     def bbox_loss(self, stage: int, x: Tuple[Tensor],
                   results_list: InstanceList, query_content: Tensor,
                   batch_img_metas: List[dict],
-                  batch_gt_instances: InstanceList) -> dict:
+                  batch_gt_instances: InstanceList,
+                  dn_mask: Optional[Tensor] = None,
+                  dn_meta: Dict[str, int] = None) -> dict:
         """Perform forward propagation and loss calculation of the bbox head on
         the features of the upstream network.
 
@@ -131,20 +133,10 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
         """
         xyzrt_list = [res.query_xyzrt for res in results_list]
         query_xyzrt = torch.stack(xyzrt_list)             # bs, num_query, 5
+        # dn_mask 已经加进来了
         bbox_results = self._bbox_forward(stage, x, query_xyzrt, query_content,
-                                          batch_img_metas)
-        ################################ CHECK #################################
-        _check_tensor(f"stage{stage}.input_query_xyzrt", query_xyzrt)
-        _check_tensor(f"stage{stage}.input_query_content", query_content)
+                                          batch_img_metas, dn_mask)
 
-        _check_tensor(f"stage{stage}.cls_score", bbox_results['cls_score'])
-        _check_tensor(f"stage{stage}.decode_bbox_pred", bbox_results['decode_bbox_pred'])
-
-        for i, t in enumerate(bbox_results['detach_cls_score_list']):
-            _check_tensor(f"stage{stage}.detach_cls_score_list[{i}]", t)
-        for i, t in enumerate(bbox_results['detached_bboxes_list']):
-            _check_tensor(f"stage{stage}.detached_bboxes_list[{i}]", t)
-        ########################################################################
         imgs_whwht = torch.cat(
             [res.imgs_whwht[None, ...] for res in results_list])  # bs, num_query, 5
         cls_pred_list = bbox_results['detach_cls_score_list']     # bs*{num_query, 80}
@@ -157,30 +149,6 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
             pred_instances.bboxes = bboxes_list[i]  # for assinger
             pred_instances.scores = cls_pred_list[i]
             pred_instances.priors = bboxes_list[i]  # for sampler
-            
-            #############################  CHECK   #############################
-            _check_tensor(f"stage{stage}.pred_bboxes[{i}]", pred_instances.bboxes)
-            _check_tensor(f"stage{stage}.pred_scores[{i}]", pred_instances.scores)
-
-            gt_bboxes_i = batch_gt_instances[i].bboxes
-            gt_labels_i = batch_gt_instances[i].labels
-            if hasattr(gt_bboxes_i, 'tensor'):
-                _check_tensor(f"stage{stage}.gt_bboxes[{i}]", gt_bboxes_i.tensor)
-            else:
-                _check_tensor(f"stage{stage}.gt_bboxes[{i}]", gt_bboxes_i)
-            _check_tensor(f"stage{stage}.gt_labels[{i}]", gt_labels_i)
-
-            assert torch.isfinite(pred_instances.bboxes).all(), \
-                f"pred_bboxes[{i}] has NaN/Inf"
-            assert torch.isfinite(pred_instances.scores).all(), \
-                f"pred_scores[{i}] has NaN/Inf"
-            if hasattr(gt_bboxes_i, 'tensor'):
-                assert torch.isfinite(gt_bboxes_i.tensor).all(), \
-                    f"gt_bboxes[{i}] has NaN/Inf"
-            else:
-                assert torch.isfinite(gt_bboxes_i).all(), \
-                    f"gt_bboxes[{i}] has NaN/Inf"
-            ####################################################################
             assign_result = self.bbox_assigner[stage].assign(
                 pred_instances=pred_instances,
                 gt_instances=batch_gt_instances[i],
@@ -195,20 +163,8 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
 
         cls_score = bbox_results['cls_score']               # bs, num_query, num_class
         decoded_bboxes = bbox_results['decode_bbox_pred']   # bs, num_query, 5
-        ################################ CHECK #################################
-        _check_tensor(f"stage{stage}.cls_score_before_view", cls_score)
-        _check_tensor(f"stage{stage}.decoded_bboxes_before_view", decoded_bboxes)
-        assert torch.isfinite(cls_score).all(), "cls_score has NaN/Inf before view"
-        assert torch.isfinite(decoded_bboxes).all(), "decoded_bboxes has NaN/Inf before view"
-        ########################################################################
         cls_score = cls_score.view(-1, cls_score.size(-1))  # bs, num_query, num_class
         decoded_bboxes = decoded_bboxes.view(-1, 5)         # bs*num_query, 5
-        ################################ CHECK #################################
-        _check_tensor(f"stage{stage}.cls_score_after_view", cls_score)
-        _check_tensor(f"stage{stage}.decoded_bboxes_after_view", decoded_bboxes)
-        assert torch.isfinite(cls_score).all(), "cls_score has NaN/Inf after view"
-        assert torch.isfinite(decoded_bboxes).all(), "decoded_bboxes has NaN/Inf after view"
-        ########################################################################
         bbox_loss_and_target = bbox_head.loss_and_target(
             cls_score,
             decoded_bboxes,
@@ -230,7 +186,8 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
 
     def _bbox_forward(self, stage: int, x: Tuple[Tensor], query_xyzrt: Tensor,
                       query_content: Tensor,
-                      batch_img_metas: List[dict]) -> dict:
+                      batch_img_metas: List[dict],
+                      dn_mask: Optional[Tensor] = None,) -> dict:
         """Box head forward function used in both training and testing. Returns
         all regression, classification results and a intermediate feature.
 
@@ -267,9 +224,12 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
         """
         num_imgs = len(batch_img_metas)     # bs
         bbox_head = self.bbox_head[stage]
-        cls_score, delta_xyzrt, query_content = bbox_head(x, query_xyzrt,
-                                                         query_content,
-                                                         featmap_strides=self.featmap_strides)  #(bs, num_query, 80),(bs,num_query,4),(bs,num_query,256)
+        #(bs, num_query, 80),(bs,num_query,4),(bs,num_query,256)
+        cls_score, delta_xyzrt, query_content = bbox_head(x, 
+                                                          query_xyzrt,
+                                                          query_content,
+                                                          featmap_strides=self.featmap_strides,
+                                                          dn_mask=dn_mask)  
 
         query_xyzrt, decoded_bboxes = self.bbox_head[stage].refine_xyzrt(
             query_xyzrt,
@@ -310,6 +270,7 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
         Returns:
             dict: a dictionary of loss components of all stage.
         """
+        # 解包 GT(batch_data_samples)，并 bbox 转成 tensor 
         outputs = unpack_gt_instances(batch_data_samples)
         batch_gt_instances, batch_gt_instances_ignore, batch_img_metas \
             = outputs
@@ -319,7 +280,10 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
         query_content = torch.cat(
             [res.pop('query_content')[None, ...] for res in rpn_results_list])   # bs, num_query, 256
         results_list = rpn_results_list
+        
+        # 总 losses（roi_losses）
         losses = {}
+        # 主循环，迭代 refinement 结构
         for stage in range(self.num_stages):
             stage_loss_weight = self.stage_loss_weights[stage]
 
@@ -330,12 +294,15 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
                 query_content=query_content,
                 results_list=results_list,
                 batch_img_metas=batch_img_metas,
-                batch_gt_instances=batch_gt_instances)
+                batch_gt_instances=batch_gt_instances,
+                dn_mask=dn_mask,
+                dn_meta=dn_meta)
 
             for name, value in bbox_results['loss_bbox'].items():
                 losses[f's{stage}.{name}'] = (
                     value * stage_loss_weight if 'loss' in name else value)
 
+            # 迭代更新变量
             query_content = bbox_results['query_content']
             results_list = bbox_results['results_list']
         return losses
