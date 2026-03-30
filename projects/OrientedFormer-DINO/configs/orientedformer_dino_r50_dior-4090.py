@@ -14,8 +14,8 @@ num_stages = 2
 num_proposals = 200 # 200
 num_classes = 20
 angle_version = 'le90'
-batch_size = 1
-num_workers = 1
+batch_size = 6
+num_workers = 2
 num_dn_queries = 100 # 100
 
 model = dict(

@@ -190,9 +190,9 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
         # flatten 拉平
         # bs, num_query, num_class
         matching_cls_scores_flatten = \
-            matching_cls_scores.view(-1, matching_cls_scores.size(-1))  
+            matching_cls_scores.reshape(-1, matching_cls_scores.size(-1))  
         # bs, num_query, 5
-        matching_bbox_preds_flatten = matching_bbox_preds.view(-1, 5)         
+        matching_bbox_preds_flatten = matching_bbox_preds.reshape(-1, 5)         
         
         # 在这里面进行真正的 loss 计算（调 loss_and_target 真正算 loss）
         # dict(loss_bbox=losses, bbox_targets=cls_reg_targets)
@@ -292,12 +292,12 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
             bbox_preds=decoded_bboxes,           # bs, num_query, 5
             query_content=query_content,        # bs, num_query, 256
             # detach then use it in label assign
-            # detach_cls_score=cls_score.detach(),
+            detach_cls_score=cls_score.detach(),
             # detached_bboxes_list=decoded_bboxes.detach(),
-            # detach_cls_score_list=[
-            #     cls_score[i].detach() for i in range(num_imgs)
-            # ],
-            # detached_bboxes_list=[item.detach() for item in bboxes_list],
+            detach_cls_score_list=[
+                cls_score[i].detach() for i in range(num_imgs)
+            ],
+            detached_bboxes_list=[item.detach() for item in bboxes_list],
         )
 
         return bbox_results
@@ -404,7 +404,7 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
             bbox_results = self._bbox_forward(stage, x, query_xyzrt, query_content,
                                               batch_img_metas)
             query_content = bbox_results['query_content']
-            cls_score = bbox_results['cls_score']
+            cls_score = bbox_results['cls_scores']
             bboxes_list = bbox_results['detached_bboxes_list']
             query_xyzrt = bbox_results['query_xyzrt']
 

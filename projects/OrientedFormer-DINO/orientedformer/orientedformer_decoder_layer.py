@@ -185,13 +185,16 @@ class OrientedFormerDecoderLayer(BBoxHead):
         attn_bias = (gau_scores * self.tau.view(
             1, -1, 1, 1)).flatten(0, 1)                     # (bs*head, num_query, num_query)
         ## 新增的 dn_mask，需要进行处理
-        dn_mask = dn_mask.to(attn_bias.device)
-        ### 从 bool 转到 float，True → -inf, False → 0
-        dn_mask = dn_mask.float()   
-        dn_mask = dn_mask.masked_fill(dn_mask > 0, -1e9)  
-        dn_mask = dn_mask.unsqueeze(0).expand(attn_bias.size(0), -1, -1)
-        ## 合并 attn_mask
-        attn_mask = attn_bias + dn_mask
+        if dn_mask is not None:
+            dn_mask = dn_mask.to(attn_bias.device)
+            ### 从 bool 转到 float，True → -inf, False → 0
+            dn_mask = dn_mask.float()   
+            dn_mask = dn_mask.masked_fill(dn_mask > 0, -1e9)  
+            dn_mask = dn_mask.unsqueeze(0).expand(attn_bias.size(0), -1, -1)
+            ## 合并 attn_mask
+            attn_mask = attn_bias + dn_mask
+        else:
+            attn_mask = attn_bias
         
         query_content = query_content.permute(1, 0, 2)      # (num_query, bs, 256)
         pe = pe.permute(1, 0, 2)                            # (num_query, bs, 256)
