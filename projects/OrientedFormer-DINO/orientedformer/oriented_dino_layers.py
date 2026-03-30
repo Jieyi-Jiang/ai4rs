@@ -284,7 +284,8 @@ class OrientedCdnQueryGenerator(BaseModule):
 
         dn_meta = dict(
             num_denoising_queries=int(max_num_target * 2 * num_groups),
-            num_denoising_groups=num_groups)
+            num_denoising_groups=num_groups,
+            num_classes=self.num_classes)
 
         return dn_label_query, dn_bbox_query, attn_mask, dn_meta
 

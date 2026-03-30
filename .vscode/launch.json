@@ -62,7 +62,7 @@
       "justMyCode": false,
       "cwd": "${workspaceFolder}"
     },
-        {
+    {
       "name": "OrientedFormer",
       "type": "debugpy",
       "request": "launch",

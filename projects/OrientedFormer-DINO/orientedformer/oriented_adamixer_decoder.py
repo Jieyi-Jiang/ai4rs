@@ -2,7 +2,7 @@ from typing import List, Tuple, Optional, Dict
 
 import torch
 from mmengine.structures import InstanceData
-from torch import Tensor
+from torch import Tensor, unsqueeze
 
 from mmdet.models.task_modules.samplers import PseudoSampler
 from mmrotate.registry import MODELS
@@ -11,6 +11,13 @@ from mmdet.structures.bbox import get_box_tensor
 from mmdet.utils import ConfigType, InstanceList, OptConfigType
 from mmdet.models.utils.misc import empty_instances, unpack_gt_instances
 from mmdet.models.roi_heads.cascade_roi_head import CascadeRoIHead
+from mmdet.models.utils import multi_apply
+from mmdet.utils import InstanceList, OptInstanceList, reduce_mean
+from mmdet.structures.bbox import (bbox_cxcywh_to_xyxy, bbox_overlaps,
+                                   bbox_xyxy_to_cxcywh)
+from mmdet.models.losses import QualityFocalLoss
+from mmdet.models.losses import accuracy
+from .match_cost import normalize_angle
 
 def _check_tensor(name, x):
     pass
@@ -137,11 +144,29 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
         bbox_results = self._bbox_forward(stage, x, query_xyzrt, query_content,
                                           batch_img_metas, dn_mask)
 
+        cls_scores = bbox_results['cls_scores']
+        bbox_preds = bbox_results['bbox_preds']
+        # TODO：需要在 assign/sampler 之前把 dn_qeury 分离出来
+        num_denoising_queries = dn_meta['num_denoising_queries']
+        denoising_cls_scores  = cls_scores[:, :num_denoising_queries, :]
+        denoising_bbox_preds  = bbox_preds[:, :num_denoising_queries, :]
+        matching_cls_scores   = cls_scores[:, num_denoising_queries:, :]
+        matching_bbox_preds   = bbox_preds[:, num_denoising_queries:, :]
+        # 准备图像尺度信息
         imgs_whwht = torch.cat(
-            [res.imgs_whwht[None, ...] for res in results_list])  # bs, num_query, 5
-        cls_pred_list = bbox_results['detach_cls_score_list']     # bs*{num_query, 80}
-        bboxes_list = bbox_results['detached_bboxes_list']        # bs*{num_query, 4}
+            [res.imgs_whwht[None, ...] for res in results_list])  
+        denoising_imgs_whwht = imgs_whwht[:, :num_denoising_queries, :]
+        matching_imgs_whwht  = imgs_whwht[:, num_denoising_queries:, :]
 
+        ## 取 detached 预测用于 assign/sample    
+        num_imgs = len(batch_img_metas)
+        cls_pred_list = [
+            matching_cls_scores[i].detach() for i in range(num_imgs)]
+        bboxes_list = [
+            matching_bbox_preds[i].detach() for i in range(num_imgs)]
+        # detached_bboxes_list=[item.detach() for item in bboxes_list],
+
+        # 对 batch 每张图做 assign + sample
         sampling_results = []
         bbox_head = self.bbox_head[stage]
         for i in range(len(batch_img_metas)):
@@ -149,6 +174,7 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
             pred_instances.bboxes = bboxes_list[i]  # for assinger
             pred_instances.scores = cls_pred_list[i]
             pred_instances.priors = bboxes_list[i]  # for sampler
+            # HungarianAssigner，一对一匹配
             assign_result = self.bbox_assigner[stage].assign(
                 pred_instances=pred_instances,
                 gt_instances=batch_gt_instances[i],
@@ -159,22 +185,44 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
                 assign_result, pred_instances, batch_gt_instances[i])
             sampling_results.append(sampling_result)
 
+        # 把 sampling 结果塞回 bbox_results
         bbox_results.update(sampling_results=sampling_results)
-
-        cls_score = bbox_results['cls_score']               # bs, num_query, num_class
-        decoded_bboxes = bbox_results['decode_bbox_pred']   # bs, num_query, 5
-        cls_score = cls_score.view(-1, cls_score.size(-1))  # bs, num_query, num_class
-        decoded_bboxes = decoded_bboxes.view(-1, 5)         # bs*num_query, 5
+        # flatten 拉平
+        # bs, num_query, num_class
+        matching_cls_scores_flatten = \
+            matching_cls_scores.view(-1, matching_cls_scores.size(-1))  
+        # bs, num_query, 5
+        matching_bbox_preds_flatten = matching_bbox_preds.view(-1, 5)         
+        
+        # 在这里面进行真正的 loss 计算（调 loss_and_target 真正算 loss）
+        # dict(loss_bbox=losses, bbox_targets=cls_reg_targets)
         bbox_loss_and_target = bbox_head.loss_and_target(
-            cls_score,
-            decoded_bboxes,
+            matching_cls_scores_flatten,
+            matching_bbox_preds_flatten,
             sampling_results,
             self.train_cfg[stage],
-            imgs_whwht=imgs_whwht,
+            imgs_whwht = matching_imgs_whwht,
             concat=True)
+        # 更新 bbox_results
         bbox_results.update(bbox_loss_and_target)
-
+        
+        # 这里计算 loss_dn
+        # self.loss_dn(denoising_cls_scores,
+        #              denoising_bbox_preds,
+        #              batch_gt_instances,
+        #              batch_img_metas,
+        #              dn_meta)
+        dn_bbox_loss_and_target = bbox_head._loss_dn_single(
+            denoising_cls_scores,
+            denoising_bbox_preds,
+            batch_gt_instances,
+            batch_img_metas,
+            dn_meta,
+            denoising_imgs_whwht)
+        bbox_results.update(dn_bbox_loss_and_target)
+        
         # propose for the new proposal_list
+        # 生成下一 stage 的 proposal_list
         proposal_list = []
         for idx in range(len(batch_img_metas)):
             results = InstanceData()
@@ -182,6 +230,7 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
             results.query_xyzrt = bbox_results['query_xyzrt'][idx].detach()
             proposal_list.append(results)
         bbox_results.update(results_list=proposal_list)
+        
         return bbox_results
 
     def _bbox_forward(self, stage: int, x: Tuple[Tensor], query_xyzrt: Tensor,
@@ -238,15 +287,17 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
         bboxes_list = [bboxes for bboxes in decoded_bboxes]
 
         bbox_results = dict(
-            cls_score=cls_score,                # bs, num_query, 80
+            cls_scores=cls_score,                # bs, num_query, 80
             query_xyzrt=query_xyzrt,            # bs, num_query, 5
-            decode_bbox_pred=decoded_bboxes,    # bs, num_query, 5
+            bbox_preds=decoded_bboxes,           # bs, num_query, 5
             query_content=query_content,        # bs, num_query, 256
             # detach then use it in label assign
-            detach_cls_score_list=[
-                cls_score[i].detach() for i in range(num_imgs)
-            ],
-            detached_bboxes_list=[item.detach() for item in bboxes_list],
+            # detach_cls_score=cls_score.detach(),
+            # detached_bboxes_list=decoded_bboxes.detach(),
+            # detach_cls_score_list=[
+            #     cls_score[i].detach() for i in range(num_imgs)
+            # ],
+            # detached_bboxes_list=[item.detach() for item in bboxes_list],
         )
 
         return bbox_results
@@ -301,7 +352,9 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
             for name, value in bbox_results['loss_bbox'].items():
                 losses[f's{stage}.{name}'] = (
                     value * stage_loss_weight if 'loss' in name else value)
-
+            for name, value in bbox_results['dn_loss_bbox'].items():
+                losses[f's{stage}.{name}'] = (
+                    value * stage_loss_weight if 'loss' in name else value)            
             # 迭代更新变量
             query_content = bbox_results['query_content']
             results_list = bbox_results['results_list']
@@ -435,4 +488,59 @@ class OrientedAdaMixerDecoder(CascadeRoIHead):
                 if self.with_mask:
                     raise NotImplemented("Not Implement for Segmentation.")
         return tuple(all_stage_bbox_results)
+
+    # copy from file(dino_head.py)-class(DINOHead)
+    @staticmethod
+    def split_outputs(cls_scores: Tensor,
+                      bbox_preds: Tensor,
+                      dn_meta: Dict[str, int]) -> Tuple[Tensor]:
+        """Split outputs of the denoising part and the matching part.
+
+        For the total outputs of `num_queries_total` length, the former
+        `num_denoising_queries` outputs are from denoising queries, and
+        the rest `num_matching_queries` ones are from matching queries,
+        where `num_queries_total` is the sum of `num_denoising_queries` and
+        `num_matching_queries`.
+
+        Args:
+            cls_scores (Tensor): Classification scores, has shape
+                (bs, num_queries_total, cls_out_channels).
+            bbox_preds (Tensor): Regression outputs with normalized
+                coordinate format (cx, cy, w, h), has shape
+                (bs, num_queries_total, 4).
+            dn_meta (Dict[str, int]): The dictionary saves information about
+              group collation, including 'num_denoising_queries' and
+              'num_denoising_groups'.
+
+        Returns:
+            Tuple[Tensor]: a tuple containing the following outputs.
+
+            - matching_cls_scores (Tensor): Classification scores in matching
+                part, has shape (bs, num_matching_queries, cls_out_channels).
+            - matching_bbox_preds (Tensor): Regression outputs in matching
+                part, has shape (bs, num_matching_queries, 4).
+            - denoising_cls_scores (Tensor): Classification scores in
+                denoising part, has shape
+                (bs, num_denoising_queries, cls_out_channels).
+            - denoising_bbox_preds (Tensor): Regression outputs in denoising
+                part, has shape (bs, num_denoising_queries, 4).
+        """
+        if dn_meta is not None:
+            num_denoising_queries = dn_meta['num_denoising_queries']
+            denoising_cls_scores = \
+                cls_scores[:, : num_denoising_queries, :]
+            denoising_bbox_preds = \
+                bbox_preds[:, : num_denoising_queries, :]
+            matching_cls_scores = \
+                cls_scores[:, num_denoising_queries:, :]
+            matching_bbox_preds = \
+                bbox_preds[:, num_denoising_queries:, :]
+        else:
+            denoising_cls_scores = None
+            denoising_bbox_preds = None
+            matching_cls_scores = cls_scores
+            matching_bbox_preds = bbox_preds
+        return (matching_cls_scores, matching_bbox_preds,
+                denoising_cls_scores,
+                denoising_bbox_preds)
 

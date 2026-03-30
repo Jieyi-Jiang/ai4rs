@@ -73,8 +73,8 @@ class OrientedDDQRCNN(TwoStageDetector):
                 batch_img_metas,
                 gt_bboxes,
                 gt_labels)
-        query_xyzrt = distinc_query_dict['query_xyzrt']     # (bs, 300, 256)
-        query_content = distinc_query_dict['query_content'] # (bs, 300, 5)
+        ddq_query_xyzrt = distinc_query_dict['query_xyzrt']     # (bs, 300, 256)
+        ddq_query_content = distinc_query_dict['query_content'] # (bs, 300, 5)
         # 这里插入 dn_query 的构建
         # if self.training: # 这个判断不太必要，loss 里面默认就是训练状态
         #     pass
@@ -83,8 +83,8 @@ class OrientedDDQRCNN(TwoStageDetector):
         # 这里插入 dn_query 的构建
 
         # dn_query 和前面生成的 query 拼接
-        query_xyzrt = torch.cat([dn_query_xyzrt, query_xyzrt], dim=1)
-        query_content = torch.cat([dn_query_content, query_content], dim=1)
+        query_xyzrt = torch.cat([dn_query_xyzrt, ddq_query_xyzrt], dim=1)
+        query_content = torch.cat([dn_query_content, ddq_query_content], dim=1)
 
         # 将 RPN 损失存入总字典，加上 rpn_ 前缀以示区分
         # （在 _forward 和 predict 方法里面没用用到 rpn_losses）
