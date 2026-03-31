@@ -11,7 +11,7 @@ custom_imports = dict(
     allow_failed_imports=False)
 
 num_stages = 2
-num_proposals = 300 # 300
+num_proposals = 200 # 300
 num_classes = 20
 angle_version = 'le90'
 batch_size = 6
