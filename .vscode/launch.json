@@ -53,7 +53,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/tools/train.py",
       "args": [
-        "${workspaceFolder}/projects/OrientedFormer-DINO/configs/orientedformer_dino_r50_dior.py"
+        "${workspaceFolder}/projects/OrientedFormer-DINO/configs/orientedformer_dino_r50_dior-2050.py"
       ],
       "console": "integratedTerminal",
       "env": {
