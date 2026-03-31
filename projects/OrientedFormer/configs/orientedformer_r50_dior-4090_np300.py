@@ -1,5 +1,3 @@
-import math
-
 _base_ = [
     '../../../configs/_base_/datasets/dior.py',
     '../../../configs/_base_/schedules/schedule_1x.py',
@@ -7,25 +5,18 @@ _base_ = [
 ]
 
 custom_imports = dict(
-    imports=['projects.OrientedFormer-DINO.orientedformer'],
+    imports=['projects.OrientedFormer.orientedformer'],
     allow_failed_imports=False)
 
 num_stages = 2
-num_proposals = 300 # 300
+num_proposals = 300
 num_classes = 20
 angle_version = 'le90'
-batch_size = 6
+batch_size = 5
 num_workers = 2
-num_dn_queries = 100 # 100
 
 model = dict(
     type='OrientedDDQRCNN',
-    dn_cfg=dict(  # TODO: Move to model.train_cfg ?
-        label_noise_scale=0.5,
-        box_noise_scale=1.0,  # 0.4 for DN-DETR
-        theta_noise_scale=math.pi/36,
-        group_cfg=dict(dynamic=True, num_groups=None,
-                       num_dn_queries=num_dn_queries)),  # TODO: half num_dn_queries    
     data_preprocessor=dict(
         type='mmdet.DetDataPreprocessor',
         mean=[123.675, 116.28, 103.53],
