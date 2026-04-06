@@ -1,6 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import warnings
-from typing import Tuple, Union
+from typing import Dict, Tuple, Union, List
 import math
 
 import torch
@@ -12,6 +12,7 @@ from mmdet.structures.bbox import bbox_xyxy_to_cxcywh
 from mmdet.utils import OptConfigType
 from mmdet.models.layers.transformer.deformable_detr_layers import DeformableDetrTransformerDecoder
 from mmdet.models.layers.transformer.utils import MLP, coordinate_to_encoding, inverse_sigmoid
+from mmengine.runner import Runner
 # from .deformable_detr_layers import DeformableDetrTransformerDecoder
 # from .utils import MLP, coordinate_to_encoding, inverse_sigmoid
 
@@ -154,6 +155,7 @@ class OrientedCdnQueryGenerator(BaseModule):
                  label_noise_scale: float = 0.5,
                  box_noise_scale: float = 1.0,
                  theta_noise_scale: float = math.pi/36,
+                 dynamic_schedule: List[Dict] = None,
                  group_cfg: OptConfigType = None) -> None:
         super().__init__()
         self.num_classes = num_classes
@@ -162,6 +164,7 @@ class OrientedCdnQueryGenerator(BaseModule):
         self.label_noise_scale = label_noise_scale
         self.box_noise_scale = box_noise_scale
         self.theta_noise_scale = theta_noise_scale
+        self.dynamic_schedule = dynamic_schedule
 
         # prepare grouping strategy
         group_cfg = {} if group_cfg is None else group_cfg
@@ -355,8 +358,10 @@ class OrientedCdnQueryGenerator(BaseModule):
         gt_labels_expand = gt_labels.repeat(2 * num_groups,
                                             1).view(-1)  # Note `* 2`  # noqa
         p = torch.rand_like(gt_labels_expand.float())
-        chosen_indice = torch.nonzero(p < (self.label_noise_scale * 0.5)).view(
-            -1)  # Note `* 0.5`
+        stage_ratio = self.get_noise_ratio(self.dynamic_schedule)
+        p_thr = (self.label_noise_scale * 0.5) * stage_ratio
+        # print(f"Label noise scale: {self.label_noise_scale * 0.5}, Stage ratio: {stage_ratio}, Threshold: {p_thr}")
+        chosen_indice = torch.nonzero(p < p_thr).view(-1)  # Note `* 0.5`
         new_labels = torch.randint_like(chosen_indice, 0, self.num_classes)
         noisy_labels_expand = gt_labels_expand.scatter(0, chosen_indice,
                                                        new_labels)
@@ -423,6 +428,10 @@ class OrientedCdnQueryGenerator(BaseModule):
         assert self.box_noise_scale > 0
         assert self.theta_noise_scale >= 0
         device = gt_bboxes.device
+        stage_ratio = self.get_noise_ratio(self.dynamic_schedule)
+        box_noise_scale = self.box_noise_scale * stage_ratio
+        theta_noise_scale = self.theta_noise_scale * stage_ratio
+        # print(f"[DEBUG] stage_ratio = {stage_ratio}, box_noise_scale = {box_noise_scale}, theta_noise_scale = {theta_noise_scale}")
 
         # expand gt_bboxes as groups
         # num_groups 组去噪，每组都有正负样本，所以复制 2*num_groups 次
@@ -459,10 +468,10 @@ class OrientedCdnQueryGenerator(BaseModule):
         # 获取 gt_bboxes_expand 的 w h
         bbox_wh = gt_bboxes_expand[:, 2:4]
         # 计算 (x1, y1) 和 (x2, y2) 的变化（暂时当作水平框处理）
-        dx1 = rand_part[:, 0:1] * bbox_wh[:, 0:1] * self.box_noise_scale / 2
-        dy1 = rand_part[:, 1:2] * bbox_wh[:, 1:2] * self.box_noise_scale / 2
-        dx2 = rand_part[:, 2:3] * bbox_wh[:, 0:1] * self.box_noise_scale / 2
-        dy2 = rand_part[:, 3:4] * bbox_wh[:, 1:2] * self.box_noise_scale / 2
+        dx1 = rand_part[:, 0:1] * bbox_wh[:, 0:1] * box_noise_scale / 2
+        dy1 = rand_part[:, 1:2] * bbox_wh[:, 1:2] * box_noise_scale / 2
+        dx2 = rand_part[:, 2:3] * bbox_wh[:, 0:1] * box_noise_scale / 2
+        dy2 = rand_part[:, 3:4] * bbox_wh[:, 1:2] * box_noise_scale / 2
         noisy_bboxes_expand = gt_bboxes_expand.clone()
         # 计算新的 cx cy，等价顶点扰动
         noisy_bboxes_expand[:, 0:1] += (dx1 + dx2) / 2 # cx
@@ -477,7 +486,7 @@ class OrientedCdnQueryGenerator(BaseModule):
         # xywh 反归一化
         noisy_bboxes_expand = noisy_bboxes_expand * gt_factors_expand
         # 给角度 theta 加噪声
-        noisy_bboxes_expand[:, 4:5] += rand_part[:, 4:5] * self.theta_noise_scale
+        noisy_bboxes_expand[:, 4:5] += rand_part[:, 4:5] * theta_noise_scale
         # wrap 到 le90
         noisy_bboxes_expand[:, 4:5] = (noisy_bboxes_expand[:, 4:5] + math.pi / 2) \
                                         % math.pi - math.pi / 2
@@ -628,3 +637,19 @@ class OrientedCdnQueryGenerator(BaseModule):
             attn_mask[row_scope, right_scope] = True
             attn_mask[row_scope, left_scope] = True
         return attn_mask
+    
+    def get_noise_ratio(self, dynamic_schedule=None):
+        if not dynamic_schedule:
+            return 1.0
+
+        cur_epoch_tmp = getattr(self, '_cur_epoch', 0)
+        if cur_epoch_tmp is None:
+            cur_epoch = 0
+        else:
+            cur_epoch = cur_epoch_tmp
+
+        for stage in dynamic_schedule:
+            if stage['start'] <= cur_epoch <= stage['end']:
+                return stage.get('ratio', 1.0)
+
+        return 1.0

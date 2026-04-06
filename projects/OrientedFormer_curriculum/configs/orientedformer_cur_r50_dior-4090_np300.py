@@ -7,7 +7,7 @@ _base_ = [
 ]
 
 custom_imports = dict(
-    imports=['projects.OrientedFormer-DINO.orientedformer'],
+    imports=['projects.OrientedFormer_curriculum.orientedformer'],
     allow_failed_imports=False)
 
 num_stages = 2
@@ -24,13 +24,12 @@ model = dict(
         label_noise_scale=0.5,
         box_noise_scale=1.0,  # 0.4 for DN-DETR
         theta_noise_scale=math.pi/36,
+        dynamic_schedule=[
+            dict(start=0, end=3, ratio=0.2),
+            dict(start=4, end=7, ratio=0.5),
+            dict(start=8, end=11, ratio=1.0),],
         group_cfg=dict(dynamic=True, num_groups=None,
                        num_dn_queries=num_dn_queries),
-        dynamic_schedule=[
-            dict(start=1, end=4, ratio=0.25),
-            dict(start=5, end=8, ratio=0.5),
-            dict(start=9, end=12, ratio=1.0),
-    ]
         ),  # TODO: half num_dn_queries    
     data_preprocessor=dict(
         type='mmdet.DetDataPreprocessor',
