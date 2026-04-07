@@ -2,7 +2,7 @@ import math
 
 _base_ = [
     '../../../configs/_base_/datasets/dior.py',
-    './schedules/schedule_1x.py',
+    './schedule_1x.py',
     '../../../configs/_base_/default_runtime.py'
 ]
 
