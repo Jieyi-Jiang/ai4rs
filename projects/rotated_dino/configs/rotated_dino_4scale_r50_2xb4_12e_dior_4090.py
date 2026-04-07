@@ -13,10 +13,12 @@ from projects.rotated_dino.rotated_dino import RotatedDINO
 from projects.rotated_dino.rotated_dino.match_cost import RBoxL1Cost, GDCost
 from projects.rotated_dino.rotated_dino.rotated_dino_head import RotatedDINOHead
 
+# with read_base():
+#     from configs._base_.datasets.dior import *
+#     from configs._base_.default_runtime import *
 with read_base():
-    from configs._base_.datasets.dior import *
-    from configs._base_.default_runtime import *
-
+    from ....configs._base_.datasets.dior import *
+    from ....configs._base_.default_runtime import *
 
 angle_cfg = dict(
     width_longer=True,
@@ -160,9 +162,9 @@ param_scheduler = [
 ]
 
 # dataset settings
-train_dataloader.update(batch_size=8, num_workers=4)
-val_dataloader.update(batch_size=8, num_workers=4)
-test_dataloader.update(batch_size=8, num_workers=4)
+train_dataloader.update(batch_size=6, num_workers=4)
+val_dataloader.update(batch_size=6, num_workers=4)
+test_dataloader.update(batch_size=6, num_workers=4)
 
 # NOTE: `auto_scale_lr` is for automatically scaling LR,
 # USER SHOULD NOT CHANGE ITS VALUES.
