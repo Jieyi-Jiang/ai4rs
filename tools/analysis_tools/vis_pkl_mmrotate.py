@@ -7,10 +7,13 @@ from mmengine.config import Config
 from mmengine.fileio import load
 
 # ====== 配置 ======
-config_file = 'projects/OrientedFormer-DINO/configs/orientedformer_dino_r50_dior-4090_np300.py'
-pkl_file = 'work_dirs/pkl_files/OF_OCDN_np300_boxdn0.5.pkl'
-out_dir = 'work_dirs/vis_from_pkl_OCDN_thr0.2'
-score_thr = 0.2
+config_file = 'projects/OrientedFormer/configs/orientedformer_r50_dior-4090_np300.py'
+pkl_file = 'work_dirs/pkl_files/OF_np300.pkl'
+out_dir = 'work_dirs/vis_from_pkl_baseline_thr0.05'
+# config_file = 'projects/OrientedFormer-DINO/configs/orientedformer_dino_r50_dior-4090_np300.py'
+# pkl_file = 'work_dirs/pkl_files/OF_OCDN_np300_boxdn0.5.pkl'
+# out_dir = 'work_dirs/vis_from_pkl_OCDN_thr0.05'
+score_thr = 0.05
 
 draw_text = False        # 是否画类别+分数
 print_progress = True    # 是否打印进度
