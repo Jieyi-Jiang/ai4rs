@@ -21,6 +21,11 @@ with read_base():
 pretrained = ('https://www.modelscope.cn/models/wokaikaixinxin/ai4rs/resolve/'
               'master/rtdetr/resnet50vd_ssld_v2_pretrained_d037e232.pth')  # noqa
 
+randomness = dict(
+    seed=42,
+    # deterministic=True
+)
+
 angle_cfg = dict(
     width_longer=True,
     start_angle=0,
