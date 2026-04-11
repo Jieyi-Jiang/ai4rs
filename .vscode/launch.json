@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "rotated_rtdetr",
+      "name": "rtdetr_o",
       "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/tools/train.py",
@@ -87,6 +87,21 @@
         "${workspaceFolder}/projects/OrientedFormer/configs/orientedformer_le90_r50_q300_layer2_head64_point32_1x_dior.py",
         "--resume",
         // "/home/jieyi/work_dirs/orientedformer_le90_r50_q300_layer2_head64_point32_1x_dior/epoch_12.pth"
+      ],
+      "console": "integratedTerminal",
+      "env": {
+        "CUDA_LAUNCH_BLOCKING": "1"
+      },
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}"
+    },
+        {
+      "name": "rotated_rtdetr",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/tools/train.py",
+      "args": [
+        "${workspaceFolder}/projects/rotated_rtdetr/configs/o2_rtdetr_r50vd_2xb4_12e_dior_4090.py",
       ],
       "console": "integratedTerminal",
       "env": {
