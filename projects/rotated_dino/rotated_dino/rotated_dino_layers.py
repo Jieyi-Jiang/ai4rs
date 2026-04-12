@@ -7,7 +7,7 @@ from mmdet.models.layers.transformer import (CdnQueryGenerator,
 from mmdet.structures.bbox import bbox_cxcywh_to_xyxy, bbox_xyxy_to_cxcywh
 from mmdet.structures import SampleList
 from torch import Tensor, nn
-from typing import Tuple
+from typing import Tuple, Dict, List
 from mmengine.model import ModuleList
 from .rotated_attention import RotatedDeformableDetrTransformerDecoderLayer
 from .utils import coordinate_to_encoding
@@ -163,6 +163,7 @@ class RotatedCdnQueryGenerator(CdnQueryGenerator):
                  max_num_groups=None,
                  angle_noise_scale=1.0,
                  noise_mode='only_xywh',  # 'only_xyxy', 'only_angle', 'only_xywh', 'all_xyxya'
+                 dynamic_schedule: List[Dict] = [dict(start=0, end=72, ratio=1.0)],
                  **kwargs):
         super().__init__(*args, **kwargs)
         self.angle_cfg = angle_cfg
@@ -171,6 +172,7 @@ class RotatedCdnQueryGenerator(CdnQueryGenerator):
         self.angle_noise_scale = angle_noise_scale
         assert noise_mode in ('only_xyxy', 'only_angle', 'only_xywh', 'all_xyxya'), f"Invalid noise_mode: {noise_mode}"
         self.noise_mode = noise_mode
+        self.dynamic_schedule = dynamic_schedule
 
     def __call__(self, batch_data_samples: SampleList) -> tuple:
         """Generate contrastive denoising (cdn) queries with ground truth.
@@ -295,6 +297,44 @@ class RotatedCdnQueryGenerator(CdnQueryGenerator):
             return min(int(num_groups), self.max_num_groups)
         return int(num_groups)
 
+    def generate_dn_label_query(self, gt_labels: Tensor,
+                                num_groups: int) -> Tensor:
+        """Generate noisy labels and their query embeddings.
+
+        The strategy for generating noisy labels is: Randomly choose labels of
+        `self.label_noise_scale * 0.5` proportion and override each of them
+        with a random object category label.
+
+        NOTE Not add noise to all labels. Besides, the `self.label_noise_scale
+        * 0.5` arg is the ratio of the chosen positions, which is higher than
+        the actual proportion of noisy labels, because the labels to override
+        may be correct. And the gap becomes larger as the number of target
+        categories decreases. The users should notice this and modify the scale
+        arg or the corresponding logic according to specific dataset.
+
+        Args:
+            gt_labels (Tensor): The concatenated gt labels of all samples
+                in the batch, has shape (num_target_total, ) where
+                `num_target_total = sum(num_target_list)`.
+            num_groups (int): The number of denoising query groups.
+
+        Returns:
+            Tensor: The query embeddings of noisy labels, has shape
+            (num_noisy_targets, embed_dims), where `num_noisy_targets =
+            num_target_total * num_groups * 2`.
+        """
+        assert self.label_noise_scale > 0
+        gt_labels_expand = gt_labels.repeat(2 * num_groups,
+                                            1).view(-1)  # Note `* 2`  # noqa
+        p = torch.rand_like(gt_labels_expand.float())
+        stage_ratio = self.get_noise_ratio(self.dynamic_schedule)
+        p_thr = (self.label_noise_scale * 0.5) * stage_ratio
+        chosen_indice = torch.nonzero(p < p_thr).view(-1)  # Note `* 0.5`
+        new_labels = torch.randint_like(chosen_indice, 0, self.num_classes)
+        noisy_labels_expand = gt_labels_expand.scatter(0, chosen_indice,
+                                                       new_labels)
+        dn_label_query = self.label_embedding(noisy_labels_expand)
+        return dn_label_query
 
     def generate_dn_bbox_query(self, gt_bboxes: Tensor, num_groups: int) -> Tensor:
         """Generate noisy bboxes and their query embeddings.
@@ -353,7 +393,13 @@ class RotatedCdnQueryGenerator(CdnQueryGenerator):
         """
         assert self.box_noise_scale > 0 or self.angle_noise_scale > 0
         device = gt_bboxes.device
-
+        stage_ratio = self.get_noise_ratio(self.dynamic_schedule)
+        if self.box_noise_scale > 0:
+            box_noise_scale = self.box_noise_scale * stage_ratio
+        if self.angle_noise_scale > 0:
+            angle_noise_scale = self.angle_noise_scale * stage_ratio
+            
+        
         # expand gt_bboxes as groups
         gt_bboxes_expand = gt_bboxes.repeat(2 * num_groups, 1)  # [2G*N, 5]
 
@@ -383,7 +429,7 @@ class RotatedCdnQueryGenerator(CdnQueryGenerator):
 
             # Scale by (w, h, w, h)
             whwh = gt_bboxes_expand[:, 2:4].repeat(1, 2)  # [2G*N, 4]
-            xyxy_noise = rand_part * whwh * self.box_noise_scale / 2.0
+            xyxy_noise = rand_part * whwh * box_noise_scale / 2.0
             noise[:, :4] = xyxy_noise
 
         if self.noise_mode in ('only_angle', 'all_xyxya'):
@@ -403,7 +449,7 @@ class RotatedCdnQueryGenerator(CdnQueryGenerator):
             h = gt_bboxes_expand[:, 3]
             aspect_ratio_factor = torch.atan2(torch.min(w, h), torch.max(w, h)) / (math.pi / 4.0)
             # angle = gt_bboxes_expand[:, 4]
-            angle_noise = rand_part_angle * self.angle_noise_scale * aspect_ratio_factor
+            angle_noise = rand_part_angle * angle_noise_scale * aspect_ratio_factor
             # angle_noise = rand_part_angle * angle * self.angle_noise_scale / ((self.angle_factor / math.pi) * 18)
             noise[:, 4] = angle_noise
 
@@ -489,3 +535,19 @@ class RotatedCdnQueryGenerator(CdnQueryGenerator):
         batched_label_query[mapper] = input_label_query
         batched_bbox_query[mapper] = input_bbox_query
         return batched_label_query, batched_bbox_query
+    
+    def get_noise_ratio(self, dynamic_schedule=None):
+        if not dynamic_schedule:
+            return 1.0
+
+        cur_epoch_tmp = getattr(self, '_cur_epoch', 0)
+        if cur_epoch_tmp is None:
+            cur_epoch = 0
+        else:
+            cur_epoch = cur_epoch_tmp
+
+        for stage in dynamic_schedule:
+            if stage['start'] <= cur_epoch <= stage['end']:
+                return stage.get('ratio', 1.0)
+
+        return 1.0
