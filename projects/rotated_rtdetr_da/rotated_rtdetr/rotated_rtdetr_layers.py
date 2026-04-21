@@ -1,6 +1,7 @@
 from typing import Tuple
 from torch import Tensor, nn
 from mmdet.models.layers.transformer import inverse_sigmoid
+import torch
 from projects.rotated_dino.rotated_dino import RotatedDinoTransformerDecoder
 from .utils import MLP
 
@@ -92,18 +93,33 @@ class RotatedRTDETRTransformerDecoder(RotatedDinoTransformerDecoder):
                 reference_points=reference_points_input,
                 **kwargs)
 
-            tmp = reg_branches[lid](query)
+            # tmp = reg_branches[lid](query)
+            # 1. 拆分预测：reg_branches 现在只输出 4 维位置残差
+            tmp_pos = reg_branches[lid](query) 
+            # 2. 角度解耦：使用独立分支进行绝对预测
+            tmp_angle = self.angle_branches[lid](query)
 
             if self.training or lid == eval_idx:
                 hidden_states.append(query)
                 all_layers_outputs_classes.append(cls_branches[lid](query))
-                all_layers_outputs_coords.append(
-                    (tmp + inverse_sigmoid(reference_points, eps=1e-3)).sigmoid())
-
+                # all_layers_outputs_coords.append(
+                    # (tmp + inverse_sigmoid(reference_points, eps=1e-3)).sigmoid())
+                # 3. 改进位置更新：位置保持残差叠加
+                pos_refined = (tmp_pos + inverse_sigmoid(reference_points[..., :4], eps=1e-3)).sigmoid()
+                # 4. 改进角度更新：角度改为独立预测 (Sigmoid 映射到 [0, 1])
+                angle_refined = tmp_angle.sigmoid()
+                # 拼回 5 维结果
+                all_layers_outputs_coords.append(torch.cat([pos_refined, angle_refined], dim=-1))
+                
                 if not self.training or lid == self.num_layers - 1:
                     break
 
-            unact_reference_points = tmp + inverse_sigmoid(reference_points, eps=1e-3).detach()
-            reference_points = unact_reference_points.sigmoid().detach()
+            # unact_reference_points = tmp + inverse_sigmoid(reference_points, eps=1e-3).detach()
+            # reference_points = unact_reference_points.sigmoid().detach()
+            
+            # 更新参考点供下一层使用 (EADP: 角度不参与 unact_reference_points 的梯度回传/迭代)
+            next_pos = (tmp_pos + inverse_sigmoid(reference_points[..., :4], eps=1e-3).detach()).sigmoid().detach()
+            next_angle = tmp_angle.sigmoid().detach()
+            reference_points = torch.cat([next_pos, next_angle], dim=-1)
 
         return hidden_states, (all_layers_outputs_classes, all_layers_outputs_coords)
