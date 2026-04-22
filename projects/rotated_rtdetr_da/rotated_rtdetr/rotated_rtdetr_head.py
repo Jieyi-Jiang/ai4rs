@@ -14,6 +14,31 @@ import torch.nn as nn
 import copy
 from mmengine.model import bias_init_with_prob, constant_init
 
+class DecoupledRotatedRegBranch(nn.Module):
+    def __init__(self, embed_dims, num_reg_fcs, reg_dim=4, angle_dim=1):
+        super().__init__()
+        # 位置分支 MLP (cx, cy, w, h)
+        pos_branch = []
+        for _ in range(num_reg_fcs):
+            pos_branch.append(nn.Linear(embed_dims, embed_dims))
+            pos_branch.append(nn.ReLU(inplace=True))
+        pos_branch.append(nn.Linear(embed_dims, reg_dim))
+        self.pos_branch = nn.Sequential(*pos_branch)
+
+        # 角度分支 MLP (theta) - EADP 核心：解耦预测
+        angle_branch = []
+        for _ in range(num_reg_fcs):
+            angle_branch.append(nn.Linear(embed_dims, embed_dims))
+            angle_branch.append(nn.ReLU(inplace=True))
+        angle_branch.append(nn.Linear(embed_dims, angle_dim))
+        self.angle_branch = nn.Sequential(*angle_branch)
+
+    def forward(self, x):
+        pos = self.pos_branch(x)
+        angle = self.angle_branch(x)
+        # 外部接口依然保持 5 维 (cx, cy, w, h, theta)
+        return torch.cat([pos, angle], dim=-1)
+
 class RotatedRTDETRHead(RotatedDINOHead):
     r"""Head of the DETRs Beat YOLOs on Real-time Object Detection
 
@@ -30,52 +55,94 @@ class RotatedRTDETRHead(RotatedDINOHead):
         super(RotatedRTDETRHead, self).__init__(*args, **kwargs)
     
     def _init_layers(self) -> None:
-        """初始化分类、位置回归和独立的 EADP 角度分支"""
-        fc_cls = Linear(self.embed_dims, self.cls_out_channels)
+        """初始化分类分支和解耦的回归分支"""
+        fc_cls = nn.Linear(self.embed_dims, self.cls_out_channels)
         
-        # 1. 位置回归分支 (仅输出 cx, cy, w, h)
-        pos_branch = []
-        for _ in range(self.num_reg_fcs):
-            pos_branch.append(Linear(self.embed_dims, self.embed_dims))
-            pos_branch.append(nn.ReLU())
-        pos_branch.append(Linear(self.embed_dims, 4)) # 维度改为 4
-        pos_branch = nn.Sequential(*pos_branch)
+        # 使用包装类替换原来的 Linear 序列
+        reg_branch = DecoupledRotatedRegBranch(
+            self.embed_dims, 
+            self.num_reg_fcs, 
+            reg_dim=4, 
+            angle_dim=1)
 
-        # 2. EADP 角度预测分支 (独立分支预测 1 维 theta)
-        angle_branch = []
-        for _ in range(self.num_reg_fcs):
-            angle_branch.append(Linear(self.embed_dims, self.embed_dims))
-            angle_branch.append(nn.ReLU())
-        angle_branch.append(Linear(self.embed_dims, 1)) # 维度为 1
-        angle_branch = nn.Sequential(*angle_branch)
-
-        # 3. 封装进 ModuleList
         if self.share_pred_layer:
             self.cls_branches = nn.ModuleList([fc_cls for _ in range(self.num_pred_layer)])
-            self.reg_branches = nn.ModuleList([pos_branch for _ in range(self.num_pred_layer)])
-            self.angle_branches = nn.ModuleList([angle_branch for _ in range(self.num_pred_layer)])
+            self.reg_branches = nn.ModuleList([reg_branch for _ in range(self.num_pred_layer)])
         else:
             self.cls_branches = nn.ModuleList([copy.deepcopy(fc_cls) for _ in range(self.num_pred_layer)])
-            self.reg_branches = nn.ModuleList([copy.deepcopy(pos_branch) for _ in range(self.num_pred_layer)])
-            self.angle_branches = nn.ModuleList([copy.deepcopy(angle_branch) for _ in range(self.num_pred_layer)])
+            self.reg_branches = nn.ModuleList([copy.deepcopy(reg_branch) for _ in range(self.num_pred_layer)])
+        # """初始化分类、位置回归和独立的 EADP 角度分支"""
+        # fc_cls = Linear(self.embed_dims, self.cls_out_channels)
+        
+        # # 1. 位置回归分支 (仅输出 cx, cy, w, h)
+        # pos_branch = []
+        # for _ in range(self.num_reg_fcs):
+        #     pos_branch.append(Linear(self.embed_dims, self.embed_dims))
+        #     pos_branch.append(nn.ReLU())
+        # pos_branch.append(Linear(self.embed_dims, 4)) # 维度改为 4
+        # pos_branch = nn.Sequential(*pos_branch)
 
+        # # 2. EADP 角度预测分支 (独立分支预测 1 维 theta)
+        # angle_branch = []
+        # for _ in range(self.num_reg_fcs):
+        #     angle_branch.append(Linear(self.embed_dims, self.embed_dims))
+        #     angle_branch.append(nn.ReLU())
+        # angle_branch.append(Linear(self.embed_dims, 1)) # 维度为 1
+        # angle_branch = nn.Sequential(*angle_branch)
+
+        # # 3. 封装进 ModuleList
+        # if self.share_pred_layer:
+        #     self.cls_branches = nn.ModuleList([fc_cls for _ in range(self.num_pred_layer)])
+        #     self.reg_branches = nn.ModuleList([pos_branch for _ in range(self.num_pred_layer)])
+        #     self.angle_branches = nn.ModuleList([angle_branch for _ in range(self.num_pred_layer)])
+        # else:
+        #     self.cls_branches = nn.ModuleList([copy.deepcopy(fc_cls) for _ in range(self.num_pred_layer)])
+        #     self.reg_branches = nn.ModuleList([copy.deepcopy(pos_branch) for _ in range(self.num_pred_layer)])
+        #     self.angle_branches = nn.ModuleList([copy.deepcopy(angle_branch) for _ in range(self.num_pred_layer)])
+        
     def init_weights(self) -> None:
-        """Initialize weights of the Deformable DETR head."""
+        """初始化权重，适配解耦的角度分支"""
+        # 1. 分类分支初始化 (保持不变)
         if self.loss_cls.use_sigmoid:
             bias_init = bias_init_with_prob(0.01)
             for m in self.cls_branches:
                 if hasattr(m, 'bias') and m.bias is not None:
                     nn.init.constant_(m.bias, bias_init)
+
+        # 2. 回归分支初始化 (位置 + 角度)
         for m in self.reg_branches:
-            constant_init(m[-1], 0, bias=0)
-        nn.init.constant_(self.reg_branches[0][-1].bias.data[2:], -2.0)
+            # m 现在是 DecoupledRotatedRegBranch 实例
+            # 初始化位置分支的最后一层 (4维: cx, cy, w, h)
+            constant_init(m.pos_branch[-1], 0, bias=0)
+            # 初始化角度分支的最后一层 (1维: theta)
+            constant_init(m.angle_branch[-1], 0, bias=0)
+
+        # 3. 针对第一层 reg_branch 的特殊处理 (让初始框变小)
+        # 索引 2, 3 对应 w, h。我们希望初始 w, h 较小 (exp(-2.0) 附近)
+        nn.init.constant_(self.reg_branches[0].pos_branch[-1].bias.data[2:], -2.0)
+        
+        # 4. 两阶段 (Two-stage) 的特殊处理
         if self.as_two_stage:
             for m in self.reg_branches:
-                nn.init.constant_(m[-1].bias.data[2:], 0.0)
-        # 针对角度分支的初始化
-        for m in self.angle_branches:
-            # 初始化最后一层 Linear 权重的 bias，使初始角度接近某个中心值
-            nn.init.constant_(m[-1].bias, 0)
+                # 在两阶段模式下，w, h 的偏置通常重置为 0
+                nn.init.constant_(m.pos_branch[-1].bias.data[2:], 0.0)
+    # def init_weights(self) -> None:
+    #     """Initialize weights of the Deformable DETR head."""
+    #     if self.loss_cls.use_sigmoid:
+    #         bias_init = bias_init_with_prob(0.01)
+    #         for m in self.cls_branches:
+    #             if hasattr(m, 'bias') and m.bias is not None:
+    #                 nn.init.constant_(m.bias, bias_init)
+    #     for m in self.reg_branches:
+    #         constant_init(m[-1], 0, bias=0)
+    #     nn.init.constant_(self.reg_branches[0][-1].bias.data[2:], -2.0)
+    #     if self.as_two_stage:
+    #         for m in self.reg_branches:
+    #             nn.init.constant_(m[-1].bias.data[2:], 0.0)
+    #     # 针对角度分支的初始化
+    #     for m in self.angle_branches:
+    #         # 初始化最后一层 Linear 权重的 bias，使初始角度接近某个中心值
+    #         nn.init.constant_(m[-1].bias, 0)
 
 
     def forward(self, hidden_states: List[Tuple[int, Tensor]],

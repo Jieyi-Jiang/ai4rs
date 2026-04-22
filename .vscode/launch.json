@@ -95,7 +95,7 @@
       "justMyCode": false,
       "cwd": "${workspaceFolder}"
     },
-        {
+    {
       "name": "rotated_rtdetr",
       "type": "debugpy",
       "request": "launch",
@@ -110,5 +110,20 @@
       "justMyCode": false,
       "cwd": "${workspaceFolder}"
     },
+    {
+      "name": "rotated_rtdetr_da",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/tools/train.py",
+      "args": [
+        "${workspaceFolder}/projects/rotated_rtdetr_da/configs/o2_rtdetr_r50vd_2xb4_12e_dior_4090_ocdn_angle18_rbox_iou.py",
+      ],
+      "console": "integratedTerminal",
+      "env": {
+        "CUDA_LAUNCH_BLOCKING": "1"
+      },
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}"
+    },    
   ]
 }

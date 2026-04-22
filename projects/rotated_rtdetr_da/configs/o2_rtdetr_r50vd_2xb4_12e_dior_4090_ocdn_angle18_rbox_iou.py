@@ -11,7 +11,7 @@ from mmdet.models.task_modules import FocalLossCost, HungarianAssigner
 from mmdet.models.layers.ema import ExpMomentumEMA
 from mmrotate.models.losses import GDLoss
 from projects.rotated_dino.rotated_dino.match_cost import ChamferCost, GDCost
-from projects.rotated_rtdetr.rotated_rtdetr import (RotatedRTDETR, RTDETRFPN, ResNetV1dPaddle,
+from projects.rotated_rtdetr_da.rotated_rtdetr import (RotatedRTDETR, RTDETRFPN, ResNetV1dPaddle,
                                                     RotatedRTDETRHead, RTDETRVarifocalLoss)
 from math import pi
 
