@@ -64,7 +64,9 @@ class RotatedRTDETRHead(RotatedDINOHead):
             self.num_reg_fcs, 
             reg_dim=4, 
             angle_dim=1)
-
+        
+        self.share_pred_layer = False
+        
         if self.share_pred_layer:
             self.cls_branches = nn.ModuleList([fc_cls for _ in range(self.num_pred_layer)])
             self.reg_branches = nn.ModuleList([reg_branch for _ in range(self.num_pred_layer)])

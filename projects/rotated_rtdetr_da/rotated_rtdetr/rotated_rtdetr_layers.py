@@ -117,13 +117,11 @@ class RotatedRTDETRTransformerDecoder(RotatedDinoTransformerDecoder):
                 if not self.training or lid == self.num_layers - 1:
                     break
 
-                # 同样的逻辑更新 reference_points
-                tmp_pos_ref = tmp[..., :4]
-                tmp_angle_ref = tmp[..., 4:]
-                
-                next_pos = (tmp_pos_ref + inverse_sigmoid(reference_points[..., :4], eps=1e-3).detach()).sigmoid().detach()
-                next_angle = tmp_angle_ref.sigmoid().detach()
-                
-                reference_points = torch.cat([next_pos, next_angle], dim=-1)
+            # 同样的逻辑更新 reference_points
+            tmp_pos_ref = tmp[..., :4]
+            tmp_angle_ref = tmp[..., 4:]
+            next_pos = (tmp_pos_ref + inverse_sigmoid(reference_points[..., :4], eps=1e-3).detach()).sigmoid().detach()
+            next_angle = tmp_angle_ref.sigmoid().detach()
+            reference_points = torch.cat([next_pos, next_angle], dim=-1)
 
         return hidden_states, (all_layers_outputs_classes, all_layers_outputs_coords)

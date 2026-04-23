@@ -211,9 +211,19 @@ class RotatedRTDETR(RotatedDINO):
         topk_output_proposals = torch.gather(
             output_proposals, 1,
             topk_indices.unsqueeze(-1).repeat(1, 1, 5))
-        topk_coords_unact = self.bbox_head.reg_branches[
-            self.decoder.num_layers](query) + topk_output_proposals
-
+        
+        # 【冲突点在这里】这里对5个维度全部执行了残差加法
+        # topk_coords_unact = self.bbox_head.reg_branches[
+        #     self.decoder.num_layers](query) + topk_output_proposals
+        # --- EADP 第一阶段解耦：位置残差，角度绝对 ---
+        tmp_coords_unact = self.bbox_head.reg_branches[self.decoder.num_layers](query)
+        # 1. 位置部分 (cx, cy, w, h)：加上 proposals 形成残差偏移
+        topk_pos_unact = tmp_coords_unact[..., :4] + topk_output_proposals[..., :4]
+        # 2. 角度部分 (theta)：直接使用绝对预测，丢弃 proposals 的角度部分
+        topk_angle_unact = tmp_coords_unact[..., 4:] 
+        # 重新拼接成 5 维
+        topk_coords_unact = torch.cat([topk_pos_unact, topk_angle_unact], dim=-1)
+        
         if self.training:
             topk_score = torch.gather(
                 enc_outputs_class, 1,
