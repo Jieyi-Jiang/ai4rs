@@ -63,5 +63,5 @@ val_dataloader = dict(
         backend_args=backend_args))
 test_dataloader = val_dataloader
 
-val_evaluator = dict(type='DOTAMetric', metric='mAP')
+val_evaluator = dict(type='DOTAMetric', metric='mAP', iou_thrs=[0.5, 0.7, 0.9])
 test_evaluator = val_evaluator

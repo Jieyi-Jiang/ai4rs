@@ -50,7 +50,7 @@ def rotated_l1_loss(pred: Tensor, target: Tensor) -> Tensor:
 
     # 4. 将位置 loss 和角度 loss 沿最后一个维度拼接回原始形状 (..., 5)
     loss = torch.cat([loss_pos, loss_angle], dim=-1)
-    # ---------------- 改进部分结束 ----------------
+    # loss = torch.cat([loss_pos, torch.zeros_like(loss_angle)], dim=-1)
 
     return loss
 

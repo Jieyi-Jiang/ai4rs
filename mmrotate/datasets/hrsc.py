@@ -152,7 +152,8 @@ class HRSCDataset(BaseDataset):
         root = raw_ann_info.getroot()
 
         width = int(root.find('Img_SizeWidth').text)
-        height = int(root.find('Img_SizeWidth').text)
+        # height = int(root.find('Img_SizeWidth').text)
+        height = int(root.find('Img_SizeHeight').text)
         if width is None or height is None:
             img_bytes = get(img_path, backend_args=self.backend_args)
             img = mmcv.imfrombytes(img_bytes, backend='cv2')
