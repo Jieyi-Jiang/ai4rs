@@ -447,7 +447,8 @@ class RotatedCdnQueryGenerator(CdnQueryGenerator):
             # add noise to the angle
             w = gt_bboxes_expand[:, 2]
             h = gt_bboxes_expand[:, 3]
-            aspect_ratio_factor = torch.atan2(torch.min(w, h), torch.max(w, h)) / (math.pi / 4.0)
+            # aspect_ratio_factor = torch.atan2(torch.min(w, h), torch.max(w, h)) / (math.pi / 4.0)
+            aspect_ratio_factor = 1.0
             # angle = gt_bboxes_expand[:, 4]
             angle_noise = rand_part_angle * angle_noise_scale * aspect_ratio_factor
             # angle_noise = rand_part_angle * angle * self.angle_noise_scale / ((self.angle_factor / math.pi) * 18)
